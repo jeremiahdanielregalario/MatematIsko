@@ -1,0 +1,46 @@
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { AppShell } from '@/components/layout/AppShell';
+import { RequireAuth } from '@/features/auth/RequireAuth';
+import { AuthProvider } from '@/hooks/useAuth';
+import { ThemeProvider } from '@/hooks/useTheme';
+import { AuthCallbackPage } from '@/pages/AuthCallbackPage';
+import { BookmarksPage } from '@/pages/BookmarksPage';
+import { CoursePage } from '@/pages/CoursePage';
+import { DashboardPage } from '@/pages/DashboardPage';
+import { LandingPage } from '@/pages/LandingPage';
+import { NotFoundPage } from '@/pages/NotFoundPage';
+import { PracticePage } from '@/pages/PracticePage';
+import { ProfilePage } from '@/pages/ProfilePage';
+import { ProgressPage } from '@/pages/ProgressPage';
+import { QuestionBankPage } from '@/pages/QuestionBankPage';
+import { QuestionDetailPage } from '@/pages/QuestionDetailPage';
+
+export function App() {
+  return (
+    <ThemeProvider>
+      <BrowserRouter>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/auth/callback" element={<AuthCallbackPage />} />
+
+            <Route element={<RequireAuth />}>
+              <Route element={<AppShell />}>
+                <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/questions" element={<QuestionBankPage />} />
+                <Route path="/questions/:id" element={<QuestionDetailPage />} />
+                <Route path="/practice" element={<PracticePage />} />
+                <Route path="/bookmarks" element={<BookmarksPage />} />
+                <Route path="/progress" element={<ProgressPage />} />
+                <Route path="/courses/:courseId" element={<CoursePage />} />
+                <Route path="/profile" element={<ProfilePage />} />
+              </Route>
+            </Route>
+
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </AuthProvider>
+      </BrowserRouter>
+    </ThemeProvider>
+  );
+}
