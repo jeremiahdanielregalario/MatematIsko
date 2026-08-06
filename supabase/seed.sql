@@ -463,8 +463,7 @@ $$P(HH \mid D) = 1, \qquad P(HH \mid F) = \frac14, \qquad P(D) = \frac14, \qquad
 
 By Bayes' theorem,
 
-$$P(D \mid HH) = \frac{P(HH \mid D)P(D)}{P(HH \mid D)P(D) + P(HH \mid F)P(F)}
- = \frac{1 \cdot \frac14}{1 \cdot \frac14 + \frac14 \cdot \frac34} = \frac{\frac14}{\frac{7}{16}} = \frac{4}{7}.$$$q$
+$$P(D \mid HH) = \frac{P(HH \mid D)P(D)}{P(HH \mid D)P(D) + P(HH \mid F)P(F)} = \frac{1 \cdot \frac14}{1 \cdot \frac14 + \frac14 \cdot \frac34} = \frac{\frac14}{\frac{7}{16}} = \frac{4}{7}.$$$q$
   ),
   (
     '0e7950ef-b9cf-5729-ad35-68050fec09f4',
