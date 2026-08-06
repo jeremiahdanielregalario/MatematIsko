@@ -38,7 +38,7 @@ export function useAsync<T>(fn: () => Promise<T>): AsyncState<T> {
     return () => {
       active = false;
     };
-  }, [attempt]);
+  }, [attempt, fn]);
 
   const reload = useCallback(() => setAttempt((a) => a + 1), []);
 

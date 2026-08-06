@@ -48,7 +48,7 @@ describe('useAsync', () => {
     await waitFor(() => expect(result.current.data).toEqual({ calls: 2 }));
   });
 
-  it('does not fetch twice when the function identity changes between renders', async () => {
+  it('re-fetches when the function identity changes between renders', async () => {
     let calls = 0;
     const makeFn = () =>
       vi.fn(async () => {
@@ -58,8 +58,12 @@ describe('useAsync', () => {
     const { result, rerender } = renderHook(({ getFn }) => useAsync(getFn), {
       initialProps: { getFn: makeFn() },
     });
-    rerender({ getFn: makeFn() });
+
     await waitFor(() => expect(result.current.loading).toBe(false));
     expect(calls).toBe(1);
+
+    rerender({ getFn: makeFn() });
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(calls).toBe(2);
   });
 });
