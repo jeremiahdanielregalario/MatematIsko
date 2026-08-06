@@ -30,7 +30,7 @@ describe('RevealSection', () => {
     renderAt('hidden');
     expect(screen.getByRole('button', { name: /show hint/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /show answer/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /show solution/i })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /show solution/i })).not.toBeInTheDocument();
     expect(screen.queryByText('Factor the numerator.')).not.toBeInTheDocument();
   });
 
@@ -54,24 +54,34 @@ describe('RevealSection', () => {
     expect(screen.getByText('Hint')).toBeInTheDocument();
   });
 
-  it('progressive reveal shows panels cumulatively', () => {
-    const { onReveal, onReset, rerender } = renderAt('answer');
-    expect(screen.getByText('Hint')).toBeInTheDocument();
+  it('does not show the hint panel at the answer or solution level', () => {
+    const { rerender } = renderAt('answer');
+    expect(screen.queryByText('Hint')).not.toBeInTheDocument();
+    expect(screen.queryByText('Factor the numerator.')).not.toBeInTheDocument();
     expect(screen.getByText('Answer')).toBeInTheDocument();
-    expect(screen.queryByText('Complete solution')).not.toBeInTheDocument();
 
     rerender(
       <RevealSection
         level="solution"
-        onReveal={onReveal}
-        onReset={onReset}
+        onReveal={vi.fn()}
+        onReset={vi.fn()}
         hint={CONTENT.hint}
         answer={CONTENT.answer}
         solution={CONTENT.solution}
       />,
     );
+    expect(screen.queryByText('Hint')).not.toBeInTheDocument();
+    expect(screen.queryByText('Factor the numerator.')).not.toBeInTheDocument();
+    expect(screen.getByText('Answer')).toBeInTheDocument();
     expect(screen.getByText('Complete solution')).toBeInTheDocument();
     expect(screen.getByText('Cancel the common factor and substitute.')).toBeInTheDocument();
+  });
+
+  it('shows only the solution button at the answer level', () => {
+    renderAt('answer');
+    expect(screen.queryByRole('button', { name: /show hint/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /show answer/i })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /show solution/i })).toBeInTheDocument();
   });
 
   it('shows a hide-all control once the solution is revealed and resets on click', async () => {

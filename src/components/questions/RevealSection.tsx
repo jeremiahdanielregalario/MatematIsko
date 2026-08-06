@@ -22,6 +22,8 @@ function Shortcut({ label }: { label: string }) {
   );
 }
 
+const LEVELS: RevealLevel[] = ['hidden', 'hint', 'answer', 'solution'];
+
 export function RevealSection({
   level,
   onReveal,
@@ -31,33 +33,42 @@ export function RevealSection({
   solution,
   className,
 }: RevealSectionProps) {
-  const showHint = level === 'hint' || level === 'answer' || level === 'solution';
-  const showAnswer = level === 'answer' || level === 'solution';
-  const showSolution = level === 'solution';
+  const levelIndex = LEVELS.indexOf(level);
+  const showHint = levelIndex === LEVELS.indexOf('hint');
+  const showAnswer = levelIndex >= LEVELS.indexOf('answer');
+  const showSolution = levelIndex >= LEVELS.indexOf('solution');
+  const canRevealHint = levelIndex === LEVELS.indexOf('hidden') && !!hint;
+  const canRevealAnswer =
+    levelIndex === LEVELS.indexOf('hidden') || levelIndex === LEVELS.indexOf('hint');
+  const canRevealSolution = levelIndex === LEVELS.indexOf('answer');
 
   return (
     <div className={cn('space-y-4', className)}>
       <div className="flex flex-wrap items-center gap-2">
-        {!showHint && hint ? (
+        {canRevealHint ? (
           <Button variant="outline" size="sm" onClick={() => onReveal('hint')}>
             Show hint
             <Shortcut label="H" />
           </Button>
         ) : null}
-        {!showAnswer ? (
+        {canRevealAnswer ? (
           <Button variant="outline" size="sm" onClick={() => onReveal('answer')}>
             Show answer
             <Shortcut label="A" />
           </Button>
         ) : null}
-        {!showSolution ? (
+        {canRevealSolution ? (
           <Button variant="outline" size="sm" onClick={() => onReveal('solution')}>
             Show solution
             <Shortcut label="S" />
           </Button>
         ) : null}
         {showSolution ? (
-          <Button variant="ghost" size="sm" onClick={() => (onReset ? onReset() : onReveal('hidden'))}>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => (onReset ? onReset() : onReveal('hidden'))}
+          >
             <EyeOff className="size-4" />
             Hide all
           </Button>

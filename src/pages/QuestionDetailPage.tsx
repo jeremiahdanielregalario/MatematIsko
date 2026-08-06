@@ -46,7 +46,10 @@ export function QuestionDetailPage() {
 
   const nextRandom = () => {
     const random = pickRandom(allQuestions.filter((q) => q.id !== question.id));
-    if (random) navigate(`/questions/${random.id}`);
+    if (random) {
+      reveal.reset();
+      navigate(`/questions/${random.id}`);
+    }
   };
 
   return (
@@ -88,7 +91,9 @@ export function QuestionDetailPage() {
             <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-stone-400 dark:text-stone-500">
               Problem
             </h2>
-            <MathRenderer className="font-serif text-lg leading-relaxed">{merged.question_text}</MathRenderer>
+            <MathRenderer className="font-serif text-lg leading-relaxed">
+              {merged.question_text}
+            </MathRenderer>
           </div>
 
           <div>
