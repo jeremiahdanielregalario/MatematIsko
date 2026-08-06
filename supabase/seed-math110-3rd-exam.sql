@@ -107,7 +107,7 @@ values
     '5db13bab-d471-42d5-957f-0ccaf2f618fc',
     'cd574181-02fb-4093-9e23-f268fea6baff',
     '5ec2fec4-2ebc-45a8-a1bd-90a63b94b0ae',
-    'Z[sqrt(2)]: Subring, Ideal, or Subfield of R?',
+    '$\mathbb{Z}[\sqrt{2}]$: Subring, Ideal, or Subfield of $\mathbb{R}$?',
     $q$Let $\mathbb{Z}[\sqrt{2}] = \{a + b\sqrt{2} \mid a, b \in \mathbb{Z}\}$.
 
 **(a)** Show that $\mathbb{Z}[\sqrt{2}]$ is a subring of $\mathbb{R}$.
@@ -143,7 +143,7 @@ By the subring test, $\mathbb{Z}[\sqrt{2}]$ is a subring of $\mathbb{R}$.
     '7b8ad2d0-c40f-4b29-a96a-d194f9953904',
     'cd574181-02fb-4093-9e23-f268fea6baff',
     '5ec2fec4-2ebc-45a8-a1bd-90a63b94b0ae',
-    'Ring Homomorphism from Z_4 to Z_12',
+    'Ring Homomorphism from $\mathbb{Z}_4$ to $\mathbb{Z}_{12}$',
     $q$Determine if the map $\varphi: \mathbb{Z}_4 \to \mathbb{Z}_{12}$ given by $\varphi(x) = 3x \pmod{12}$ is a ring homomorphism.$q$,
     'medium',
     2023,

@@ -384,7 +384,7 @@ $\therefore$ $[b, a]$ is the multiplicative inverse of $[a, b]$. $\blacksquare$$
   '26ef19a5-e9ab-4149-b015-a58b0bc76052',
   'cd574181-02fb-4093-9e23-f268fea6baff',
   '7977cbab-91ae-4b90-ac11-632565468414',
-  'Subring of F Isomorphic to D',
+  'Subring of $F$ Isomorphic to $D$',
   $q$Given an integral domain $D$ with field of quotients $F = \{[a, b] \mid a, b \in D,\; b \neq 0\}$. Give explicitly the subring of $F$ which is isomorphic to $D$.$q$,
   'medium',
   2023,
