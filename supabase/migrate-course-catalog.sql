@@ -8,15 +8,9 @@
 -- 1. Merge old "MATH 121 Modern Algebra" questions/topics into MATH 110.1
 -- ---------------------------------------------------------------------------
 -- Move topics that belonged to the placeholder Modern Algebra course.
-insert into public.topics (id, course_id, name, description)
-select
-  t.id,
-  'cd574181-02fb-4093-9e23-f268fea6baff',
-  t.name,
-  t.description
-from public.topics t
-where t.course_id = 'c0000000-0000-4000-8000-000000000005'
-on conflict (course_id, name) do nothing;
+update public.topics
+set course_id = 'cd574181-02fb-4093-9e23-f268fea6baff'
+where course_id = 'c0000000-0000-4000-8000-000000000005';
 
 -- Move questions referencing the old Modern Algebra course.
 update public.questions
