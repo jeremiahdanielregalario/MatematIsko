@@ -161,7 +161,7 @@ Alternatively, check multiplication: $\varphi(1 \cdot 1) = 3$ but $\varphi(1) \c
     'f8d6c809-788f-46b1-bbb2-981db4b62e36',
     'cd574181-02fb-4093-9e23-f268fea6baff',
     '5ec2fec4-2ebc-45a8-a1bd-90a63b94b0ae',
-    'Quotient Ring 5Z / 30Z',
+    'Quotient Ring $5\mathbb{Z} / 30\mathbb{Z}$',
     $q$Consider the ring $R = 5\mathbb{Z}$ under the usual addition and multiplication. Let $I$ be the ideal $30\mathbb{Z}$.
 
 **(a)** List all six elements of the quotient ring $R/I$.
@@ -212,7 +212,7 @@ Alternatively, check multiplication: $\varphi(1 \cdot 1) = 3$ but $\varphi(1) \c
     '823c05f6-6e51-4758-ad65-53f1593c4daa',
     'cd574181-02fb-4093-9e23-f268fea6baff',
     '5ec2fec4-2ebc-45a8-a1bd-90a63b94b0ae',
-    'Proof: Image of an Ideal Under a Ring Homomorphism',
+    'Proof: Image of an Ideal Under a Ring Homomorphism from $R$ to $R\'$',
     $q$Let $\varphi: R \to R'$ be a ring homomorphism. Show that if $I$ is an ideal of $R$, then $\varphi(I)$ is an ideal of $\varphi(R)$.$q$,
     'hard',
     2023,
@@ -238,7 +238,7 @@ Therefore $\varphi(I)$ is an ideal of $\varphi(R)$. $\blacksquare$$q$
     'f5346797-b42c-4737-bf62-9f2ac9534593',
     'cd574181-02fb-4093-9e23-f268fea6baff',
     '5ec2fec4-2ebc-45a8-a1bd-90a63b94b0ae',
-    'Proof: Kernel of Epimorphism onto an Integral Domain',
+    'Proof: Kernel of Epimorphism onto an Integral Domain from $R$ to $R\'$',
     $q$Let $R$ and $R'$ be rings and $\varphi: R \to R'$ a ring epimorphism. Prove that if $R$ is a commutative ring with unity and $R'$ is an integral domain, then $\ker \varphi$ is a prime ideal of $R$.$q$,
     'hard',
     2023,
@@ -262,7 +262,7 @@ For a commutative ring $R$ with unity, an ideal $P$ is prime if and only if $R/P
     '1d3fa77b-bce2-46af-b765-7136783a686e',
     'cd574181-02fb-4093-9e23-f268fea6baff',
     '5ec2fec4-2ebc-45a8-a1bd-90a63b94b0ae',
-    'Proof: Prime Element in an Integral Domain',
+    'Proof: Prime Element in an Integral Domain $D$',
     $q$Let $D$ be an integral domain and $0 \neq p \in D$. Suppose the principal ideal $\langle p \rangle$ is a prime ideal of $D$. Prove that if $p = ab$, then either $a$ is a unit of $D$ or $b$ is a unit of $D$.$q$,
     'hard',
     2023,
