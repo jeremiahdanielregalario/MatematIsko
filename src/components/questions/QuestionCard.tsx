@@ -47,7 +47,7 @@ export function QuestionCard({ question, onToggleBookmark, onSetStatus, classNam
             to={`/questions/${question.id}`}
             className="rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 after:absolute after:inset-0"
           >
-            {question.title}
+            <MathRenderer inline>{question.title}</MathRenderer>
           </Link>
         </h3>
         <div className="line-clamp-3 text-stone-600 dark:text-stone-300">

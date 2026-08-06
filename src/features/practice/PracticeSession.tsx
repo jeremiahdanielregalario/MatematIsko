@@ -91,7 +91,7 @@ export function PracticeSession({ questions, onAnswer, onComplete, onQuit }: Pra
 
           <div>
             <h2 className="mb-2 font-serif text-xl font-semibold leading-snug text-stone-900 dark:text-stone-50">
-              {question.title}
+              <MathRenderer inline>{question.title}</MathRenderer>
             </h2>
             <MathRenderer className="font-serif text-lg leading-relaxed">
               {question.question_text}

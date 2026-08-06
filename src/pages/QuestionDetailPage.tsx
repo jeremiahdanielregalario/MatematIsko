@@ -79,7 +79,7 @@ export function QuestionDetailPage() {
             />
           </div>
           <h1 className="mt-3 font-serif text-2xl font-bold leading-tight tracking-tight text-stone-900 dark:text-stone-50">
-            {merged.title}
+            <MathRenderer inline>{merged.title}</MathRenderer>
           </h1>
         </div>
 
