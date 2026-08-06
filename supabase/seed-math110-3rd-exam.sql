@@ -8,7 +8,7 @@
 -- Course
 -- ---------------------------------------------------------------------------
 insert into public.courses (id, code, name, description) values
-  ('c0000000-0000-4000-8000-000000000010', 'MATH 110.1', 'Modern Algebra I',
+  ('cd574181-02fb-4093-9e23-f268fea6baff', 'MATH 110.1', 'Modern Algebra I',
    'Rings, ideals, fields, ring homomorphisms, and integral domains.')
 on conflict (code) do nothing;
 
@@ -16,7 +16,7 @@ on conflict (code) do nothing;
 -- Topic (all questions fall under Rings and Ideals)
 -- ---------------------------------------------------------------------------
 insert into public.topics (id, course_id, name, description) values
-  ('t0000000-0000-4000-8000-000000000201', 'c0000000-0000-4000-8000-000000000010', 'Rings, Ideals, and Fields', null)
+  ('5ec2fec4-2ebc-45a8-a1bd-90a63b94b0ae', 'cd574181-02fb-4093-9e23-f268fea6baff', 'Rings, Ideals, and Fields', null)
 on conflict (course_id, name) do nothing;
 
 -- ---------------------------------------------------------------------------
@@ -28,9 +28,9 @@ insert into public.questions
   (id, course_id, topic_id, title, question_text, difficulty, year, exam_name, question_number, hint, answer, solution)
 values
   (
-    'q0000000-0000-4000-8000-000000000226',
-    'c0000000-0000-4000-8000-000000000010',
-    't0000000-0000-4000-8000-000000000201',
+    '40da8bc6-d7c7-4255-a1c2-bb19cf54400b',
+    'cd574181-02fb-4093-9e23-f268fea6baff',
+    '5ec2fec4-2ebc-45a8-a1bd-90a63b94b0ae',
     'Definitions: Division Ring, Zero Divisor, Prime Ideal',
     $q$Define the following precisely:
 
@@ -56,9 +56,9 @@ values
 
   -- Q2: Fill in the blanks (7 pts — 7 items × 1 pt each)
   (
-    'q0000000-0000-4000-8000-000000000227',
-    'c0000000-0000-4000-8000-000000000010',
-    't0000000-0000-4000-8000-000000000201',
+    'fc5c2b8a-16cc-450f-a24c-c86553483b28',
+    'cd574181-02fb-4093-9e23-f268fea6baff',
+    '5ec2fec4-2ebc-45a8-a1bd-90a63b94b0ae',
     'Fill in the Blanks: Rings and Ideals',
     $q$Fill in the blanks with the word, phrase, number, or symbol that best completes the statement.
 
@@ -104,9 +104,9 @@ values
 
   -- Q3a: Z[sqrt(2)] — subring, ideal, subfield (7 pts)
   (
-    'q0000000-0000-4000-8000-000000000228',
-    'c0000000-0000-4000-8000-000000000010',
-    't0000000-0000-4000-8000-000000000201',
+    '5db13bab-d471-42d5-957f-0ccaf2f618fc',
+    'cd574181-02fb-4093-9e23-f268fea6baff',
+    '5ec2fec4-2ebc-45a8-a1bd-90a63b94b0ae',
     'Z[sqrt(2)]: Subring, Ideal, or Subfield of R?',
     $q$Let $\mathbb{Z}[\sqrt{2}] = \{a + b\sqrt{2} \mid a, b \in \mathbb{Z}\}$.
 
@@ -140,9 +140,9 @@ By the subring test, $\mathbb{Z}[\sqrt{2}]$ is a subring of $\mathbb{R}$.
 
   -- Q3b: Ring homomorphism check (2 pts)
   (
-    'q0000000-0000-4000-8000-000000000229',
-    'c0000000-0000-4000-8000-000000000010',
-    't0000000-0000-4000-8000-000000000201',
+    '7b8ad2d0-c40f-4b29-a96a-d194f9953904',
+    'cd574181-02fb-4093-9e23-f268fea6baff',
+    '5ec2fec4-2ebc-45a8-a1bd-90a63b94b0ae',
     'Ring Homomorphism from Z_4 to Z_12',
     $q$Determine if the map $\varphi: \mathbb{Z}_4 \to \mathbb{Z}_{12}$ given by $\varphi(x) = 3x \pmod{12}$ is a ring homomorphism.$q$,
     'medium',
@@ -158,9 +158,9 @@ Alternatively, check multiplication: $\varphi(1 \cdot 1) = 3$ but $\varphi(1) \c
 
   -- Q3c: Quotient ring R/I (7 pts — 4 sub-parts)
   (
-    'q0000000-0000-4000-8000-000000000230',
-    'c0000000-0000-4000-8000-000000000010',
-    't0000000-0000-4000-8000-000000000201',
+    'f8d6c809-788f-46b1-bbb2-981db4b62e36',
+    'cd574181-02fb-4093-9e23-f268fea6baff',
+    '5ec2fec4-2ebc-45a8-a1bd-90a63b94b0ae',
     'Quotient Ring 5Z / 30Z',
     $q$Consider the ring $R = 5\mathbb{Z}$ under the usual addition and multiplication. Let $I$ be the ideal $30\mathbb{Z}$.
 
@@ -209,9 +209,9 @@ Alternatively, check multiplication: $\varphi(1 \cdot 1) = 3$ but $\varphi(1) \c
 
   -- Q4a: Proof — homomorphism image of ideal (3 pts)
   (
-    'q0000000-0000-4000-8000-000000000231',
-    'c0000000-0000-4000-8000-000000000010',
-    't0000000-0000-4000-8000-000000000201',
+    '823c05f6-6e51-4758-ad65-53f1593c4daa',
+    'cd574181-02fb-4093-9e23-f268fea6baff',
+    '5ec2fec4-2ebc-45a8-a1bd-90a63b94b0ae',
     'Proof: Image of an Ideal Under a Ring Homomorphism',
     $q$Let $\varphi: R \to R'$ be a ring homomorphism. Show that if $I$ is an ideal of $R$, then $\varphi(I)$ is an ideal of $\varphi(R)$.$q$,
     'hard',
@@ -235,9 +235,9 @@ Therefore $\varphi(I)$ is an ideal of $\varphi(R)$. $\blacksquare$$q$
 
   -- Q4b: Proof — kernel of epimorphism is prime ideal (4 pts)
   (
-    'q0000000-0000-4000-8000-000000000232',
-    'c0000000-0000-4000-8000-000000000010',
-    't0000000-0000-4000-8000-000000000201',
+    'f5346797-b42c-4737-bf62-9f2ac9534593',
+    'cd574181-02fb-4093-9e23-f268fea6baff',
+    '5ec2fec4-2ebc-45a8-a1bd-90a63b94b0ae',
     'Proof: Kernel of Epimorphism onto an Integral Domain',
     $q$Let $R$ and $R'$ be rings and $\varphi: R \to R'$ a ring epimorphism. Prove that if $R$ is a commutative ring with unity and $R'$ is an integral domain, then $\ker \varphi$ is a prime ideal of $R$.$q$,
     'hard',
@@ -259,9 +259,9 @@ For a commutative ring $R$ with unity, an ideal $P$ is prime if and only if $R/P
 
   -- Q4c: Proof — prime ideal element factorization (4 pts)
   (
-    'q0000000-0000-4000-8000-000000000233',
-    'c0000000-0000-4000-8000-000000000010',
-    't0000000-0000-4000-8000-000000000201',
+    '1d3fa77b-bce2-46af-b765-7136783a686e',
+    'cd574181-02fb-4093-9e23-f268fea6baff',
+    '5ec2fec4-2ebc-45a8-a1bd-90a63b94b0ae',
     'Proof: Prime Element in an Integral Domain',
     $q$Let $D$ be an integral domain and $0 \neq p \in D$. Suppose the principal ideal $\langle p \rangle$ is a prime ideal of $D$. Prove that if $p = ab$, then either $a$ is a unit of $D$ or $b$ is a unit of $D$.$q$,
     'hard',
