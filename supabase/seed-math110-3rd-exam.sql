@@ -8,9 +8,9 @@
 -- Course
 -- ---------------------------------------------------------------------------
 insert into public.courses (id, code, name, description) values
-  ('cd574181-02fb-4093-9e23-f268fea6baff', 'MATH 110.1', 'Modern Algebra I',
-   'Rings, ideals, fields, ring homomorphisms, and integral domains.')
-on conflict (code) do nothing;
+  ('cd574181-02fb-4093-9e23-f268fea6baff', 'MATH 110.1', 'Abstract Algebra I',
+   'Groups, rings, fields, ideals, homomorphisms, and fields of quotients.')
+on conflict (code) do update set name = excluded.name, description = excluded.description;
 
 -- ---------------------------------------------------------------------------
 -- Topic (all questions fall under Rings and Ideals)
