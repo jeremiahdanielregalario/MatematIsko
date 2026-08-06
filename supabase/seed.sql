@@ -32,32 +32,32 @@ on conflict (code) do nothing;
 -- Topics
 -- ---------------------------------------------------------------------------
 insert into public.topics (id, course_id, name, description) values
-  ('t0000000-0000-4000-8000-000000000101', 'c0000000-0000-4000-8000-000000000001', 'Limits and Continuity', null),
-  ('t0000000-0000-4000-8000-000000000102', 'c0000000-0000-4000-8000-000000000001', 'Differentiation', null),
-  ('t0000000-0000-4000-8000-000000000103', 'c0000000-0000-4000-8000-000000000001', 'Applications of Derivatives', null),
-  ('t0000000-0000-4000-8000-000000000104', 'c0000000-0000-4000-8000-000000000001', 'Integration', null),
-  ('t0000000-0000-4000-8000-000000000105', 'c0000000-0000-4000-8000-000000000002', 'Integration Techniques', null),
-  ('t0000000-0000-4000-8000-000000000106', 'c0000000-0000-4000-8000-000000000002', 'Sequences and Series', null),
-  ('t0000000-0000-4000-8000-000000000107', 'c0000000-0000-4000-8000-000000000002', 'Power Series', null),
-  ('t0000000-0000-4000-8000-000000000108', 'c0000000-0000-4000-8000-000000000003', 'Systems of Linear Equations', null),
-  ('t0000000-0000-4000-8000-000000000109', 'c0000000-0000-4000-8000-000000000003', 'Vector Spaces', null),
-  ('t0000000-0000-4000-8000-000000000110', 'c0000000-0000-4000-8000-000000000003', 'Eigenvalues and Eigenvectors', null),
-  ('t0000000-0000-4000-8000-000000000111', 'c0000000-0000-4000-8000-000000000004', 'Real Sequences and Limits', null),
-  ('t0000000-0000-4000-8000-000000000112', 'c0000000-0000-4000-8000-000000000004', 'Continuity', null),
-  ('t0000000-0000-4000-8000-000000000113', 'c0000000-0000-4000-8000-000000000004', 'Differentiability', null),
-  ('t0000000-0000-4000-8000-000000000114', 'c0000000-0000-4000-8000-000000000005', 'Groups and Subgroups', null),
-  ('t0000000-0000-4000-8000-000000000115', 'c0000000-0000-4000-8000-000000000005', 'Cyclic Groups', null),
-  ('t0000000-0000-4000-8000-000000000116', 'c0000000-0000-4000-8000-000000000005', 'Rings and Ideals', null),
-  ('t0000000-0000-4000-8000-000000000117', 'c0000000-0000-4000-8000-000000000006', 'First-Order Differential Equations', null),
-  ('t0000000-0000-4000-8000-000000000118', 'c0000000-0000-4000-8000-000000000006', 'Linear Second-Order Equations', null),
-  ('t0000000-0000-4000-8000-000000000119', 'c0000000-0000-4000-8000-000000000007', 'Probability Basics', null),
-  ('t0000000-0000-4000-8000-000000000120', 'c0000000-0000-4000-8000-000000000007', 'Conditional Probability and Bayes', null),
-  ('t0000000-0000-4000-8000-000000000121', 'c0000000-0000-4000-8000-000000000007', 'Random Variables', null),
-  ('t0000000-0000-4000-8000-000000000122', 'c0000000-0000-4000-8000-000000000008', 'Estimation', null),
-  ('t0000000-0000-4000-8000-000000000123', 'c0000000-0000-4000-8000-000000000008', 'Hypothesis Testing', null),
-  ('t0000000-0000-4000-8000-000000000124', 'c0000000-0000-4000-8000-000000000009', 'Open and Closed Sets', null),
-  ('t0000000-0000-4000-8000-000000000125', 'c0000000-0000-4000-8000-000000000009', 'Compactness', null),
-  ('t0000000-0000-4000-8000-000000000126', 'c0000000-0000-4000-8000-000000000009', 'Connectedness', null)
+  ('d054d6e8-b7f0-5b51-bee3-077535bcff12', 'c0000000-0000-4000-8000-000000000001', 'Limits and Continuity', null),
+  ('e0fcbbef-0a2b-5e34-8ea3-a814bec15036', 'c0000000-0000-4000-8000-000000000001', 'Differentiation', null),
+  ('891e6378-0089-560a-b6e3-a958bc2ff569', 'c0000000-0000-4000-8000-000000000001', 'Applications of Derivatives', null),
+  ('56ed8f8c-e735-5966-8bdf-d69fb026face', 'c0000000-0000-4000-8000-000000000001', 'Integration', null),
+  ('f0068c90-d348-53f9-a0cb-5d96616ed130', 'c0000000-0000-4000-8000-000000000002', 'Integration Techniques', null),
+  ('a38b0b1e-f4b8-5c1d-8652-87852eb3bcde', 'c0000000-0000-4000-8000-000000000002', 'Sequences and Series', null),
+  ('e25dbfed-dfba-520d-896d-0e6e8bad0930', 'c0000000-0000-4000-8000-000000000002', 'Power Series', null),
+  ('4278538e-5f97-564b-931e-b93abb751d6d', 'c0000000-0000-4000-8000-000000000003', 'Systems of Linear Equations', null),
+  ('fa12d7a6-ff9e-5dd2-ab6b-5762211d30e3', 'c0000000-0000-4000-8000-000000000003', 'Vector Spaces', null),
+  ('59c0d7e7-b8c7-5acf-b861-b98d8da62b8c', 'c0000000-0000-4000-8000-000000000003', 'Eigenvalues and Eigenvectors', null),
+  ('aedc8388-0405-5758-8869-04cd382811bf', 'c0000000-0000-4000-8000-000000000004', 'Real Sequences and Limits', null),
+  ('6a99930b-0342-51d3-8b50-5caec5b9dc32', 'c0000000-0000-4000-8000-000000000004', 'Continuity', null),
+  ('e991fd11-981e-5afd-a2f6-cd0a4b9bf058', 'c0000000-0000-4000-8000-000000000004', 'Differentiability', null),
+  ('972a40a9-bbb6-518c-beb8-9a3270fd6d88', 'c0000000-0000-4000-8000-000000000005', 'Groups and Subgroups', null),
+  ('d210d4b4-a572-5804-bdfa-71052bd7dc1b', 'c0000000-0000-4000-8000-000000000005', 'Cyclic Groups', null),
+  ('5e955520-14c6-5029-b68c-4dc87fc335b1', 'c0000000-0000-4000-8000-000000000005', 'Rings and Ideals', null),
+  ('a2713fe8-d0fc-5ea4-9bd0-f2c6a253b965', 'c0000000-0000-4000-8000-000000000006', 'First-Order Differential Equations', null),
+  ('958f64c7-fb5b-5df0-aad8-74b53387eb79', 'c0000000-0000-4000-8000-000000000006', 'Linear Second-Order Equations', null),
+  ('ba213157-df7b-5508-9e84-e89b7546cae8', 'c0000000-0000-4000-8000-000000000007', 'Probability Basics', null),
+  ('d7b56557-cf21-5753-89e5-846e0ee7e56c', 'c0000000-0000-4000-8000-000000000007', 'Conditional Probability and Bayes', null),
+  ('e6630ffe-d66c-5052-bd01-322238292d9e', 'c0000000-0000-4000-8000-000000000007', 'Random Variables', null),
+  ('62c38fcc-f7e3-5797-b4f9-b1f4bc2fc98b', 'c0000000-0000-4000-8000-000000000008', 'Estimation', null),
+  ('e496ba7c-761b-5aa8-9e7a-9daf5ecc9ccf', 'c0000000-0000-4000-8000-000000000008', 'Hypothesis Testing', null),
+  ('bda32821-a540-5b79-acfe-0691fa8dd2e3', 'c0000000-0000-4000-8000-000000000009', 'Open and Closed Sets', null),
+  ('d540ed14-59ca-5ece-9416-7bd146f05802', 'c0000000-0000-4000-8000-000000000009', 'Compactness', null),
+  ('82172f37-6c21-565f-8deb-dc67248ff9fe', 'c0000000-0000-4000-8000-000000000009', 'Connectedness', null)
 on conflict (course_id, name) do nothing;
 
 -- ---------------------------------------------------------------------------
@@ -67,9 +67,9 @@ insert into public.questions
   (id, course_id, topic_id, title, question_text, difficulty, year, exam_name, question_number, hint, answer, solution)
 values
   (
-    'q0000000-0000-4000-8000-000000000201',
+    'ee0b76f1-a574-5812-ab54-b863b7aed767',
     'c0000000-0000-4000-8000-000000000001',
-    't0000000-0000-4000-8000-000000000101',
+    'd054d6e8-b7f0-5b51-bee3-077535bcff12',
     'A Limit of a Rational Function',
     $q$Compute the limit
 
@@ -91,9 +91,9 @@ A limit only looks at values *near* $x = 2$, so
 $$\lim_{x \to 2} \frac{x^2 - 4}{x - 2} = \lim_{x \to 2} (x + 2) = 4.$$$q$
   ),
   (
-    'q0000000-0000-4000-8000-000000000202',
+    'a936439c-2944-5fa7-a15b-e84e04e719ce',
     'c0000000-0000-4000-8000-000000000001',
-    't0000000-0000-4000-8000-000000000102',
+    'e0fcbbef-0a2b-5e34-8ea3-a814bec15036',
     'The Derivative at a Point',
     $q$Let $f(x) = x^3$. Using the limit definition of the derivative, compute $f'(2)$.$q$,
     'medium',
@@ -115,9 +115,9 @@ $$\lim_{h \to 0} \frac{12h + 6h^2 + h^3}{h}
  = \lim_{h \to 0} (12 + 6h + h^2) = 12.$$$q$
   ),
   (
-    'q0000000-0000-4000-8000-000000000203',
+    '012fb58c-2bc4-5a57-84e7-40aca78ed7b0',
     'c0000000-0000-4000-8000-000000000001',
-    't0000000-0000-4000-8000-000000000104',
+    '56ed8f8c-e735-5966-8bdf-d69fb026face',
     'A Simple Definite Integral',
     $q$Evaluate
 
@@ -133,9 +133,9 @@ $$\int_0^1 x^2 \, dx.$$$q$,
 $$\int_0^1 x^2 \, dx = \left[ \frac{x^3}{3} \right]_0^1 = \frac{1}{3} - 0 = \frac{1}{3}.$$$q$
   ),
   (
-    'q0000000-0000-4000-8000-000000000204',
+    '7a7a3ec2-1728-588c-9fa1-bea45b86fef7',
     'c0000000-0000-4000-8000-000000000002',
-    't0000000-0000-4000-8000-000000000105',
+    'f0068c90-d348-53f9-a0cb-5d96616ed130',
     'Integration by Parts',
     $q$Evaluate
 
@@ -151,9 +151,9 @@ $$\int x e^x \, dx.$$$q$,
 $$\int x e^x \, dx = x e^x - \int e^x \, dx = x e^x - e^x + C = e^x (x - 1) + C.$$$q$
   ),
   (
-    'q0000000-0000-4000-8000-000000000205',
+    '56f07e8f-4c4f-5a79-9c64-be2aec54b0e6',
     'c0000000-0000-4000-8000-000000000002',
-    't0000000-0000-4000-8000-000000000105',
+    'f0068c90-d348-53f9-a0cb-5d96616ed130',
     'Partial Fractions',
     $q$Evaluate
 
@@ -174,9 +174,9 @@ $$\int \frac{dx}{x^2 - 1} = \frac{1}{2} \ln|x - 1| - \frac{1}{2} \ln|x + 1| + C
  = \frac{1}{2} \ln\left| \frac{x - 1}{x + 1} \right| + C.$$$q$
   ),
   (
-    'q0000000-0000-4000-8000-000000000206',
+    '837f33be-f15e-5066-9a9e-2cf7a954b440',
     'c0000000-0000-4000-8000-000000000002',
-    't0000000-0000-4000-8000-000000000106',
+    'a38b0b1e-f4b8-5c1d-8652-87852eb3bcde',
     'Convergence of a p-Series',
     $q$Determine whether the series
 
@@ -192,9 +192,9 @@ converges or diverges, and justify your answer.$q$,
     $q$This is a $p$-series $\sum 1/n^p$ with $p = 2$. A $p$-series converges exactly when $p > 1$, so $\sum 1/n^2$ converges.$q$
   ),
   (
-    'q0000000-0000-4000-8000-000000000207',
+    '91ad71db-c42e-5fd7-9fb2-f14966dd1576',
     'c0000000-0000-4000-8000-000000000002',
-    't0000000-0000-4000-8000-000000000107',
+    'e25dbfed-dfba-520d-896d-0e6e8bad0930',
     'Radius of Convergence',
     $q$Find the radius of convergence of the power series
 
@@ -213,9 +213,9 @@ $$\lim_{n \to \infty} \left| \frac{a_{n + 1}}{a_n} \right|
 for every real $x$. The series therefore converges for all $x$, so $R = \infty$.$q$
   ),
   (
-    'q0000000-0000-4000-8000-000000000208',
+    '85f7c11c-3b92-5acd-829a-68698c41d158',
     'c0000000-0000-4000-8000-000000000003',
-    't0000000-0000-4000-8000-000000000108',
+    '4278538e-5f97-564b-931e-b93abb751d6d',
     'Solving a Linear System',
     $q$Solve the system
 
@@ -229,9 +229,9 @@ $$\begin{cases} x + y = 3 \\ 2x - y = 0. \end{cases}$$$q$,
     $q$Adding the equations gives $3x = 3$, so $x = 1$. Substituting into $x + y = 3$ yields $y = 2$.$q$
   ),
   (
-    'q0000000-0000-4000-8000-000000000209',
+    '736981e9-3fb1-54bf-9aac-6ef5c73cd161',
     'c0000000-0000-4000-8000-000000000003',
-    't0000000-0000-4000-8000-000000000109',
+    'fa12d7a6-ff9e-5dd2-ab6b-5762211d30e3',
     'Linear Dependence',
     $q$Are the vectors $v_1 = (1, 0, 1)$, $v_2 = (0, 1, 1)$, and $v_3 = (1, 1, 2)$ linearly independent in $\mathbb{R}^3$? Justify your answer.$q$,
     'medium',
@@ -243,9 +243,9 @@ $$\begin{cases} x + y = 3 \\ 2x - y = 0. \end{cases}$$$q$,
     $q$Observe that $v_1 + v_2 = (1, 1, 2) = v_3$. Rearranging gives $v_1 + v_2 - v_3 = 0$, a nontrivial linear combination of the vectors equaling the zero vector. Hence they are linearly dependent.$q$
   ),
   (
-    'q0000000-0000-4000-8000-000000000210',
+    '28a2be4f-cef6-5a5e-9ace-bdf410788fd3',
     'c0000000-0000-4000-8000-000000000003',
-    't0000000-0000-4000-8000-000000000110',
+    '59c0d7e7-b8c7-5acf-b861-b98d8da62b8c',
     'Eigenvalues of a Symmetric Matrix',
     $q$Find the eigenvalues of
 
@@ -264,9 +264,9 @@ $$\det(A - \lambda I) = \begin{vmatrix} 2 - \lambda & 1 \\ 1 & 2 - \lambda \end{
 Setting this to zero gives $\lambda = 1$ and $\lambda = 3$.$q$
   ),
   (
-    'q0000000-0000-4000-8000-000000000211',
+    'c77a9c34-b59e-555a-a0ad-e72447c8e6e5',
     'c0000000-0000-4000-8000-000000000004',
-    't0000000-0000-4000-8000-000000000111',
+    'aedc8388-0405-5758-8869-04cd382811bf',
     'An Epsilon-N Proof',
     $q$Using the $\epsilon$-$N$ definition of convergence, prove that
 
@@ -284,9 +284,9 @@ $$\left| \frac{1}{n} - 0 \right| = \frac{1}{n} \leq \frac{1}{N} < \epsilon.$$
 This is exactly the definition of $\lim_{n \to \infty} 1/n = 0$.$q$
   ),
   (
-    'q0000000-0000-4000-8000-000000000212',
+    'b2eee0de-26fd-560a-9d8d-28fd2c5d718a',
     'c0000000-0000-4000-8000-000000000004',
-    't0000000-0000-4000-8000-000000000112',
+    '6a99930b-0342-51d3-8b50-5caec5b9dc32',
     'Not Uniformly Continuous',
     $q$Show that $f(x) = \dfrac{1}{x}$ is **not** uniformly continuous on $(0, 1]$.$q$,
     'hard',
@@ -306,9 +306,9 @@ $$|f(x_n) - f(y_n)| = |n - 2n| = n \to \infty.$$
 If $f$ were uniformly continuous, sequences with $|x_n - y_n| \to 0$ would force $|f(x_n) - f(y_n)| \to 0$. Since that fails, $f$ is not uniformly continuous on $(0, 1]$.$q$
   ),
   (
-    'q0000000-0000-4000-8000-000000000213',
+    '7f03576b-28c5-5c1f-92ac-46d38049832f',
     'c0000000-0000-4000-8000-000000000004',
-    't0000000-0000-4000-8000-000000000113',
+    'e991fd11-981e-5afd-a2f6-cd0a4b9bf058',
     'Derivative Implies Continuity',
     $q$Prove that if $f$ is differentiable at $a$, then $f$ is continuous at $a$.$q$,
     'medium',
@@ -324,9 +324,9 @@ $$f(x) - f(a) = \frac{f(x) - f(a)}{x - a} \cdot (x - a).$$
 Since $f$ is differentiable at $a$, the difference quotient tends to $f'(a)$, while $x - a \to 0$. Therefore $f(x) - f(a) \to f'(a) \cdot 0 = 0$, i.e. $\lim_{x \to a} f(x) = f(a)$, which is continuity at $a$.$q$
   ),
   (
-    'q0000000-0000-4000-8000-000000000214',
+    'f8e04b72-10a4-562e-b3bb-1f5b9decbce8',
     'c0000000-0000-4000-8000-000000000005',
-    't0000000-0000-4000-8000-000000000114',
+    '972a40a9-bbb6-518c-beb8-9a3270fd6d88',
     'Order of an Element and Its Inverse',
     $q$Let $G$ be a group and let $a \in G$. Prove that $a$ and $a^{-1}$ have the same order.$q$,
     'medium',
@@ -342,9 +342,9 @@ $$(a^{-1})^n = (a^n)^{-1} = e^{-1} = e,$$
 so the order of $a^{-1}$ is at most $n$. Repeating the argument with $a$ and $a^{-1}$ swapped gives $\operatorname{ord}(a) \leq \operatorname{ord}(a^{-1})$. Hence the orders are equal. (If $a$ has infinite order, so does $a^{-1}$ by the same pairing.)$q$
   ),
   (
-    'q0000000-0000-4000-8000-000000000215',
+    'b4795a18-0eb7-5dd5-8291-fb67147c1224',
     'c0000000-0000-4000-8000-000000000005',
-    't0000000-0000-4000-8000-000000000115',
+    'd210d4b4-a572-5804-bdfa-71052bd7dc1b',
     'Generators of the Cyclic Group Z_12',
     $q$How many generators does the cyclic group $\mathbb{Z}_{12}$ have?$q$,
     'easy',
@@ -356,9 +356,9 @@ so the order of $a^{-1}$ is at most $n$. Repeating the argument with $a$ and $a^
     $q$An element $k$ generates $\mathbb{Z}_{12}$ precisely when $\gcd(k, 12) = 1$. The number of such elements is Euler's totient function $\varphi(12) = 12 \cdot \tfrac12 \cdot \tfrac23 = 4$, namely $1, 5, 7, 11$.$q$
   ),
   (
-    'q0000000-0000-4000-8000-000000000216',
+    '98bcf1cd-e8a0-5b5b-96bc-e23043c95e7a',
     'c0000000-0000-4000-8000-000000000005',
-    't0000000-0000-4000-8000-000000000116',
+    '5e955520-14c6-5029-b68c-4dc87fc335b1',
     'An Ideal of the Ring Z_6',
     $q$In the ring $\mathbb{Z}_6$, show that the set of even residue classes $I = \{ 0, 2, 4 \}$ is an ideal.$q$,
     'medium',
@@ -370,9 +370,9 @@ so the order of $a^{-1}$ is at most $n$. Repeating the argument with $a$ and $a^
     $q$First, $I$ is an additive subgroup of $\mathbb{Z}_6$: the sum of two even classes is even, and the additive inverse of an even class is even. Second, for any $r \in \mathbb{Z}_6$ and any $i \in I$, the product $ri$ is even because each even class is $2$ times some class and multiplication distributes. Hence $rI \subseteq I$ and $Ir \subseteq I$, so $I$ is an ideal.$q$
   ),
   (
-    'q0000000-0000-4000-8000-000000000217',
+    '0597874c-86f3-59aa-9809-fcc5c23d47e7',
     'c0000000-0000-4000-8000-000000000006',
-    't0000000-0000-4000-8000-000000000117',
+    'a2713fe8-d0fc-5ea4-9bd0-f2c6a253b965',
     'A Separable Equation',
     $q$Solve the differential equation $y' = x\,y$.$q$,
     'easy',
@@ -390,9 +390,9 @@ Integrating both sides gives $\ln|y| = x^2/2 + C$, so $|y| = e^{x^2/2 + C}$ and
 $$y = C e^{x^2 / 2}.$$$q$
   ),
   (
-    'q0000000-0000-4000-8000-000000000218',
+    'ee2f0e6c-c192-53c4-9ce5-6f1fd2bd966d',
     'c0000000-0000-4000-8000-000000000006',
-    't0000000-0000-4000-8000-000000000117',
+    'a2713fe8-d0fc-5ea4-9bd0-f2c6a253b965',
     'An Integrating Factor Problem',
     $q$Solve the initial value problem
 
@@ -412,9 +412,9 @@ Integrating, $e^{2t} y = e^{t} + C$, so $y = e^{-t} + C e^{-2t}$. Applying $y(0)
 $$y(t) = e^{-t} - e^{-2t}.$$$q$
   ),
   (
-    'q0000000-0000-4000-8000-000000000219',
+    '9396fb49-2675-5e8d-83b2-4a9e293365df',
     'c0000000-0000-4000-8000-000000000006',
-    't0000000-0000-4000-8000-000000000118',
+    '958f64c7-fb5b-5df0-aad8-74b53387eb79',
     'A Constant-Coefficient Equation',
     $q$Find the general solution of
 
@@ -430,9 +430,9 @@ $$y'' - 3y' + 2y = 0.$$$q$,
 $$y(t) = C_1 e^{t} + C_2 e^{2t}.$$$q$
   ),
   (
-    'q0000000-0000-4000-8000-000000000220',
+    'dc2bcae8-92df-5ce0-b987-2ea90c3c7b06',
     'c0000000-0000-4000-8000-000000000007',
-    't0000000-0000-4000-8000-000000000119',
+    'ba213157-df7b-5508-9e84-e89b7546cae8',
     'The Sum of Two Dice',
     $q$Two fair six-sided dice are rolled. What is the probability that the sum of the outcomes is $7$?$q$,
     'easy',
@@ -446,9 +446,9 @@ $$y(t) = C_1 e^{t} + C_2 e^{2t}.$$$q$
 $$P(\text{sum} = 7) = \frac{6}{36} = \frac{1}{6}.$$$q$
   ),
   (
-    'q0000000-0000-4000-8000-000000000221',
+    '715d76e2-192a-522a-86d0-056096728464',
     'c0000000-0000-4000-8000-000000000007',
-    't0000000-0000-4000-8000-000000000120',
+    'd7b56557-cf21-5753-89e5-846e0ee7e56c',
     'Bayes with a Double-Headed Coin',
     $q$A box contains $3$ fair coins and $1$ double-headed coin. A coin is chosen uniformly at random and tossed twice, landing heads both times. What is the probability that the chosen coin is the double-headed coin?$q$,
     'medium',
@@ -467,9 +467,9 @@ $$P(D \mid HH) = \frac{P(HH \mid D)P(D)}{P(HH \mid D)P(D) + P(HH \mid F)P(F)}
  = \frac{1 \cdot \frac14}{1 \cdot \frac14 + \frac14 \cdot \frac34} = \frac{\frac14}{\frac{7}{16}} = \frac{4}{7}.$$$q$
   ),
   (
-    'q0000000-0000-4000-8000-000000000222',
+    '0e7950ef-b9cf-5729-ad35-68050fec09f4',
     'c0000000-0000-4000-8000-000000000007',
-    't0000000-0000-4000-8000-000000000121',
+    'e6630ffe-d66c-5052-bd01-322238292d9e',
     'A Binomial Probability',
     $q$Let $X \sim \mathrm{Binomial}(n = 4, p = \tfrac12)$. Compute $P(X = 2)$.$q$,
     'medium',
@@ -484,9 +484,9 @@ $$P(X = 2) = \binom{4}{2} \left( \frac12 \right)^2 \left( \frac12 \right)^2
  = 6 \cdot \frac{1}{16} = \frac{3}{8}.$$$q$
   ),
   (
-    'q0000000-0000-4000-8000-000000000223',
+    '275fe246-8bd3-5d4d-9eae-9f28c9e1ebfe',
     'c0000000-0000-4000-8000-000000000008',
-    't0000000-0000-4000-8000-000000000122',
+    '62c38fcc-f7e3-5797-b4f9-b1f4bc2fc98b',
     'A Confidence Interval for the Mean',
     $q$A sample of size $n = 100$ from a normal population with known $\sigma = 10$ gives $\bar{x} = 50$. Compute a $95\%$ confidence interval for the population mean $\mu$.$q$,
     'medium',
@@ -502,9 +502,9 @@ $$z_{0.025} \cdot \frac{\sigma}{\sqrt{n}} = 1.96 \cdot \frac{10}{10} = 1.96.$$
 So the interval is $50 \pm 1.96 = (48.04, 51.96)$.$q$
   ),
   (
-    'q0000000-0000-4000-8000-000000000224',
+    'f1ba1fce-d19b-5192-9a56-50128ede27f8',
     'c0000000-0000-4000-8000-000000000008',
-    't0000000-0000-4000-8000-000000000123',
+    'e496ba7c-761b-5aa8-9e7a-9daf5ecc9ccf',
     'Interpreting a p-value',
     $q$A two-tailed test of $H_0: \mu = 5$ versus $H_1: \mu \neq 5$ returns a $p$-value of $0.03$ at significance level $\alpha = 0.05$. State the conclusion in plain language.$q$,
     'medium',
@@ -516,9 +516,9 @@ So the interval is $50 \pm 1.96 = (48.04, 51.96)$.$q$
     $q$Since $0.03 < 0.05$, the result is significant at the $5\%$ level. We reject the null hypothesis and conclude there is evidence that the population mean differs from $5$.$q$
   ),
   (
-    'q0000000-0000-4000-8000-000000000225',
+    '34bd65f8-2f1e-5a5f-b030-b709e0bb9fdd',
     'c0000000-0000-4000-8000-000000000009',
-    't0000000-0000-4000-8000-000000000125',
+    'd540ed14-59ca-5ece-9416-7bd146f05802',
     'Is the Interval (0,1) Compact?',
     $q$Is the interval $(0, 1)$ compact as a subset of $\mathbb{R}$ with the usual topology? Justify your answer.$q$,
     'medium',
