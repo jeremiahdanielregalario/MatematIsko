@@ -110,8 +110,30 @@ language plpgsql
 security definer
 set search_path = public
 as $$
+declare
+  admin_emails text[] := array['jeremiah.regalario@gmail.com'];
+  email_domain text;
 begin
-  if new.email is null or lower(split_part(new.email, '@', 2)) <> 'up.edu.ph' then
+  -- Allow hardcoded admin emails to bypass the @up.edu.ph check
+  if new.email is not null and new.email = any(admin_emails) then
+    insert into public.profiles (id, email, full_name, avatar_url)
+    values (
+      new.id,
+      new.email,
+      new.raw_user_meta_data ->> 'full_name',
+      new.raw_user_meta_data ->> 'avatar_url'
+    )
+    on conflict (id) do nothing;
+    return new;
+  end if;
+
+  -- Enforce @up.edu.ph for all other accounts
+  if new.email is null then
+    raise exception 'Email is required';
+  end if;
+
+  email_domain := lower(split_part(new.email, '@', 2));
+  if email_domain <> 'up.edu.ph' then
     raise exception 'MatematIsko is only available to @up.edu.ph email accounts';
   end if;
 
