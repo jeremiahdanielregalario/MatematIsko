@@ -145,32 +145,6 @@ export function OnboardingPage() {
                 </Select>
               </div>
 
-              <div className="flex flex-col gap-1.5">
-                <Label>Are you a member of UPMMC?</Label>
-                <div className="grid grid-cols-2 gap-2" role="group" aria-label="UPMMC membership">
-                  {[
-                    { value: true, label: 'Yes' },
-                    { value: false, label: 'No' },
-                  ].map(({ value, label }) => (
-                    <button
-                      key={label}
-                      type="button"
-                      aria-pressed={upmmcMember === value}
-                      onClick={() => setUpmmcMember(value)}
-                      className={cn(
-                        'h-10 rounded-lg border border-stone-300 text-sm font-medium transition-colors',
-                        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600',
-                        upmmcMember === value
-                          ? 'border-brand-900 bg-brand-900 text-white dark:border-brand-800 dark:bg-brand-800'
-                          : 'bg-white text-stone-700 hover:bg-stone-50 dark:bg-stone-950 dark:text-stone-300 dark:hover:bg-stone-800',
-                      )}
-                    >
-                      {label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
               <div className="flex flex-col gap-2">
                 <Label>Which math courses do you want to study?</Label>
                 {coursesLoading ? (
@@ -190,6 +164,36 @@ export function OnboardingPage() {
                     ))}
                   </div>
                 )}
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <Label>Are you a member of UPMMC?</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { value: true, label: 'Yes' },
+                    { value: false, label: 'No' },
+                  ].map(({ value, label }) => (
+                    <label
+                      key={label}
+                      className={cn(
+                        'flex h-10 cursor-pointer items-center justify-center gap-2 rounded-lg border border-stone-300 text-sm font-medium transition-colors',
+                        'focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-brand-600',
+                        upmmcMember === value
+                          ? 'border-brand-900 bg-brand-900 text-white dark:border-brand-800 dark:bg-brand-800'
+                          : 'bg-white text-stone-700 hover:bg-stone-50 dark:bg-stone-950 dark:text-stone-300 dark:hover:bg-stone-800',
+                      )}
+                    >
+                      <input
+                        type="radio"
+                        name="upmmc-member"
+                        checked={upmmcMember === value}
+                        onChange={() => setUpmmcMember(value)}
+                        className="sr-only"
+                      />
+                      {label}
+                    </label>
+                  ))}
+                </div>
               </div>
 
               {error ? (
