@@ -106,8 +106,9 @@ body {
 .math-prose .katex-display {
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 0.25rem 0;
+  padding: 0.5rem 0;
   max-width: 100%;
+  text-align: center;
 }
 
 .math-prose .katex-display > .katex {
