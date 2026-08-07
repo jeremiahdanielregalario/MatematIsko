@@ -95,7 +95,11 @@ if it exists.$q$,
     'Long Exam 1',
     1,
     $q$Factor the numerator and cancel the common factor before taking the limit.$q$,
-    $q$$4$$q$,
+    $q$
+$$
+4
+$$
+$q$,
     $q$For $x \neq 2$,
 
 $$
@@ -121,7 +125,11 @@ $$$q$
     'Long Exam 1',
     4,
     $q$Write out $\displaystyle \lim_{h \to 0} \frac{f(2 + h) - f(2)}{h}$ and expand $(2 + h)^3$.$q$,
-    $q$$f'(2) = 12$$q$,
+    $q$
+$$
+f'(2) = 12
+$$
+    $q$,
     $q$By definition,
 
 $$
@@ -156,7 +164,11 @@ $$$q$,
     'Final Examination',
     2,
     $q$Apply the power rule in reverse, then evaluate between the limits.$q$,
-    $q$$\frac{1}{3}$$q$,
+    $q$
+$$
+\frac{1}{3}
+$$
+$q$,
     $q$An antiderivative of $x^2$ is $x^3 / 3$, hence
 
 $$
@@ -180,7 +192,11 @@ $$$q$,
     'Long Exam 1',
     3,
     $q$Use integration by parts with $u = x$ and $dv = e^x\, dx$.$q$,
-    $q$$e^x (x - 1) + C$$q$,
+    $q$
+$$
+e^x (x - 1) + C
+$$
+$q$,
     $q$Let $u = x$, $du = dx$, and $dv = e^x\, dx$, $v = e^x$. Then
 
 $$
@@ -204,7 +220,11 @@ $$$q$,
     'Final Examination',
     1,
     $q$Decompose the integrand into partial fractions with denominators $x - 1$ and $x + 1$.$q$,
-    $q$$\frac{1}{2} \ln\left| \frac{x - 1}{x + 1} \right| + C$$q$,
+    $q$
+$$
+\frac{1}{2} \ln\left| \frac{x - 1}{x + 1} \right| + C
+$$
+$q$,
     $q$Since $x^2 - 1 = (x - 1)(x + 1)$, write
 
 $$
@@ -223,7 +243,7 @@ $$$q$
     '837f33be-f15e-5066-9a9e-2cf7a954b440',
     'c0000000-0000-4000-8000-000000000002',
     'a38b0b1e-f4b8-5c1d-8652-87852eb3bcde',
-    'Convergence of a p-Series',
+    'Convergence of a $p$-Series',
     $q$Determine whether the series
 
 $$
@@ -238,7 +258,7 @@ converges or diverges, and justify your answer.$q$,
     4,
     $q$Classify this series by the exponent in its general term.$q$,
     $q$The series **converges**.$q$,
-    $q$This is a $p$-series $\sum 1/n^p$ with $p = 2$. A $p$-series converges exactly when $p > 1$, so $\sum 1/n^2$ converges.$q$
+    $q$This is a $p$-series $\sum \frac{1}{n^p}$ with $p = 2$. A $p$-series converges exactly when $p > 1$, so $\sum \frac{1}{n^2}$ converges.$q$
   ),
   (
     '91ad71db-c42e-5fd7-9fb2-f14966dd1576',
@@ -282,7 +302,11 @@ $$$q$,
     'Long Exam 1',
     1,
     $q$Add the two equations to eliminate $y$.$q$,
-    $q$$(x, y) = (1, 2)$$q$,
+    $q$
+$$
+(x, y) = (1, 2)
+$$
+    $q$,
     $q$Adding the equations gives $3x = 3$, so $x = 1$. Substituting into $x + y = 3$ yields $y = 2$, so $\boxed{(x, y) = (1, 2)}$.$q$
   ),
   (
@@ -329,8 +353,8 @@ Setting this to zero gives $\lambda = \boxed{1}$ and $\lambda = \boxed{3}$.$q$
     'c77a9c34-b59e-555a-a0ad-e72447c8e6e5',
     'c0000000-0000-4000-8000-000000000004',
     'aedc8388-0405-5758-8869-04cd382811bf',
-    'An Epsilon-N Proof',
-    $q$Using the $\epsilon$-$N$ definition of convergence, prove that
+    'An Epsilon-$N$ Proof',
+    $q$Using the $\varepsilon$-$N$ definition of convergence, prove that
 
 $$
 
@@ -340,16 +364,16 @@ $$$q$,
     2024,
     'Long Exam 1',
     1,
-    $q$Given $\epsilon > 0$, choose a positive integer $N$ with $N > 1 / \epsilon$.$q$,
-    $q$Proof: given $\epsilon > 0$, choose $N > 1/\epsilon$; then for all $n \geq N$, $1/n < \epsilon$.$q$,
-    $q$Let $\epsilon > 0$ be given. Choose an integer $N > 1/\epsilon$. For every $n \geq N$,
+    $q$Given $\varepsilon > 0$, choose a positive integer $N$ with $N > 1 / \varepsilon$.$q$,
+    $q$Proof: given $\varepsilon > 0$, choose $N > 1/\varepsilon$; then for all $n \geq N$, $\frac{1}{n} < \varepsilon$.$q$,
+    $q$Let $\varepsilon > 0$ be given. Choose an integer $N > 1/\varepsilon$. For every $n \geq N$,
 
 $$
 
-\begin{equation*}\left| \frac{1}{n} - 0 \right| = \frac{1}{n} \leq \frac{1}{N} < \epsilon.\end{equation*}
+\begin{equation*}\left| \frac{1}{n} - 0 \right| = \frac{1}{n} \leq \frac{1}{N} < \varepsilon.\end{equation*}
 $$
 
-This is exactly the definition of $\lim_{n \to \infty} 1/n = 0$.$q$
+This is exactly the definition of $\lim_{n \to \infty} \frac{1}{n} = 0$.$q$
   ),
   (
     'b2eee0de-26fd-560a-9d8d-28fd2c5d718a',
@@ -362,8 +386,8 @@ This is exactly the definition of $\lim_{n \to \infty} 1/n = 0$.$q$
     'Long Exam 2',
     4,
     $q$Pick two sequences $x_n, y_n$ in $(0, 1]$ whose difference shrinks to $0$ while $|f(x_n) - f(y_n)|$ stays large.$q$,
-    $q$Proof by sequences: take $x_n = 1/n$ and $y_n = 1/(2n)$.$q$,
-    $q$Let $x_n = 1/n$ and $y_n = 1/(2n)$. Then
+    $q$Proof by sequences: take $x_n = \frac{1}{n}$ and $y_n = \frac{1}{2n}$.$q$,
+    $q$Let $x_n = \frac{1}{n}$ and $y_n = \frac{1}{2n}$. Then
 
 $$
 
@@ -460,7 +484,11 @@ so the order of $a^{-1}$ is at most $n$. Repeating the argument with $a$ and $a^
     'Long Exam 1',
     1,
     $q$Separate the variables so that all $y$'s are on one side and all $x$'s on the other.$q$,
-    $q$$y = C e^{x^2 / 2}$$q$,
+    $q$
+$$
+y = C e^{x^2 / 2}
+$$
+$q$,
     $q$Separating variables,
 
 $$
@@ -491,7 +519,11 @@ $$$q$,
     'Long Exam 1',
     4,
     $q$Multiply through by the integrating factor $\mu(t) = e^{2t}$.$q$,
-    $q$$y(t) = e^{-t} - e^{-2t}$$q$,
+    $q$
+$$
+y(t) = e^{-t} - e^{-2t}
+$$
+    $q$,
     $q$With $\mu(t) = e^{2t}$, the equation becomes
 
 $$
@@ -522,7 +554,11 @@ $$$q$,
     'Final Examination',
     2,
     $q$Write and solve the characteristic equation $r^2 - 3r + 2 = 0$.$q$,
-    $q$$y(t) = C_1 e^{t} + C_2 e^{2t}$$q$,
+    $q$
+$$
+y(t) = C_1 e^{t} + C_2 e^{2t}
+$$
+  $q$,
     $q$The characteristic equation is $r^2 - 3r + 2 = (r - 1)(r - 2) = 0$, giving distinct real roots $r = 1$ and $r = 2$. The general solution is therefore
 
 $$
@@ -541,7 +577,11 @@ $$$q$
     'Long Exam 1',
     1,
     $q$Count the ordered pairs that sum to $7$ out of the $36$ equally likely outcomes.$q$,
-    $q$$\frac{1}{6}$$q$,
+    $q$
+$$
+\frac{1}{6}
+$$
+$q$,
     $q$There are $6 \times 6 = 36$ equally likely ordered outcomes. The pairs summing to $7$ are $(1,6),(2,5),(3,4),(4,3),(5,2),(6,1)$ — six of them. Hence
 
 $$
@@ -560,7 +600,11 @@ $$$q$
     'Long Exam 2',
     3,
     $q$Let $D$ be the event of choosing the double-headed coin and let $HH$ be the event of two heads. Apply Bayes' theorem.$q$,
-    $q$$\frac{4}{7}$$q$,
+    $q$
+$$
+\frac{4}{7}
+$$
+$q$,
     $q$Let $D$ = "double-headed coin" and $HH$ = "two heads". Then
 
 $$
@@ -586,7 +630,11 @@ $$$q$
     'Long Exam 1',
     4,
     $q$Use the binomial formula $P(X = k) = \binom{n}{k} p^k (1 - p)^{n - k}$.$q$,
-    $q$$\frac{3}{8}$$q$,
+    $q$
+$$
+\frac{3}{8}
+$$
+$q$,
     $q$Applying the binomial formula,
 
 $$
@@ -599,13 +647,17 @@ $$$q$
     'c0000000-0000-4000-8000-000000000008',
     '62c38fcc-f7e3-5797-b4f9-b1f4bc2fc98b',
     'A Confidence Interval for the Mean',
-    $q$A sample of size $n = 100$ from a normal population with known $\sigma = 10$ gives $\bar{x} = 50$. Compute a $95\%$ confidence interval for the population mean $\mu$.$q$,
+    $q$A sample of size $n = 100$ from a normal population with known $\sigma = 10$ gives $\bar{X} = 50$. Compute a $95\%$ confidence interval for the population mean $\mu$.$q$,
     'medium',
     2024,
     'Long Exam 1',
     2,
-    $q$Use the $z$-interval $\bar{x} \pm z_{\alpha/2} \cdot \sigma / \sqrt{n}$ with $z_{0.025} \approx 1.96$.$q$,
-    $q$$(48.04,\ 51.96)$$q$,
+    $q$Use the $z$-interval $\bar{X} \pm z_{\alpha/2} \cdot \sigma / \sqrt{n}$ with $z_{0.025} \approx 1.96$.$q$,
+    $q$
+$$
+(48.04,\ 51.96)
+$$
+$q$,
     $q$The margin of error is
 
 $$
@@ -641,7 +693,7 @@ So the interval is $50 \pm 1.96 = \boxed{(48.04, 51.96)}$.$q$
     2,
     $q$Recall the Heine–Borel theorem, or build an open cover with no finite subcover.$q$,
     $q$**No**, $(0, 1)$ is not compact.$q$,
-    $q$By the Heine–Borel theorem, a subset of $\mathbb{R}$ is compact exactly when it is closed and bounded. The interval $(0, 1)$ is bounded but not closed. Alternatively, the open cover $\{ (1/n, 1 - 1/n) : n \geq 3 \}$ covers $(0, 1)$ yet has no finite subcover: any finite subcover uses only finitely many sets, whose union misses points close to $0$ or $1$.$q$
+    $q$By the Heine–Borel theorem, a subset of $\mathbb{R}$ is compact exactly when it is closed and bounded. The interval $(0, 1)$ is bounded but not closed. Alternatively, the open cover $\{ (\frac{1}{n}, 1 - \frac{1}{n}) : n \geq 3 \}$ covers $(0, 1)$ yet has no finite subcover: any finite subcover uses only finitely many sets, whose union misses points close to $0$ or $1$.$q$
   )
 on conflict (id) do nothing;
 
