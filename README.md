@@ -91,7 +91,8 @@ Never commit `.env`. Never expose `service_role` in client code.
 ## Supabase Setup
 
 1. Create a new Supabase project.
-2. **Install the Supabase CLI** (already a devDependency in this repo):
+2. **Install the Supabase CLI** (pinned to `2.111.0` as a devDependency — v2.112.0 has a known
+   regression in `supabase link`; see [supabase/cli#6115](https://github.com/supabase/cli/issues/6115)):
    ```bash
    npm install
    npx supabase login                      # one-time auth
