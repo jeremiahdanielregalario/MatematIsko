@@ -308,7 +308,7 @@ export function OnboardingPage() {
 
               <div className="flex flex-col gap-1.5">
                 <Label>Are you a member of UPMMC?</Label>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="flex flex-col gap-1">
                   {[
                     { value: true, label: 'Yes' },
                     { value: false, label: 'No' },
@@ -316,11 +316,8 @@ export function OnboardingPage() {
                     <label
                       key={label}
                       className={cn(
-                        'flex h-10 cursor-pointer items-center justify-center gap-2 rounded-lg border border-stone-300 text-sm font-medium transition-colors',
-                        'focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-brand-600',
-                        upmmcMember === value
-                          ? 'border-brand-900 bg-brand-900 text-white dark:border-brand-800 dark:bg-brand-800'
-                          : 'bg-white text-stone-700 hover:bg-stone-50 dark:bg-stone-950 dark:text-stone-300 dark:hover:bg-stone-800',
+                        'flex cursor-pointer items-center gap-2.5 rounded-lg border border-stone-200 px-3 py-2.5 text-sm transition-colors',
+                        'has-[:checked]:border-brand-700 has-[:checked]:bg-brand-50 dark:border-stone-800 dark:has-[:checked]:border-brand-500 dark:has-[:checked]:bg-brand-950/40',
                       )}
                     >
                       <input
@@ -328,9 +325,9 @@ export function OnboardingPage() {
                         name="upmmc-member"
                         checked={upmmcMember === value}
                         onChange={() => setUpmmcMember(value)}
-                        className="sr-only"
+                        className="size-4 shrink-0 accent-brand-800 dark:accent-brand-400"
                       />
-                      {label}
+                      <span className="text-stone-900 dark:text-stone-100">{label}</span>
                     </label>
                   ))}
                 </div>
