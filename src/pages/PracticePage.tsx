@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ErrorState } from '@/components/common/ErrorState';
 import { LoadingState } from '@/components/common/LoadingState';
 import { useCourses } from '@/hooks/useCourses';
+import { useCourseScope } from '@/hooks/useCourseScope';
 import { useQuestionMutations } from '@/hooks/useQuestionMutations';
 import { useQuestions } from '@/hooks/useQuestions';
 import { mergeMutations } from '@/lib/mutations';
@@ -19,7 +20,10 @@ type Phase =
 export function PracticePage() {
   const { data: loaded, loading, error, reload } = useQuestions();
   const { data: coursesData } = useCourses();
-  const courses = coursesData ?? [];
+  const { courseIds } = useCourseScope();
+  const courses = (coursesData ?? []).filter(
+    (course) => courseIds === null || courseIds.includes(course.id),
+  );
   const [phase, setPhase] = useState<Phase>({ kind: 'setup', filter: {} });
 
   const baseQuestions = loaded ?? [];

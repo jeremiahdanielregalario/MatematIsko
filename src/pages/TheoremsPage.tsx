@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useCourses } from '@/hooks/useCourses';
+import { useCourseScope } from '@/hooks/useCourseScope';
 import { useTheoremMutations } from '@/hooks/useTheoremMutations';
 import { useTheorems } from '@/hooks/useTheorems';
 import { useTopics } from '@/hooks/useTopics';
@@ -36,11 +37,20 @@ export function TheoremsPage() {
   const { data: loaded, loading, error, reload } = useTheorems();
   const { data: coursesData } = useCourses();
   const { data: topicsData } = useTopics();
+  const { courseIds } = useCourseScope();
 
-  const courses = coursesData ?? [];
+  const courses = (coursesData ?? []).filter(
+    (course) => courseIds === null || courseIds.includes(course.id),
+  );
   const theorems = loaded ?? EMPTY_THEOREMS;
 
-  const allTopics = useMemo(() => topicsData ?? [], [topicsData]);
+  const allTopics = useMemo(
+    () =>
+      (topicsData ?? []).filter(
+        (topic) => courseIds === null || courseIds.includes(topic.course_id),
+      ),
+    [topicsData, courseIds],
+  );
   const courseTopics = useMemo(
     () => allTopics.filter((topic) => topic.course_id === courseId),
     [allTopics, courseId],

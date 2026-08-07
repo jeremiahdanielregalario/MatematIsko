@@ -1,11 +1,12 @@
 import { ArrowLeft, ArrowRight, BookOpenText } from 'lucide-react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, Navigate, useParams } from 'react-router-dom';
 import { ErrorState } from '@/components/common/ErrorState';
 import { EmptyState } from '@/components/common/EmptyState';
 import { LoadingState } from '@/components/common/LoadingState';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useCourses } from '@/hooks/useCourses';
+import { useCourseScope } from '@/hooks/useCourseScope';
 import { useQuestions } from '@/hooks/useQuestions';
 import { cn } from '@/lib/cn';
 import type { TopicWithStats } from '@/types';
@@ -13,6 +14,7 @@ import type { TopicWithStats } from '@/types';
 export function CoursePage() {
   const { courseId } = useParams<{ courseId: string }>();
   const { data: coursesData } = useCourses();
+  const { courseIds } = useCourseScope();
   const courses = coursesData ?? [];
   const { data: loaded, loading, error, reload } = useQuestions();
 
@@ -20,6 +22,10 @@ export function CoursePage() {
 
   const questions = loaded ?? [];
   const course = courses.find((c) => c.id === courseId) ?? questions.find((q) => q.course_id === courseId)?.course;
+
+  if (courseIds !== null && courseId && !courseIds.includes(courseId)) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   if (error) {
     return (

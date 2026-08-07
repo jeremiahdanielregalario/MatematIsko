@@ -5,6 +5,7 @@ import { AuthProvider } from '@/hooks/useAuth';
 import { ThemeProvider } from '@/hooks/useTheme';
 import { RequireAdmin } from '@/features/auth/RequireAdmin';
 import { RequireOnboarding } from '@/features/auth/RequireOnboarding';
+import { CourseScopeProvider } from '@/hooks/useCourseScope';
 import { AdminPage } from '@/pages/AdminPage';
 import { AuthCallbackPage } from '@/pages/AuthCallbackPage';
 import { BookmarksPage } from '@/pages/BookmarksPage';
@@ -27,7 +28,8 @@ export function App() {
     <ThemeProvider>
       <BrowserRouter>
         <AuthProvider>
-          <Routes>
+          <CourseScopeProvider>
+            <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/auth/callback" element={<AuthCallbackPage />} />
 
@@ -59,7 +61,8 @@ export function App() {
             </Route>
 
             <Route path="*" element={<NotFoundPage />} />
-          </Routes>
+            </Routes>
+          </CourseScopeProvider>
         </AuthProvider>
       </BrowserRouter>
     </ThemeProvider>

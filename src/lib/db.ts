@@ -35,25 +35,31 @@ export async function getTopics(courseId?: string): Promise<Topic[]> {
   return (data ?? []) as Topic[];
 }
 
-export async function getQuestionsWithRelations(): Promise<QuestionWithRelations[]> {
+export async function getQuestionsWithRelations(courseIds?: string[]): Promise<QuestionWithRelations[]> {
   if (!isSupabaseConfigured) return [];
   if (!supabase) notConfigured();
-  const { data, error } = await supabase
+  let query = supabase
     .from('questions')
     .select('*, course:courses(*), topic:topics(*)')
     .order('created_at', { ascending: false });
+  if (courseIds && courseIds.length > 0) query = query.in('course_id', courseIds);
+  const { data, error } = await query;
   if (error) throw new Error(error.message);
   return (data ?? []) as QuestionWithRelations[];
 }
 
-export async function getQuestionById(id: string): Promise<QuestionWithRelations | null> {
+export async function getQuestionById(
+  id: string,
+  courseIds?: string[],
+): Promise<QuestionWithRelations | null> {
   if (!isSupabaseConfigured) return null;
   if (!supabase) notConfigured();
-  const { data, error } = await supabase
+  let query = supabase
     .from('questions')
     .select('*, course:courses(*), topic:topics(*)')
-    .eq('id', id)
-    .maybeSingle();
+    .eq('id', id);
+  if (courseIds && courseIds.length > 0) query = query.in('course_id', courseIds);
+  const { data, error } = await query.maybeSingle();
   if (error) throw new Error(error.message);
   return (data as QuestionWithRelations | null) ?? null;
 }
@@ -62,25 +68,31 @@ export async function getQuestionById(id: string): Promise<QuestionWithRelations
 // Named Theorems
 // ---------------------------------------------------------------------------
 
-export async function getTheorems(): Promise<TheoremWithRelations[]> {
+export async function getTheorems(courseIds?: string[]): Promise<TheoremWithRelations[]> {
   if (!isSupabaseConfigured) return [];
   if (!supabase) notConfigured();
-  const { data, error } = await supabase
+  let query = supabase
     .from('theorems')
     .select('*, course:courses(*), topic:topics(*)')
     .order('created_at', { ascending: false });
+  if (courseIds && courseIds.length > 0) query = query.in('course_id', courseIds);
+  const { data, error } = await query;
   if (error) throw new Error(error.message);
   return (data ?? []) as TheoremWithRelations[];
 }
 
-export async function getTheoremById(id: string): Promise<TheoremWithRelations | null> {
+export async function getTheoremById(
+  id: string,
+  courseIds?: string[],
+): Promise<TheoremWithRelations | null> {
   if (!isSupabaseConfigured) return null;
   if (!supabase) notConfigured();
-  const { data, error } = await supabase
+  let query = supabase
     .from('theorems')
     .select('*, course:courses(*), topic:topics(*)')
-    .eq('id', id)
-    .maybeSingle();
+    .eq('id', id);
+  if (courseIds && courseIds.length > 0) query = query.in('course_id', courseIds);
+  const { data, error } = await query.maybeSingle();
   if (error) throw new Error(error.message);
   return (data as TheoremWithRelations | null) ?? null;
 }

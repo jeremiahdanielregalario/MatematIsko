@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useCourses } from '@/hooks/useCourses';
+import { useCourseScope } from '@/hooks/useCourseScope';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useQuestionMutations } from '@/hooks/useQuestionMutations';
 import { useQuestions } from '@/hooks/useQuestions';
@@ -43,7 +44,10 @@ export function QuestionBankPage() {
 
   const { data: loaded, loading, error, reload } = useQuestions();
   const { data: coursesData } = useCourses();
-  const courses = coursesData ?? [];
+  const { courseIds } = useCourseScope();
+  const courses = (coursesData ?? []).filter(
+    (course) => courseIds === null || courseIds.includes(course.id),
+  );
 
   const baseQuestions = loaded ?? EMPTY_QUESTIONS;
 

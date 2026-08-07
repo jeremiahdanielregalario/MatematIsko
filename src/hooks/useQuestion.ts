@@ -3,15 +3,17 @@ import { getBookmarksForUser, getProgressForUser, getQuestionById } from '@/lib/
 import type { QuestionWithMeta } from '@/types';
 import { useAsync } from './useAsync';
 import { useAuth } from './useAuth';
+import { useCourseScope } from './useCourseScope';
 
 export function useQuestion(id: string | undefined) {
   const { user } = useAuth();
+  const { courseIds } = useCourseScope();
   const userId = user?.id ?? null;
 
   const fn = useCallback(async (): Promise<QuestionWithMeta | null> => {
     if (!id) return null;
     const [question, progress, bookmarks] = await Promise.all([
-      getQuestionById(id),
+      getQuestionById(id, courseIds ?? undefined),
       userId ? getProgressForUser(userId) : Promise.resolve([]),
       userId ? getBookmarksForUser(userId) : Promise.resolve([]),
     ]);
@@ -21,7 +23,7 @@ export function useQuestion(id: string | undefined) {
       progress: progress.find((p) => p.question_id === id) ?? null,
       bookmarked: bookmarks.some((b) => b.question_id === id),
     };
-  }, [id, userId]);
+  }, [id, userId, courseIds]);
 
   return useAsync(fn);
 }

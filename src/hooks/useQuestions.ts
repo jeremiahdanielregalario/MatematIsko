@@ -3,19 +3,22 @@ import { getBookmarksForUser, getProgressForUser, getQuestionsWithRelations } fr
 import type { QuestionWithMeta } from '@/types';
 import { useAsync } from './useAsync';
 import { useAuth } from './useAuth';
+import { useCourseScope } from './useCourseScope';
 
 /**
- * Loads the full question bank merged with the current student's
- * bookmarks and progress. Filtering/sorting happen client-side.
+ * Loads the question bank (restricted to the courses the student preselected)
+ * merged with the current student's bookmarks and progress. Filtering/sorting
+ * happen client-side.
  */
 export function useQuestions() {
   const { user } = useAuth();
+  const { courseIds } = useCourseScope();
   const userId = user?.id ?? null;
 
   const fn = useCallback(async (): Promise<QuestionWithMeta[]> => {
     if (!userId) return [];
     const [questions, progress, bookmarks] = await Promise.all([
-      getQuestionsWithRelations(),
+      getQuestionsWithRelations(courseIds ?? undefined),
       getProgressForUser(userId),
       getBookmarksForUser(userId),
     ]);
@@ -26,7 +29,7 @@ export function useQuestions() {
       progress: progressById.get(q.id) ?? null,
       bookmarked: bookmarkSet.has(q.id),
     }));
-  }, [userId]);
+  }, [userId, courseIds]);
 
   return useAsync(fn);
 }
