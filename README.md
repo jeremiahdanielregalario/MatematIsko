@@ -91,13 +91,52 @@ Never commit `.env`. Never expose `service_role` in client code.
 ## Supabase Setup
 
 1. Create a new Supabase project.
-2. In **SQL Editor**, run `supabase/schema.sql` to create tables, RLS policies, and the email-domain trigger.
-3. In **SQL Editor**, run `supabase/seed.sql` to populate the question bank (25 questions across 9 courses).
-4. In **Authentication → Providers**, enable **Google** and enter your Google Cloud OAuth client ID + secret.
-5. In **Authentication → URL Configuration**, add:
+2. **Install the Supabase CLI** (already a devDependency in this repo):
+   ```bash
+   npm install
+   npx supabase login                      # one-time auth
+   ```
+3. **Link this repo to your remote project** (needs the project ref from Dashboard → Settings → General):
+   ```bash
+   npx supabase link --project-ref <your-project-ref>
+   ```
+4. **Apply the schema + question bank** (this runs every file in `supabase/migrations/` in order):
+   ```bash
+   npm run db:push
+   ```
+   > Migrating an *existing* database? Run `npm run db:status`, then mark the three baseline
+   > migrations as already-applied so they don't run again:
+   > `npx supabase migration repair --status applied 20260808000001 20260808000002 20260808000003`
+   > (only needed the very first time, and only if tables already exist).
+5. In **Authentication → Providers**, enable **Google** and enter your Google Cloud OAuth client ID + secret.
+6. In **Authentication → URL Configuration**, add:
    - **Site URL:** `http://localhost:3000` (development)
    - **Redirect URLs:** `http://localhost:3000/auth/callback` (and your Vercel domain for production)
-6. (Recommended) In **Authentication → Providers → Email**, add `up.edu.ph` to the allowed email domains list as an additional safety layer.
+7. (Recommended) In **Authentication → Providers → Email**, add `up.edu.ph` to the allowed email domains list as an additional safety layer.
+
+## Making Database Changes (Migrations)
+
+**Stop using the SQL Editor.** Every schema change or new batch of questions becomes a versioned
+migration file that is applied with one command:
+
+```bash
+npm run db:new -- add-stat-201-questions   # creates supabase/migrations/<timestamp>_add-stat-201-questions.sql
+#   ...write your SQL in the new file...
+npm run db:push                            # applies pending migrations to the linked (remote) database
+npm run db:status                          # shows which migrations are applied vs. pending
+npm run db:reset                           # (local dev only) rebuild local DB from migrations
+```
+
+Rules to keep it painless:
+
+- **Never edit an already-applied migration.** Add a *new* migration file instead — they run exactly
+  once, in order, so edits won't re-run.
+- **New questions go in new migrations** (they run on your remote DB via `db:push`). This is the
+  direct replacement for pasting `INSERT` statements into the SQL Editor.
+- **Migrations run in order.** Keep them read-only after they're pushed so the repo always matches
+  the remote database (`npm run db:status` should show no drift).
+- **Local dev** (optional, needs Docker): `npx supabase start` spins up a full local Supabase stack
+  and applies the same migrations, so you can test schema changes before pushing.
 
 ---
 
@@ -131,13 +170,13 @@ A `handle_new_user` trigger on `auth.users` rejects sign-ups from non-`@up.edu.p
 
 ## Seed Data
 
-The question bank ships with:
+The question bank lives in the migration history (`supabase/migrations/`):
 
-- **9 courses:** Calculus I & II, Linear Algebra, Real Analysis, Modern Algebra, Differential Equations, Probability, Statistics, Topology
-- **26 topics** spanning the above courses
-- **25 questions** with real math content in LaTeX (limits, derivatives, integrals, eigenvalues, group theory, ODEs, Bayes' theorem, p-values, compactness, …)
-
-All questions were written originally for this project and do not reproduce copyrighted exam material.
+- **Baseline migration** `..._seed_questions.sql`: 9 courses, 26 topics, 25+ questions with real math
+  content in LaTeX (limits, derivatives, integrals, eigenvalues, group theory, ODEs, Bayes' theorem,
+  p-values, compactness, …) plus the course-catalog migration for the full UP Math catalog.
+- **New questions:** add a new migration file via `npm run db:new -- <name>`, write the `INSERT`
+  statements, then `npm run db:push`. Do not edit applied migrations.
 
 ---
 

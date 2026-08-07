@@ -14,7 +14,7 @@ function isAdminEmail(email: string): boolean {
  * Returns true if the address is an allowed @up.edu.ph address or a
  * hardcoded admin account. This is the single source of truth used by the
  * auth provider. (The database additionally enforces this for non-admin
- * accounts; see supabase/schema.sql.)
+ * accounts; see supabase/migrations/20260808000001_initial_schema.sql.)
  */
 export function isApprovedUpEmail(email: string | null | undefined): boolean {
   if (!email) return false;

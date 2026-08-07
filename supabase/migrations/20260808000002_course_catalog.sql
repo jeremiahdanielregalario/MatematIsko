@@ -1,7 +1,7 @@
 -- ============================================================================
 -- Course Catalog Migration
 -- Updates existing courses to the official UP Math catalog names and
--- inserts all courses from the provided catalog. Safe to re-run.
+-- inserts all courses from the provided catalog. Runs exactly once.
 -- ============================================================================
 
 -- ---------------------------------------------------------------------------

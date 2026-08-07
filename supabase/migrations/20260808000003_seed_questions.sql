@@ -1,13 +1,11 @@
 -- ============================================================================
--- MatematIsko — Seed data (single file, safe to re-run)
--- Run AFTER schema.sql.
+-- MatematIsko — Question bank baseline (formerly supabase/seed.sql)
+-- Runs exactly once as part of the migration history (via `supabase db push`).
 -- Adds 9 courses, 29 topics, and 47 exam questions (100-level UP math/stat
 -- courses + Math 110.1) written in Markdown + LaTeX.
 --
--- Safe to re-run: courses upsert by code, topics/questions use ON CONFLICT
--- DO NOTHING, so existing rows are left untouched. To force a full refresh:
---   TRUNCATE questions, topics, courses RESTART IDENTITY CASCADE;
--- then run this file.
+-- New questions should be added in a NEW migration file (see README), not
+-- appended here, since migrations only run once.
 -- ============================================================================
 
 -- ---------------------------------------------------------------------------

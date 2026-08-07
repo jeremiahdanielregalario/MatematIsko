@@ -1,7 +1,6 @@
 -- ============================================================================
 -- MatematIsko — Supabase / PostgreSQL schema
--- Run this file in the Supabase SQL Editor (or via supabase db push) first,
--- then run seed.sql to populate the question bank.
+-- Baseline migration (formerly supabase/schema.sql). Applied by `supabase db push`.
 -- ============================================================================
 
 create extension if not exists pgcrypto;
