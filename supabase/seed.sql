@@ -115,10 +115,13 @@ $$\lim_{x \to 2} \frac{x^2 - 4}{x - 2} = \lim_{x \to 2} (x + 2) = 4.$$$q$
     $q$$$f'(2) = 12$$$q$,
     $q$By definition,
 
-$$\begin{aligned}
+$$
+
+\begin{aligned}
 f'(2) &= \lim_{h \to 0} \frac{f(2 + h) - f(2)}{h} \\
      &= \lim_{h \to 0} \frac{(2 + h)^3 - 8}{h}.
-\end{aligned}$$
+\end{aligned}
+$$
 
 Expanding, $(2 + h)^3 = 8 + 12h + 6h^2 + h^3$, so
 
@@ -316,7 +319,7 @@ If $f$ were uniformly continuous, sequences with $|x_n - y_n| \to 0$ would force
     '7f03576b-28c5-5c1f-92ac-46d38049832f',
     'c0000000-0000-4000-8000-000000000004',
     'e991fd11-981e-5afd-a2f6-cd0a4b9bf058',
-    'Derivative Implies Continuity',
+    'Differentiability Implies Continuity',
     $q$Prove that if $f$ is differentiable at $a$, then $f$ is continuous at $a$.$q$,
     'medium',
     2024,
@@ -524,7 +527,7 @@ So the interval is $50 \pm 1.96 = (48.04, 51.96)$.$q$
     '34bd65f8-2f1e-5a5f-b030-b709e0bb9fdd',
     'c0000000-0000-4000-8000-000000000009',
     'd540ed14-59ca-5ece-9416-7bd146f05802',
-    'Is the Interval $(0,1)$ Compact?',
+    'Is the open unit interval compact?',
     $q$Is the interval $(0, 1)$ compact as a subset of $\mathbb{R}$ with the usual topology? Justify your answer.$q$,
     'medium',
     2024,
@@ -1034,7 +1037,9 @@ which is precisely the condition for $[ka, kb] = [a, b]$ in $F$. $\blacksquare$$
     $q$**$[a,b]\big([c,d]+[e,f]\big) = [a,b][c,d] + [a,b][e,f]$.**$q$,
     $q$Let $[a,b], [c,d], [e,f] \in F$ with $b, d, f \neq 0$.
 
-$$\begin{aligned}
+$$
+
+\begin{aligned}
 [a,b]\big([c,d]+[e,f]\big) &= [a,b][cf+de,\ df] \\
   &= [a(cf+de),\ bdf] \\
   &= [acf + ade,\ bdf] \\
@@ -1043,7 +1048,8 @@ $$\begin{aligned}
   &= [(ac)(bf) + (ab)(de),\ (bd)(bf)] \\
   &= [ac, bd] + [ae, bf] \\
   &= [a,b][c,d] + [a,b][e,f].
-\end{aligned}$$
+\end{aligned}
+$$
 
 The step from line 2 to line 3 uses the result $[kx,ky] = [x,y]$ (with $k=b$) to multiply numerator and denominator by $b$. The step from line 5 to line 6 uses the addition rule for a common denominator.
 
