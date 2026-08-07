@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/hooks/useAuth';
 import { useCourses } from '@/hooks/useCourses';
-import { setUserCourses, updateProfileOnboarding } from '@/lib/db';
+import { ensureProfile, setUserCourses, updateProfileOnboarding } from '@/lib/db';
 import type { Course } from '@/types';
 
 const YEAR_LEVELS = ['1st Year', '2nd Year', '3rd Year', '4th Year', '5th Year or more'];
@@ -179,6 +179,12 @@ export function OnboardingPage() {
     }
     setSubmitting(true);
     try {
+      await ensureProfile(
+        user.id,
+        user.email ?? '',
+        user.user_metadata?.full_name ?? null,
+        user.user_metadata?.avatar_url ?? null,
+      );
       await updateProfileOnboarding(user.id, {
         degree_program: degreeProgram,
         year_level: yearLevel,
