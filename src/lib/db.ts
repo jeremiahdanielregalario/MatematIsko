@@ -220,3 +220,34 @@ export async function ensureProfile(
   if (error) throw new Error(error.message);
   return (data as Profile | null) ?? null;
 }
+
+export async function updateProfileOnboarding(
+  userId: string,
+  fields: { degree_program: string; year_level: string; upmmc_member: boolean },
+): Promise<Profile | null> {
+  if (!isSupabaseConfigured) return null;
+  if (!supabase) notConfigured();
+  const { data, error } = await supabase
+    .from('profiles')
+    .update(fields)
+    .eq('id', userId)
+    .select()
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  return (data as Profile | null) ?? null;
+}
+
+export async function setUserCourses(userId: string, courseIds: string[]): Promise<void> {
+  if (!isSupabaseConfigured) return;
+  if (!supabase) notConfigured();
+  const { error: deleteError } = await supabase
+    .from('user_courses')
+    .delete()
+    .eq('user_id', userId);
+  if (deleteError) throw new Error(deleteError.message);
+  if (courseIds.length === 0) return;
+  const { error } = await supabase
+    .from('user_courses')
+    .insert(courseIds.map((course_id) => ({ user_id: userId, course_id })));
+  if (error) throw new Error(error.message);
+}

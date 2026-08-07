@@ -7,6 +7,15 @@ export interface Profile {
   email: string;
   full_name: string | null;
   avatar_url: string | null;
+  degree_program: string | null;
+  year_level: string | null;
+  upmmc_member: boolean;
+  created_at: string;
+}
+
+export interface UserCourse {
+  user_id: string;
+  course_id: string;
   created_at: string;
 }
 
