@@ -3,6 +3,8 @@ import { AppShell } from '@/components/layout/AppShell';
 import { RequireAuth } from '@/features/auth/RequireAuth';
 import { AuthProvider } from '@/hooks/useAuth';
 import { ThemeProvider } from '@/hooks/useTheme';
+import { RequireAdmin } from '@/features/auth/RequireAdmin';
+import { AdminPage } from '@/pages/AdminPage';
 import { AuthCallbackPage } from '@/pages/AuthCallbackPage';
 import { BookmarksPage } from '@/pages/BookmarksPage';
 import { CoursePage } from '@/pages/CoursePage';
@@ -34,6 +36,14 @@ export function App() {
                 <Route path="/progress" element={<ProgressPage />} />
                 <Route path="/courses/:courseId" element={<CoursePage />} />
                 <Route path="/profile" element={<ProfilePage />} />
+                <Route
+                  path="/admin"
+                  element={
+                    <RequireAdmin>
+                      <AdminPage />
+                    </RequireAdmin>
+                  }
+                />
               </Route>
             </Route>
 

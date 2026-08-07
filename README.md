@@ -129,10 +129,11 @@ npm run db:reset                           # (local dev only) rebuild local DB f
 
 Rules to keep it painless:
 
+- **Adding questions? Use the Admin page** (`/admin`, only visible to the admin account). Create/edit
+  questions with a live Markdown + LaTeX preview — no SQL required. Schema changes (new tables,
+  columns, constraints) still go through migrations.
 - **Never edit an already-applied migration.** Add a *new* migration file instead — they run exactly
   once, in order, so edits won't re-run.
-- **New questions go in new migrations** (they run on your remote DB via `db:push`). This is the
-  direct replacement for pasting `INSERT` statements into the SQL Editor.
 - **Migrations run in order.** Keep them read-only after they're pushed so the repo always matches
   the remote database (`npm run db:status` should show no drift).
 - **Local dev** (optional, needs Docker): `npx supabase start` spins up a full local Supabase stack
@@ -175,8 +176,8 @@ The question bank lives in the migration history (`supabase/migrations/`):
 - **Baseline migration** `..._seed_questions.sql`: 9 courses, 26 topics, 25+ questions with real math
   content in LaTeX (limits, derivatives, integrals, eigenvalues, group theory, ODEs, Bayes' theorem,
   p-values, compactness, …) plus the course-catalog migration for the full UP Math catalog.
-- **New questions:** add a new migration file via `npm run db:new -- <name>`, write the `INSERT`
-  statements, then `npm run db:push`. Do not edit applied migrations.
+- **New questions:** use the Admin page (`/admin`) for everyday content, or add a migration file via
+  `npm run db:new -- <name>` for batch/scripted inserts. Do not edit applied migrations.
 
 ---
 
@@ -211,7 +212,10 @@ Shortcuts are suppressed while typing in any input or textarea, and only apply o
 - **Domain enforcement (backend):** The `handle_new_user` Postgres trigger rejects any `auth.users` insert where the email domain is not `up.edu.ph`. This cannot be bypassed from the client.
 - **Domain enforcement (frontend):** The `AuthProvider` immediately signs out users with non-UP emails and shows a clear message.
 - **Row-Level Security:** Students can only read/write their own `bookmarks` and `progress` rows. The question bank is read-only.
-- **No admin UI:** Question management is not exposed to students. Admin tooling can be added later with Supabase service-role keys kept server-side.
+- **Admin tooling:** The `/admin` page lets the admin create/edit/delete questions and topics from the
+  browser. Writes go through `security definer` database functions (`admin_upsert_question`,
+  `admin_delete_question`, `admin_upsert_topic`, …) that check the admin email server-side, so there
+  is no RLS write policy for students to exploit.
 
 ---
 

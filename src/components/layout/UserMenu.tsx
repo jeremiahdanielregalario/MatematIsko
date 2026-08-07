@@ -1,6 +1,7 @@
-import { LogOut, UserRound } from 'lucide-react';
+import { LogOut, Shield, UserRound } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { isAdminEmail } from '@/lib/auth';
 import { cn } from '@/lib/cn';
 import {
   DropdownMenu,
@@ -66,6 +67,14 @@ export function UserMenu() {
             Profile
           </Link>
         </DropdownMenuItem>
+        {isAdminEmail(user.email) ? (
+          <DropdownMenuItem asChild>
+            <Link to="/admin">
+              <Shield className="size-4" />
+              Admin
+            </Link>
+          </DropdownMenuItem>
+        ) : null}
         <DropdownMenuItem
           className="text-red-700 focus:text-red-800 dark:text-red-400 dark:focus:text-red-300"
           onSelect={() => void handleSignOut()}

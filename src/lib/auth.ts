@@ -6,8 +6,8 @@ export const UP_ACCESS_MESSAGE =
 /** Hardcoded admin emails that bypass the @up.edu.ph domain check. */
 const ADMIN_EMAILS: readonly string[] = ['jeremiah.regalario@gmail.com'];
 
-function isAdminEmail(email: string): boolean {
-  return ADMIN_EMAILS.includes(email.toLowerCase());
+export function isAdminEmail(email: string | null | undefined): boolean {
+  return email ? ADMIN_EMAILS.includes(email.toLowerCase()) : false;
 }
 
 /**
