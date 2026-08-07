@@ -251,3 +251,18 @@ export async function setUserCourses(userId: string, courseIds: string[]): Promi
     .insert(courseIds.map((course_id) => ({ user_id: userId, course_id })));
   if (error) throw new Error(error.message);
 }
+
+export async function getUserCourses(userId: string): Promise<Course[]> {
+  if (!isSupabaseConfigured) return [];
+  if (!supabase) notConfigured();
+  const { data, error } = await supabase
+    .from('user_courses')
+    .select('course:courses(*)')
+    .eq('user_id', userId);
+  if (error) throw new Error(error.message);
+  const courses = (data ?? []).map((row) => (row as unknown as { course: Course }).course);
+  return courses.sort((a, b) => {
+    const number = (code: string) => parseFloat(code.replace('MATH', '').trim()) || 0;
+    return number(a.code) - number(b.code);
+  });
+}
