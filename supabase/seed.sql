@@ -84,7 +84,7 @@ values
     'A Limit of a Rational Function',
     $q$Compute the limit
 
-$$\lim_{x \to 2} \frac{x^2 - 4}{x - 2},$$
+$$\begin{equation}\lim_{x \to 2} \frac{x^2 - 4}{x - 2},\end{equation}$$
 
 if it exists.$q$,
     'easy',
@@ -92,10 +92,10 @@ if it exists.$q$,
     'Long Exam 1',
     1,
     $q$Factor the numerator and cancel the common factor before taking the limit.$q$,
-    $q$$$4$$$q$,
+    $q$$\boxed{4}$$q$,
     $q$For $x \neq 2$,
 
-$$\frac{x^2 - 4}{x - 2} = \frac{(x - 2)(x + 2)}{x - 2} = x + 2.$$
+$$\begin{equation}\frac{x^2 - 4}{x - 2} = \frac{(x - 2)(x + 2)}{x - 2} = x + 2.\end{equation}$$
 
 A limit only looks at values *near* $x = 2$, so
 
@@ -112,7 +112,7 @@ $$\lim_{x \to 2} \frac{x^2 - 4}{x - 2} = \lim_{x \to 2} (x + 2) = 4.$$$q$
     'Long Exam 1',
     4,
     $q$Write out $\displaystyle \lim_{h \to 0} \frac{f(2 + h) - f(2)}{h}$ and expand $(2 + h)^3$.$q$,
-    $q$$$f'(2) = 12$$$q$,
+    $q$$\boxed{f'(2) = 12}$$q$,
     $q$By definition,
 
 $$
@@ -125,7 +125,11 @@ $$
 
 Expanding, $(2 + h)^3 = 8 + 12h + 6h^2 + h^3$, so
 
-$$\lim_{h \to 0} \frac{12h + 6h^2 + h^3}{h} = \lim_{h \to 0} (12 + 6h + h^2) = 12.$$$q$
+$$
+\begin{aligned}
+\lim_{h \to 0} \frac{12h + 6h^2 + h^3}{h} = \lim_{h \to 0} (12 + 6h + h^2) = 12.
+\end{aligned}
+$$$q$
   ),
   (
     '012fb58c-2bc4-5a57-84e7-40aca78ed7b0',
@@ -140,7 +144,7 @@ $$\int_0^1 x^2 \, dx.$$$q$,
     'Final Examination',
     2,
     $q$Apply the power rule in reverse, then evaluate between the limits.$q$,
-    $q$$$\frac{1}{3}$$$q$,
+    $q$$\boxed{\frac{1}{3}}$$q$,
     $q$An antiderivative of $x^2$ is $x^3 / 3$, hence
 
 $$\int_0^1 x^2 \, dx = \left[ \frac{x^3}{3} \right]_0^1 = \frac{1}{3} - 0 = \frac{1}{3}.$$$q$
@@ -158,7 +162,7 @@ $$\int x e^x \, dx.$$$q$,
     'Long Exam 1',
     3,
     $q$Use integration by parts with $u = x$ and $dv = e^x\, dx$.$q$,
-    $q$$$e^x (x - 1) + C$$$q$,
+    $q$$\boxed{e^x (x - 1) + C}$$q$,
     $q$Let $u = x$, $du = dx$, and $dv = e^x\, dx$, $v = e^x$. Then
 
 $$\int x e^x \, dx = x e^x - \int e^x \, dx = x e^x - e^x + C = e^x (x - 1) + C.$$$q$
@@ -176,10 +180,10 @@ $$\int \frac{dx}{x^2 - 1}.$$$q$,
     'Final Examination',
     1,
     $q$Decompose the integrand into partial fractions with denominators $x - 1$ and $x + 1$.$q$,
-    $q$$$\frac{1}{2} \ln\left| \frac{x - 1}{x + 1} \right| + C$$$q$,
+    $q$$\boxed{\frac{1}{2} \ln\left| \frac{x - 1}{x + 1} \right| + C}$$q$,
     $q$Since $x^2 - 1 = (x - 1)(x + 1)$, write
 
-$$\frac{1}{x^2 - 1} = \frac{1}{2}\left( \frac{1}{x - 1} - \frac{1}{x + 1} \right).$$
+$$\begin{equation}\frac{1}{x^2 - 1} = \frac{1}{2}\left( \frac{1}{x - 1} - \frac{1}{x + 1} \right).\end{equation}$$
 
 Integrating term by term,
 
@@ -192,7 +196,7 @@ $$\int \frac{dx}{x^2 - 1} = \frac{1}{2} \ln|x - 1| - \frac{1}{2} \ln|x + 1| + C 
     'Convergence of a p-Series',
     $q$Determine whether the series
 
-$$\sum_{n = 1}^{\infty} \frac{1}{n^2}$$
+$$\begin{equation}\sum_{n = 1}^{\infty} \frac{1}{n^2}\end{equation}$$
 
 converges or diverges, and justify your answer.$q$,
     'medium',
@@ -219,7 +223,7 @@ $$\sum_{n = 0}^{\infty} \frac{x^n}{n!}.$$$q$,
     $q$The radius of convergence is $R = \infty$.$q$,
     $q$Let $a_n = x^n / n!$. The ratio test gives
 
-$$\lim_{n \to \infty} \left| \frac{a_{n + 1}}{a_n} \right| = \lim_{n \to \infty} \frac{|x|}{n + 1} = 0 < 1$$
+$$\begin{equation}\lim_{n \to \infty} \left| \frac{a_{n + 1}}{a_n} \right| = \lim_{n \to \infty} \frac{|x|}{n + 1} = 0 < 1\end{equation}$$
 
 for every real $x$. The series therefore converges for all $x$, so $R = \infty$.$q$
   ),
@@ -236,7 +240,7 @@ $$\begin{cases} x + y = 3 \\ 2x - y = 0. \end{cases}$$$q$,
     'Long Exam 1',
     1,
     $q$Add the two equations to eliminate $y$.$q$,
-    $q$$$(x, y) = (1, 2)$$$q$,
+    $q$$\boxed{(x, y) = (1, 2)}$$q$,
     $q$Adding the equations gives $3x = 3$, so $x = 1$. Substituting into $x + y = 3$ yields $y = 2$.$q$
   ),
   (
@@ -260,7 +264,7 @@ $$\begin{cases} x + y = 3 \\ 2x - y = 0. \end{cases}$$$q$,
     'Eigenvalues of a Symmetric Matrix',
     $q$Find the eigenvalues of
 
-$$A = \begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}.$$$q$,
+$$\begin{equation}A = \begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}.\end{equation}$$$q$,
     'medium',
     2024,
     'Final Examination',
@@ -269,7 +273,7 @@ $$A = \begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}.$$$q$,
     $q$The eigenvalues are $\lambda = 1$ and $\lambda = 3$.$q$,
     $q$The characteristic polynomial is
 
-$$\det(A - \lambda I) = \begin{vmatrix} 2 - \lambda & 1 \\ 1 & 2 - \lambda \end{vmatrix} = (2 - \lambda)^2 - 1 = \lambda^2 - 4\lambda + 3 = (\lambda - 1)(\lambda - 3).$$
+$$\begin{equation}\det(A - \lambda I) = \begin{vmatrix} 2 - \lambda & 1 \\ 1 & 2 - \lambda \end{vmatrix} = (2 - \lambda)^2 - 1 = \lambda^2 - 4\lambda + 3 = (\lambda - 1)(\lambda - 3).\end{equation}$$
 
 Setting this to zero gives $\lambda = 1$ and $\lambda = 3$.$q$
   ),
@@ -289,7 +293,7 @@ $$\lim_{n \to \infty} \frac{1}{n} = 0.$$$q$,
     $q$Proof: given $\epsilon > 0$, choose $N > 1/\epsilon$; then for all $n \geq N$, $1/n < \epsilon$.$q$,
     $q$Let $\epsilon > 0$ be given. Choose an integer $N > 1/\epsilon$. For every $n \geq N$,
 
-$$\left| \frac{1}{n} - 0 \right| = \frac{1}{n} \leq \frac{1}{N} < \epsilon.$$
+$$\begin{equation}\left| \frac{1}{n} - 0 \right| = \frac{1}{n} \leq \frac{1}{N} < \epsilon.\end{equation}$$
 
 This is exactly the definition of $\lim_{n \to \infty} 1/n = 0$.$q$
   ),
@@ -307,11 +311,11 @@ This is exactly the definition of $\lim_{n \to \infty} 1/n = 0$.$q$
     $q$Proof by sequences: take $x_n = 1/n$ and $y_n = 1/(2n)$.$q$,
     $q$Let $x_n = 1/n$ and $y_n = 1/(2n)$. Then
 
-$$|x_n - y_n| = \frac{1}{2n} \to 0,$$
+$$\begin{equation}|x_n - y_n| = \frac{1}{2n} \to 0,\end{equation}$$
 
 but
 
-$$|f(x_n) - f(y_n)| = |n - 2n| = n \to \infty.$$
+$$\begin{equation}|f(x_n) - f(y_n)| = |n - 2n| = n \to \infty.\end{equation}$$
 
 If $f$ were uniformly continuous, sequences with $|x_n - y_n| \to 0$ would force $|f(x_n) - f(y_n)| \to 0$. Since that fails, $f$ is not uniformly continuous on $(0, 1]$.$q$
   ),
@@ -329,7 +333,7 @@ If $f$ were uniformly continuous, sequences with $|x_n - y_n| \to 0$ would force
     $q$Proof: $f(x) - f(a) = \frac{f(x) - f(a)}{x - a} \cdot (x - a) \to f'(a) \cdot 0 = 0$ as $x \to a$.$q$,
     $q$For $x \neq a$,
 
-$$f(x) - f(a) = \frac{f(x) - f(a)}{x - a} \cdot (x - a).$$
+$$\begin{equation}f(x) - f(a) = \frac{f(x) - f(a)}{x - a} \cdot (x - a).\end{equation}$$
 
 Since $f$ is differentiable at $a$, the difference quotient tends to $f'(a)$, while $x - a \to 0$. Therefore $f(x) - f(a) \to f'(a) \cdot 0 = 0$, i.e. $\lim_{x \to a} f(x) = f(a)$, which is continuity at $a$.$q$
   ),
@@ -347,7 +351,7 @@ Since $f$ is differentiable at $a$, the difference quotient tends to $f'(a)$, wh
     $q$Proof: $a^n = e$ if and only if $(a^{-1})^n = e$, so the least positive such $n$ coincides.$q$,
     $q$Suppose $a$ has finite order $n$, so $a^n = e$. Then
 
-$$(a^{-1})^n = (a^n)^{-1} = e^{-1} = e,$$
+$$\begin{equation}(a^{-1})^n = (a^n)^{-1} = e^{-1} = e,\end{equation}$$
 
 so the order of $a^{-1}$ is at most $n$. Repeating the argument with $a$ and $a^{-1}$ swapped gives $\operatorname{ord}(a) \leq \operatorname{ord}(a^{-1})$. Hence the orders are equal. (If $a$ has infinite order, so does $a^{-1}$ by the same pairing.)$q$
   ),
@@ -390,10 +394,10 @@ so the order of $a^{-1}$ is at most $n$. Repeating the argument with $a$ and $a^
     'Long Exam 1',
     1,
     $q$Separate the variables so that all $y$'s are on one side and all $x$'s on the other.$q$,
-    $q$$$y = C e^{x^2 / 2}$$$q$,
+    $q$$\boxed{y = C e^{x^2 / 2}}$$q$,
     $q$Separating variables,
 
-$$\frac{dy}{y} = x\, dx.$$
+$$\begin{equation}\frac{dy}{y} = x\, dx.\end{equation}$$
 
 Integrating both sides gives $\ln|y| = x^2/2 + C$, so $|y| = e^{x^2/2 + C}$ and
 
@@ -412,10 +416,10 @@ $$y' + 2y = e^{-t}, \qquad y(0) = 0.$$$q$,
     'Long Exam 1',
     4,
     $q$Multiply through by the integrating factor $\mu(t) = e^{2t}$.$q$,
-    $q$$$y(t) = e^{-t} - e^{-2t}$$$q$,
+    $q$$\boxed{y(t) = e^{-t} - e^{-2t}}$$q$,
     $q$With $\mu(t) = e^{2t}$, the equation becomes
 
-$$(e^{2t} y)' = e^{2t} e^{-t} = e^{t}.$$
+$$\begin{equation}(e^{2t} y)' = e^{2t} e^{-t} = e^{t}.\end{equation}$$
 
 Integrating, $e^{2t} y = e^{t} + C$, so $y = e^{-t} + C e^{-2t}$. Applying $y(0) = 0$ gives $1 + C = 0$, hence $C = -1$ and
 
@@ -434,7 +438,7 @@ $$y'' - 3y' + 2y = 0.$$$q$,
     'Final Examination',
     2,
     $q$Write and solve the characteristic equation $r^2 - 3r + 2 = 0$.$q$,
-    $q$$$y(t) = C_1 e^{t} + C_2 e^{2t}$$$q$,
+    $q$$\boxed{y(t) = C_1 e^{t} + C_2 e^{2t}}$$q$,
     $q$The characteristic equation is $r^2 - 3r + 2 = (r - 1)(r - 2) = 0$, giving distinct real roots $r = 1$ and $r = 2$. The general solution is therefore
 
 $$y(t) = C_1 e^{t} + C_2 e^{2t}.$$$q$
@@ -450,7 +454,7 @@ $$y(t) = C_1 e^{t} + C_2 e^{2t}.$$$q$
     'Long Exam 1',
     1,
     $q$Count the ordered pairs that sum to $7$ out of the $36$ equally likely outcomes.$q$,
-    $q$$$\frac{1}{6}$$$q$,
+    $q$$\boxed{\frac{1}{6}}$$q$,
     $q$There are $6 \times 6 = 36$ equally likely ordered outcomes. The pairs summing to $7$ are $(1,6),(2,5),(3,4),(4,3),(5,2),(6,1)$ — six of them. Hence
 
 $$P(\text{sum} = 7) = \frac{6}{36} = \frac{1}{6}.$$$q$
@@ -466,10 +470,10 @@ $$P(\text{sum} = 7) = \frac{6}{36} = \frac{1}{6}.$$$q$
     'Long Exam 2',
     3,
     $q$Let $D$ be the event of choosing the double-headed coin and let $HH$ be the event of two heads. Apply Bayes' theorem.$q$,
-    $q$$$\frac{4}{7}$$$q$,
+    $q$$\boxed{\frac{4}{7}}$$q$,
     $q$Let $D$ = "double-headed coin" and $HH$ = "two heads". Then
 
-$$P(HH \mid D) = 1, \qquad P(HH \mid F) = \frac14, \qquad P(D) = \frac14, \qquad P(F) = \frac34.$$
+$$\begin{equation}P(HH \mid D) = 1, \qquad P(HH \mid F) = \frac14, \qquad P(D) = \frac14, \qquad P(F) = \frac34.\end{equation}$$
 
 By Bayes' theorem,
 
@@ -486,7 +490,7 @@ $$P(D \mid HH) = \frac{P(HH \mid D)P(D)}{P(HH \mid D)P(D) + P(HH \mid F)P(F)} = 
     'Long Exam 1',
     4,
     $q$Use the binomial formula $P(X = k) = \binom{n}{k} p^k (1 - p)^{n - k}$.$q$,
-    $q$$$\frac{3}{8}$$$q$,
+    $q$$\boxed{\frac{3}{8}}$$q$,
     $q$Applying the binomial formula,
 
 $$P(X = 2) = \binom{4}{2} \left( \frac12 \right)^2 \left( \frac12 \right)^2 = 6 \cdot \frac{1}{16} = \frac{3}{8}.$$$q$
@@ -502,10 +506,10 @@ $$P(X = 2) = \binom{4}{2} \left( \frac12 \right)^2 \left( \frac12 \right)^2 = 6 
     'Long Exam 1',
     2,
     $q$Use the $z$-interval $\bar{x} \pm z_{\alpha/2} \cdot \sigma / \sqrt{n}$ with $z_{0.025} \approx 1.96$.$q$,
-    $q$$$(48.04,\ 51.96)$$$q$,
+    $q$$\boxed{(48.04,\ 51.96)}$$q$,
     $q$The margin of error is
 
-$$z_{0.025} \cdot \frac{\sigma}{\sqrt{n}} = 1.96 \cdot \frac{10}{10} = 1.96.$$
+$$\begin{equation}z_{0.025} \cdot \frac{\sigma}{\sqrt{n}} = 1.96 \cdot \frac{10}{10} = 1.96.\end{equation}$$
 
 So the interval is $50 \pm 1.96 = (48.04, 51.96)$.$q$
   ),
@@ -748,7 +752,7 @@ Therefore $\varphi(I)$ is an ideal of $\varphi(R)$. $\blacksquare$$q$
     $q$Proof: By the First Isomorphism Theorem, $R/\ker\varphi \cong R'$. Since $R'$ is an integral domain, $R/\ker\varphi$ is an integral domain. A proper ideal of a commutative ring is prime if and only if the quotient ring is an integral domain. Since $R'$ is an integral domain (hence $R' \neq \{0\}$), $\ker\varphi \neq R$, so $\ker\varphi$ is a proper ideal. Thus $\ker\varphi$ is a prime ideal of $R$. $\blacksquare$$q$,
     $q$By the First Isomorphism Theorem for rings, since $\varphi$ is an epimorphism (surjective):
 
-$$R / \ker \varphi \cong R'.$$
+$$\begin{equation}R / \ker \varphi \cong R'.\end{equation}$$
 
 Since $R'$ is an integral domain, the quotient $R/\ker\varphi$ is also an integral domain (isomorphic rings share algebraic properties).
 
@@ -774,11 +778,11 @@ Without loss of generality, suppose $a \in \langle p \rangle$. Then $a = pc$ for
 
 **Case 1:** Suppose $a \in \langle p \rangle$. Then $a = pc$ for some $c \in D$. Substituting into $p = ab$:
 
-$$p = (pc)b = p(cb).$$
+$$\begin{equation}p = (pc)b = p(cb).\end{equation}$$
 
 Since $D$ is an integral domain and $p \neq 0$, we may cancel $p$:
 
-$$1 = cb.$$
+$$\begin{equation}1 = cb.\end{equation}$$
 
 This shows $b$ is a unit (with $c$ as its inverse).
 
@@ -811,7 +815,7 @@ values
 
 In $\mathbb{Z}_{12}/\langle 6 \rangle$,
 
-$$(2 + \langle 6 \rangle)(3 + \langle 6 \rangle) = 6 + \langle 6 \rangle = \langle 6 \rangle,$$
+$$\begin{equation}(2 + \langle 6 \rangle)(3 + \langle 6 \rangle) = 6 + \langle 6 \rangle = \langle 6 \rangle,\end{equation}$$
 
 where $2 + \langle 6 \rangle \neq \langle 6 \rangle$ and $3 + \langle 6 \rangle \neq \langle 6 \rangle$. Hence $2 + \langle 6 \rangle$ is a zero divisor of $\mathbb{Z}_{12}/\langle 6 \rangle$, so $\mathbb{Z}_{12}/\langle 6 \rangle$ is not an integral domain and therefore not a field.
 
@@ -835,7 +839,7 @@ $\therefore$ $\langle 6 \rangle$ is not a maximal ideal of $\mathbb{Z}_{12}$. $\
 
 Since every nonzero element has an inverse:
 
-$$(1 + \langle 3 \rangle)^{-1} = 1 + \langle 3 \rangle, \qquad (2 + \langle 3 \rangle)^{-1} = 2 + \langle 3 \rangle,$$
+$$\begin{equation}(1 + \langle 3 \rangle)^{-1} = 1 + \langle 3 \rangle, \qquad (2 + \langle 3 \rangle)^{-1} = 2 + \langle 3 \rangle,\end{equation}$$
 
 because $2 \cdot 2 = 4 \equiv 1 \pmod{3}$. Therefore $\mathbb{Z}_{12}/\langle 3 \rangle$ is a field, and is therefore an integral domain.
 
@@ -859,7 +863,7 @@ $\therefore$ $\langle 3 \rangle$ is a prime ideal of $\mathbb{Z}_{12}$. $\blacks
 
 The quotient ring
 
-$$\langle 3 \rangle / \langle 6 \rangle = \{\langle 6 \rangle,\ 3 + \langle 6 \rangle\}$$
+$$\begin{equation}\langle 3 \rangle / \langle 6 \rangle = \{\langle 6 \rangle,\ 3 + \langle 6 \rangle\}\end{equation}$$
 
 is a commutative ring with unity $3 + \langle 6 \rangle$ (note $9 + \langle 6 \rangle = 3 + \langle 6 \rangle$ since $9 - 3 = 6 \in \langle 6 \rangle$). Since $\langle 3 \rangle / \langle 6 \rangle$ has exactly two elements, it is isomorphic to $\mathbb{Z}_2$, which is a field.
 
@@ -883,13 +887,13 @@ $\therefore$ $\langle 6 \rangle$ is a prime ideal of $\langle 3 \rangle$. $\blac
 
 **(i)** Let $(a, 0), (b, 0) \in S$ for some $a, b \in \mathbb{Z}$. Then
 
-$$(a, 0) - (b, 0) = (a - b, 0) \in S,$$
+$$\begin{equation}(a, 0) - (b, 0) = (a - b, 0) \in S,\end{equation}$$
 
 since $a - b \in \mathbb{Z}$. So $S$ is an additive subgroup of $R$.
 
 **(ii)** Let $(r, s) \in R$ and $(a, 0) \in S$ for some $a, r, s \in \mathbb{Z}$. Then
 
-$$(r, s)(a, 0) = (ra, 0) \in S, \qquad (a, 0)(r, s) = (ar, 0) \in S,$$
+$$\begin{equation}(r, s)(a, 0) = (ra, 0) \in S, \qquad (a, 0)(r, s) = (ar, 0) \in S,\end{equation}$$
 
 since $ra, ar \in \mathbb{Z}$.
 
@@ -909,15 +913,15 @@ $\therefore$ $S$ is an ideal of $R$. $\blacksquare$$q$
     $q$**$S$ is a prime ideal of $\mathbb{Z} \times \mathbb{Z}$.**$q$,
     $q$By the previous result, $S$ is a proper ideal of $R$. Consider the factor ring $R/S$, which is commutative with unity $(0,1) + S$:
 
-$$R/S = \{\ldots,\; (0,-2)+S,\; (0,-1)+S,\; S,\; (0,1)+S,\; (0,2)+S,\; \ldots\}.$$
+$$\begin{equation}R/S = \{\ldots,\; (0,-2)+S,\; (0,-1)+S,\; S,\; (0,1)+S,\; (0,2)+S,\; \ldots\}.\end{equation}$$
 
 Let $(0,a) + S$ be a nonzero element of $R/S$ (so $a \neq 0$). Suppose
 
-$$[(0,a) + S]\,[(0,b) + S] = S$$
+$$\begin{equation}[(0,a) + S]\,[(0,b) + S] = S\end{equation}$$
 
 for some $(0,b) + S \in R/S$. Since
 
-$$[(0,a) + S]\,[(0,b) + S] = (0, ab) + S,$$
+$$\begin{equation}[(0,a) + S]\,[(0,b) + S] = (0, ab) + S,\end{equation}$$
 
 we get $(0, ab) \in S$, i.e. $ab = 0$. As $\mathbb{Z}$ is an integral domain and $a \neq 0$, it follows that $b = 0$, so $(0,b) + S = S$.
 
@@ -939,7 +943,7 @@ $\therefore$ $S$ is a prime ideal of $R$. $\blacksquare$$q$
     $q$**No.** $S$ is not a maximal ideal of $\mathbb{Z} \times \mathbb{Z}$.$q$,
     $q$Consider the factor ring $R/S$. Take $(0,2) + S \in R/S$, which is nonzero. We show it has no multiplicative inverse: there is no $(0,c) + S \in R/S$ with
 
-$$[(0,2) + S]\,[(0,c) + S] = (0, 2c) + S = (0, 1) + S,$$
+$$\begin{equation}[(0,2) + S]\,[(0,c) + S] = (0, 2c) + S = (0, 1) + S,\end{equation}$$
 
 because that would require $2c = 1$ for some integer $c$, which is impossible in $\mathbb{Z}$.
 
@@ -961,11 +965,11 @@ Hence $R/S$ is not a field. Therefore $S$ is not a maximal ideal of $R$. $\black
 
 By a standard theorem, $\ker \varphi$ is an ideal of $R$. Consider the factor ring $R/\ker \varphi$. By the First Isomorphism Theorem for rings,
 
-$$R / \ker \varphi \cong \varphi(R).$$
+$$\begin{equation}R / \ker \varphi \cong \varphi(R).\end{equation}$$
 
 Since $\varphi$ is a ring epimorphism, it is surjective, so $\varphi(R) = R'$. Hence
 
-$$R / \ker \varphi \cong R'.$$
+$$\begin{equation}R / \ker \varphi \cong R'.\end{equation}$$
 
 Since $R'$ is an integral domain and the property of being an integral domain is preserved under ring isomorphism, $R/\ker \varphi$ is also an integral domain.
 
@@ -989,17 +993,17 @@ $\therefore$ $\ker \varphi$ is a prime ideal of $R$. $\blacksquare$$q$
 
 Since $\langle p \rangle$ is a prime ideal,
 
-$$p = ab \in \langle p \rangle \implies a \in \langle p \rangle \;\text{or}\; b \in \langle p \rangle.$$
+$$\begin{equation}p = ab \in \langle p \rangle \implies a \in \langle p \rangle \;\text{or}\; b \in \langle p \rangle.\end{equation}$$
 
 **Case 1:** $a \in \langle p \rangle$. Then $a = pk$ for some $0 \neq k \in D$, and
 
-$$p = ab \implies p = pkb \implies 1 = kb$$
+$$\begin{equation}p = ab \implies p = pkb \implies 1 = kb\end{equation}$$
 
 by the cancellation law ($D$ is an integral domain and $p \neq 0$). Hence $b$ is a unit.
 
 **Case 2:** $b \in \langle p \rangle$. Then $b = \ell p$ for some $\ell \in D$, and
 
-$$p = ab \implies p = a\ell p \implies 1 = a\ell$$
+$$\begin{equation}p = ab \implies p = a\ell p \implies 1 = a\ell\end{equation}$$
 
 by the cancellation law. Hence $a$ is a unit.
 
@@ -1019,7 +1023,7 @@ $\therefore$ Either $a$ is a unit or $b$ is a unit of $D$. $\blacksquare$$q$
     $q$**$[ka, kb] = [a, b]$.**$q$,
     $q$Suppose $0 \neq k \in D$ and $[a, b] \in F$, so $a, b \in D$ with $b \neq 0$. Then
 
-$$(ka) b = k a b = (kb) a,$$
+$$\begin{equation}(ka) b = k a b = (kb) a,\end{equation}$$
 
 which is precisely the condition for $[ka, kb] = [a, b]$ in $F$. $\blacksquare$$q$
   ),
@@ -1071,13 +1075,13 @@ $\therefore$ $F$ satisfies the left distributive law. $\blacksquare$$q$
 
 **Zero element:** Consider $[0, 1] \in F$. Then
 
-$$[a, b] + [0, 1] = [a \cdot 1 + 0 \cdot b,\; b \cdot 1] = [a, b].$$
+$$\begin{equation}[a, b] + [0, 1] = [a \cdot 1 + 0 \cdot b,\; b \cdot 1] = [a, b].\end{equation}$$
 
 $\therefore$ $[0,1]$ is the additive identity.
 
 **Unity:** Consider $[1, 1] \in F$. Then
 
-$$[a, b][1, 1] = [a \cdot 1,\; b \cdot 1] = [a, b].$$
+$$\begin{equation}[a, b][1, 1] = [a \cdot 1,\; b \cdot 1] = [a, b].\end{equation}$$
 
 $\therefore$ $[1,1]$ is the multiplicative identity. $\blacksquare$$q$
   ),
@@ -1095,7 +1099,7 @@ $\therefore$ $[1,1]$ is the multiplicative identity. $\blacksquare$$q$
     $q$**The additive inverse of $[a,b]$ is $[-a, b]$.**$q$,
     $q$Let $[a, b] \in F$ with $b \neq 0$. Since $D$ is a ring, $-a \in D$, so $[-a, b] \in F$. Then
 
-$$[a, b] + [-a, b] = [a \cdot b + (-a) \cdot b,\; b \cdot b] = [ab - ab,\; b^2] = [0, b^2].$$
+$$\begin{equation}[a, b] + [-a, b] = [a \cdot b + (-a) \cdot b,\; b \cdot b] = [ab - ab,\; b^2] = [0, b^2].\end{equation}$$
 
 By the result $[kx, ky] = [x, y]$ with $k = b$, $x = 0$, $y = b$, we get $[0, b^2] = [0, 1]$.
 
@@ -1115,7 +1119,7 @@ $\therefore$ $[-a, b]$ is the additive inverse of $[a, b]$. $\blacksquare$$q$
     $q$**The multiplicative inverse of $[a,b]$ is $[b, a]$.**$q$,
     $q$Let $[a, b] \in F$ be nonzero, so $a, b \in D$ with $a, b \neq 0$. Then $[b, a] \in F$, and
 
-$$[a, b][b, a] = [a \cdot b,\; b \cdot a] = [ab, ab].$$
+$$\begin{equation}[a, b][b, a] = [a \cdot b,\; b \cdot a] = [ab, ab].\end{equation}$$
 
 By the result $[kx, ky] = [x, y]$ with $k = ab$, $x = 1$, $y = 1$, we get $[ab, ab] = [1, 1]$, which is the unity of $F$.
 
@@ -1137,21 +1141,21 @@ $\therefore$ $[b, a]$ is the multiplicative inverse of $[a, b]$. $\blacksquare$$
 
 For $a, b \in D$:
 
-$$\varphi(a) + \varphi(b) = [a, 1] + [b, 1] = [a + b, 1] = \varphi(a + b),$$
+$$\begin{equation}\varphi(a) + \varphi(b) = [a, 1] + [b, 1] = [a + b, 1] = \varphi(a + b),\end{equation}$$
 
-$$\varphi(a)\,\varphi(b) = [a, 1][b, 1] = [ab, 1] = \varphi(ab).$$
+$$\begin{equation}\varphi(a)\,\varphi(b) = [a, 1][b, 1] = [ab, 1] = \varphi(ab).\end{equation}$$
 
 So $\varphi$ is a ring homomorphism.
 
 **Kernel:**
 
-$$\ker \varphi = \{a \in D \mid \varphi(a) = [0, 1]\} = \{a \in D \mid [a, 1] = [0, 1]\}.$$
+$$\begin{equation}\ker \varphi = \{a \in D \mid \varphi(a) = [0, 1]\} = \{a \in D \mid [a, 1] = [0, 1]\}.\end{equation}$$
 
 Now $[a, 1] = [0, 1] \iff a \cdot 1 = 1 \cdot 0 \iff a = 0$, so $\ker \varphi = \{0\}$.
 
 By the First Isomorphism Theorem for rings,
 
-$$\varphi(D) \cong D / \ker \varphi = D / \{0\} \cong D.$$
+$$\begin{equation}\varphi(D) \cong D / \ker \varphi = D / \{0\} \cong D.\end{equation}$$
 
 $\therefore$ $D$ is isomorphic to $\varphi(D) = \{[a, 1] \mid a \in D\}$, which is a subring of $F$. $\blacksquare$$q$
   )

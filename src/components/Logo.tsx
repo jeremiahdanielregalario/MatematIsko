@@ -55,7 +55,7 @@ export function Logo({ size = 'md', showWordmark = true, className }: LogoProps)
           fontSize={s.glyph}
           fill="#ffffff"
         >
-          ∫
+          ∮
         </text>
       </svg>
       {showWordmark ? (
