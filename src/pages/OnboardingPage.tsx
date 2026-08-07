@@ -1,5 +1,5 @@
-import { GraduationCap, Loader2, Save } from 'lucide-react';
-import { useState } from 'react';
+import { ChevronUp, GraduationCap, Loader2, Save, Sparkles } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { ErrorState } from '@/components/common/ErrorState';
 import { LoadingState } from '@/components/common/LoadingState';
@@ -15,6 +15,16 @@ import { cn } from '@/lib/cn';
 import type { Course } from '@/types';
 
 const YEAR_LEVELS = ['1st Year', '2nd Year', '3rd Year', '4th Year', '5th Year or more'];
+
+const DEFAULT_COURSE_CODES = ['MATH 20', 'MATH 21', 'MATH 22', 'MATH 23', 'MATH 122', 'MATH 162'];
+
+function courseNumber(code: string): number {
+  return parseFloat(code.replace('MATH', '').trim()) || 0;
+}
+
+function sortByCourseNumber(courses: Course[]): Course[] {
+  return [...courses].sort((a, b) => courseNumber(a.code) - courseNumber(b.code));
+}
 
 const DEGREE_PROGRAMS = [
   'BS Mathematics',
@@ -123,8 +133,21 @@ export function OnboardingPage() {
   const [yearLevel, setYearLevel] = useState<string | undefined>();
   const [upmmcMember, setUpmmcMember] = useState(false);
   const [selectedCourseIds, setSelectedCourseIds] = useState<string[]>([]);
+  const [showHigher, setShowHigher] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const defaultCourses = useMemo(() => {
+    const byCode = new Map((courses ?? []).map((course) => [course.code, course]));
+    return DEFAULT_COURSE_CODES.map((code) => byCode.get(code)).filter(
+      (course): course is Course => Boolean(course),
+    );
+  }, [courses]);
+
+  const higherCourses = useMemo(() => {
+    const defaultIds = new Set(defaultCourses.map((course) => course.id));
+    return sortByCourseNumber((courses ?? []).filter((course) => !defaultIds.has(course.id)));
+  }, [courses, defaultCourses]);
 
   if (loading) return <LoadingState label="Preparing your setup" />;
 
@@ -232,16 +255,54 @@ export function OnboardingPage() {
                     Loading courses&hellip;
                   </div>
                 ) : (
-                  <div className="grid max-h-72 gap-2 overflow-y-auto pr-1">
-                    {(courses ?? []).map((course) => (
-                      <CourseCheckbox
-                        key={course.id}
-                        course={course}
-                        checked={selectedCourseIds.includes(course.id)}
-                        onToggle={() => toggleCourse(course.id)}
-                      />
-                    ))}
-                  </div>
+                  <>
+                    <div className="grid max-h-72 gap-2 overflow-y-auto pr-1">
+                      {defaultCourses.map((course) => (
+                        <CourseCheckbox
+                          key={course.id}
+                          course={course}
+                          checked={selectedCourseIds.includes(course.id)}
+                          onToggle={() => toggleCourse(course.id)}
+                        />
+                      ))}
+                    </div>
+                    {higherCourses.length > 0 ? (
+                      showHigher ? (
+                        <>
+                          <div className="grid max-h-72 gap-2 overflow-y-auto pr-1">
+                            {higherCourses.map((course) => (
+                              <CourseCheckbox
+                                key={course.id}
+                                course={course}
+                                checked={selectedCourseIds.includes(course.id)}
+                                onToggle={() => toggleCourse(course.id)}
+                              />
+                            ))}
+                          </div>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="w-full"
+                            onClick={() => setShowHigher(false)}
+                          >
+                            <ChevronUp className="size-4" />
+                            Hide higher maths
+                          </Button>
+                        </>
+                      ) : (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="w-full"
+                          onClick={() => setShowHigher(true)}
+                        >
+                          <Sparkles className="size-4" />
+                          Higher Maths
+                        </Button>
+                      )
+                    ) : null}
+                  </>
                 )}
               </div>
 
