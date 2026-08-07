@@ -6,7 +6,6 @@ import { LoadingState } from '@/components/common/LoadingState';
 import { Logo } from '@/components/Logo';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/hooks/useAuth';
@@ -16,6 +15,81 @@ import { cn } from '@/lib/cn';
 import type { Course } from '@/types';
 
 const YEAR_LEVELS = ['1st Year', '2nd Year', '3rd Year', '4th Year', '5th Year or more'];
+
+const DEGREE_PROGRAMS = [
+  'BA Anthropology',
+  'BS Applied Physics',
+  'BA Applied Psychology',
+  'BS Architecture',
+  'B Fine Arts',
+  'BA Art Studies',
+  'BS Biology',
+  'BA Broadcast Communication',
+  'BS Business Administration',
+  'BS Business Administration and Accountancy',
+  'BS Business Economics',
+  'BA Business Economics',
+  'BS Business Management',
+  'BS Chemical Engineering',
+  'BS Chemistry',
+  'BS Civil Engineering',
+  'BS Clothing Technology',
+  'BS Community Development',
+  'BA Communication Research',
+  'BS Community Nutrition',
+  'BA Comparative Literature',
+  'BS Computer Engineering',
+  'BS Computer Science',
+  'BA Creative Writing',
+  'BS Economics',
+  'BS Electrical Engineering',
+  'BS Electronics Engineering',
+  'B Elementary Education',
+  'BA English Studies: Language',
+  'BA English Studies: Literature',
+  'BA European Languages',
+  'BS Family Life and Child Development',
+  'BA Filipino',
+  'BA Film',
+  'BS Food Technology',
+  'BS Geodetic Engineering',
+  'BS Geography',
+  'BS Geology',
+  'BA History',
+  'BS Home Economics',
+  'BS Hotel, Restaurant and Institution Management',
+  'BS Industrial Engineering',
+  'BS Interior Design',
+  'BA Journalism',
+  'B Landscape Architecture',
+  'B Library and Information Science',
+  'BA Linguistics',
+  'BA Malikhaing Pagsulat',
+  'BS Materials Engineering',
+  'BS Mechanical Engineering',
+  'BS Metallurgical Engineering',
+  'BS Mining Engineering',
+  'BS Mathematics',
+  'BS Molecular Biology and Biotechnology',
+  'B Music',
+  'BA Philippine Studies',
+  'BA Philosophy',
+  'B Physical Education',
+  'BS Physics',
+  'BA Political Science',
+  'B Public Administration',
+  'BA Psychology',
+  'BFA Sculpture',
+  'B Secondary Education',
+  'BS Social Work',
+  'BA Sociology',
+  'BA Speech Communication',
+  'B Sport Science',
+  'AA Sports Studies',
+  'BS Statistics',
+  'BA Theatre Arts',
+  'BS Tourism',
+];
 
 function CourseCheckbox({
   course,
@@ -45,7 +119,7 @@ export function OnboardingPage() {
   const navigate = useNavigate();
   const { data: courses, loading: coursesLoading, error: coursesError, reload } = useCourses();
 
-  const [degreeProgram, setDegreeProgram] = useState('');
+  const [degreeProgram, setDegreeProgram] = useState<string | undefined>();
   const [yearLevel, setYearLevel] = useState<string | undefined>();
   const [upmmcMember, setUpmmcMember] = useState(false);
   const [selectedCourseIds, setSelectedCourseIds] = useState<string[]>([]);
@@ -69,8 +143,8 @@ export function OnboardingPage() {
 
   const handleSubmit = async () => {
     setError(null);
-    if (!degreeProgram.trim()) {
-      setError('Please enter your degree program.');
+    if (!degreeProgram) {
+      setError('Please select your degree program.');
       return;
     }
     if (!yearLevel) {
@@ -84,7 +158,7 @@ export function OnboardingPage() {
     setSubmitting(true);
     try {
       await updateProfileOnboarding(user.id, {
-        degree_program: degreeProgram.trim(),
+        degree_program: degreeProgram,
         year_level: yearLevel,
         upmmc_member: upmmcMember,
       });
@@ -120,13 +194,18 @@ export function OnboardingPage() {
             <>
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="degree-program">Degree program</Label>
-                <Input
-                  id="degree-program"
-                  value={degreeProgram}
-                  onChange={(e) => setDegreeProgram(e.target.value)}
-                  placeholder="e.g. BS Mathematics"
-                  autoComplete="off"
-                />
+                <Select value={degreeProgram} onValueChange={setDegreeProgram}>
+                  <SelectTrigger id="degree-program">
+                    <SelectValue placeholder="Select your degree program" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {DEGREE_PROGRAMS.map((program) => (
+                      <SelectItem key={program} value={program}>
+                        {program}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="flex flex-col gap-1.5">
