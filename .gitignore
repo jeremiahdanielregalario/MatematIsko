@@ -24,3 +24,6 @@ npm-debug.log*
 
 # Supabase local
 supabase/.temp/
+
+# Build output
+compiled.css
