@@ -46,7 +46,7 @@ export function MathRenderer({
     >
       <ReactMarkdown
         remarkPlugins={[remarkMath, remarkGfm]}
-        rehypePlugins={[[rehypeKatex, { throwOnError: false, displayMode: true }]]}
+        rehypePlugins={[[rehypeKatex, { throwOnError: false }]]}
         components={inline ? { p: 'span' } : undefined}
       >
         {source}
