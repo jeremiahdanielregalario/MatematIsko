@@ -1,4 +1,4 @@
-import type { ProgressStatus, QuestionWithMeta } from '@/types';
+import type { ProgressStatus, QuestionWithMeta, TheoremWithMeta } from '@/types';
 
 export interface QuestionMutationState {
   bookmarks: Record<string, boolean>;
@@ -25,6 +25,24 @@ export function mergeMutations(
       attempts,
       last_attempted_at: question.progress?.last_attempted_at ?? null,
       mastered_at: question.progress?.mastered_at ?? null,
+    },
+  };
+}
+
+/** Applies optimistic local mutations on top of server-loaded theorem data. */
+export function mergeTheoremMutations(
+  theorem: TheoremWithMeta,
+  statuses: Record<string, ProgressStatus>,
+): TheoremWithMeta {
+  const status = statuses[theorem.id] ?? theorem.progress?.status ?? 'unseen';
+  return {
+    ...theorem,
+    progress: {
+      user_id: theorem.progress?.user_id ?? '',
+      theorem_id: theorem.id,
+      status,
+      last_reviewed_at: theorem.progress?.last_reviewed_at ?? null,
+      mastered_at: theorem.progress?.mastered_at ?? null,
     },
   };
 }

@@ -1,5 +1,6 @@
 import {
   Bookmark,
+  BookMarked,
   BookOpenText,
   Home,
   LayoutDashboard,
@@ -16,6 +17,7 @@ import { UserMenu } from './UserMenu';
 const NAV_ITEMS = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/questions', label: 'Questions', icon: BookOpenText },
+  { to: '/theorems', label: 'Theorems', icon: BookMarked },
   { to: '/practice', label: 'Practice', icon: Target },
   { to: '/bookmarks', label: 'Bookmarks', icon: Bookmark },
   { to: '/progress', label: 'Progress', icon: LineChart },

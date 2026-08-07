@@ -1,5 +1,5 @@
 import { supabase, isSupabaseConfigured } from './supabase';
-import type { Difficulty, Question, Topic } from '@/types';
+import type { Difficulty, Question, Theorem, Topic } from '@/types';
 
 function notConfigured(): never {
   throw new Error(
@@ -85,4 +85,41 @@ export async function adminIsAdmin(): Promise<boolean> {
   const { data, error } = await supabase.rpc('is_admin');
   if (error) return false;
   return Boolean(data);
+}
+
+// ---------------------------------------------------------------------------
+// Named Theorems
+// ---------------------------------------------------------------------------
+
+export interface TheoremDraft {
+  id?: string;
+  course_id: string;
+  topic_id: string;
+  name: string;
+  reference: string | null;
+  statement: string;
+  formal_notation: string | null;
+}
+
+export async function adminUpsertTheorem(draft: TheoremDraft): Promise<Theorem> {
+  if (!isSupabaseConfigured) notConfigured();
+  if (!supabase) notConfigured();
+  const { data, error } = await supabase.rpc('admin_upsert_theorem', {
+    p_id: draft.id ?? null,
+    p_course_id: draft.course_id,
+    p_topic_id: draft.topic_id,
+    p_name: draft.name,
+    p_reference: draft.reference,
+    p_statement: draft.statement,
+    p_formal_notation: draft.formal_notation,
+  });
+  if (error) throw new Error(error.message);
+  return data as Theorem;
+}
+
+export async function adminDeleteTheorem(id: string): Promise<void> {
+  if (!isSupabaseConfigured) notConfigured();
+  if (!supabase) notConfigured();
+  const { error } = await supabase.rpc('admin_delete_theorem', { p_id: id });
+  if (error) throw new Error(error.message);
 }

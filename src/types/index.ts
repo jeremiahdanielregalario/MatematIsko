@@ -95,3 +95,36 @@ export const DIFFICULTY_ORDER: Record<Difficulty, number> = {
   medium: 1,
   hard: 2,
 };
+
+// ---------------------------------------------------------------------------
+// Named Theorems
+// ---------------------------------------------------------------------------
+
+export interface Theorem {
+  id: string;
+  course_id: string;
+  topic_id: string;
+  name: string;
+  reference: string | null;
+  statement: string;
+  formal_notation: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TheoremWithRelations extends Theorem {
+  course?: Course | null;
+  topic?: Topic | null;
+}
+
+export interface TheoremProgress {
+  user_id: string;
+  theorem_id: string;
+  status: ProgressStatus;
+  last_reviewed_at: string | null;
+  mastered_at: string | null;
+}
+
+export interface TheoremWithMeta extends TheoremWithRelations {
+  progress?: TheoremProgress | null;
+}

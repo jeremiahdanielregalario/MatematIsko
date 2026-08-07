@@ -6,6 +6,8 @@ import type {
   ProgressStatus,
   QuestionProgress,
   QuestionWithRelations,
+  TheoremProgress,
+  TheoremWithRelations,
   Topic,
 } from '@/types';
 
@@ -54,6 +56,67 @@ export async function getQuestionById(id: string): Promise<QuestionWithRelations
     .maybeSingle();
   if (error) throw new Error(error.message);
   return (data as QuestionWithRelations | null) ?? null;
+}
+
+// ---------------------------------------------------------------------------
+// Named Theorems
+// ---------------------------------------------------------------------------
+
+export async function getTheorems(): Promise<TheoremWithRelations[]> {
+  if (!isSupabaseConfigured) return [];
+  if (!supabase) notConfigured();
+  const { data, error } = await supabase
+    .from('theorems')
+    .select('*, course:courses(*), topic:topics(*)')
+    .order('created_at', { ascending: false });
+  if (error) throw new Error(error.message);
+  return (data ?? []) as TheoremWithRelations[];
+}
+
+export async function getTheoremById(id: string): Promise<TheoremWithRelations | null> {
+  if (!isSupabaseConfigured) return null;
+  if (!supabase) notConfigured();
+  const { data, error } = await supabase
+    .from('theorems')
+    .select('*, course:courses(*), topic:topics(*)')
+    .eq('id', id)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  return (data as TheoremWithRelations | null) ?? null;
+}
+
+export async function getTheoremProgressForUser(
+  userId: string,
+): Promise<TheoremProgress[]> {
+  if (!isSupabaseConfigured) return [];
+  if (!supabase) notConfigured();
+  const { data, error } = await supabase
+    .from('theorem_progress')
+    .select('*')
+    .eq('user_id', userId);
+  if (error) throw new Error(error.message);
+  return (data ?? []) as TheoremProgress[];
+}
+
+export async function upsertTheoremProgress(
+  userId: string,
+  theoremId: string,
+  status: ProgressStatus,
+  masteredAt: string | null,
+): Promise<void> {
+  if (!isSupabaseConfigured) return;
+  if (!supabase) notConfigured();
+  const { error } = await supabase.from('theorem_progress').upsert(
+    {
+      user_id: userId,
+      theorem_id: theoremId,
+      status,
+      mastered_at: masteredAt,
+      last_reviewed_at: new Date().toISOString(),
+    },
+    { onConflict: 'user_id,theorem_id' },
+  );
+  if (error) throw new Error(error.message);
 }
 
 export async function getProgressForUser(

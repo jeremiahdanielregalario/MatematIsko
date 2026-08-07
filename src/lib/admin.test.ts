@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { Question, Topic } from '@/types';
+import type { Question, Theorem, Topic } from '@/types';
 
 const { mockRpc } = vi.hoisted(() => ({ mockRpc: vi.fn() }));
 
@@ -10,11 +10,14 @@ vi.mock('./supabase', () => ({
 
 import {
   adminDeleteQuestion,
+  adminDeleteTheorem,
   adminDeleteTopic,
   adminIsAdmin,
   adminUpsertQuestion,
+  adminUpsertTheorem,
   adminUpsertTopic,
   type QuestionDraft,
+  type TheoremDraft,
 } from './admin';
 
 function makeDraft(): QuestionDraft {
@@ -147,5 +150,78 @@ describe('adminIsAdmin', () => {
   it('returns false on an error', async () => {
     mockRpc.mockResolvedValue({ data: null, error: { message: 'boom' } });
     await expect(adminIsAdmin()).resolves.toBe(false);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Named Theorems
+// ---------------------------------------------------------------------------
+
+function makeTheoremDraft(): TheoremDraft {
+  return {
+    course_id: 'c1',
+    topic_id: 't1',
+    name: 'Lagrange\'s Theorem',
+    reference: 'Theorem 1.17',
+    statement: 'If $G$ is finite and $H \\le G$, then $|H|$ divides $|G|$.',
+    formal_notation: null,
+  };
+}
+
+const theorem: Theorem = {
+  id: 'th1',
+  course_id: 'c1',
+  topic_id: 't1',
+  name: "Lagrange's Theorem",
+  reference: 'Theorem 1.17',
+  statement: 'If $G$ is finite and $H \\le G$, then $|H|$ divides $|G|$.',
+  formal_notation: null,
+  created_at: '2024-01-01',
+  updated_at: '2024-01-01',
+};
+
+describe('adminUpsertTheorem', () => {
+  it('resolves with the saved theorem and maps p_ params', async () => {
+    mockRpc.mockResolvedValue({ data: theorem, error: null });
+    const result = await adminUpsertTheorem(makeTheoremDraft());
+    expect(result).toEqual(theorem);
+    expect(mockRpc).toHaveBeenCalledWith('admin_upsert_theorem', {
+      p_id: null,
+      p_course_id: 'c1',
+      p_topic_id: 't1',
+      p_name: "Lagrange's Theorem",
+      p_reference: 'Theorem 1.17',
+      p_statement: expect.stringContaining('finite'),
+      p_formal_notation: null,
+    });
+  });
+
+  it('passes an existing id through for updates', async () => {
+    mockRpc.mockResolvedValue({ data: theorem, error: null });
+    await adminUpsertTheorem({ ...makeTheoremDraft(), id: 'th1' });
+    expect(mockRpc).toHaveBeenCalledWith(
+      'admin_upsert_theorem',
+      expect.objectContaining({ p_id: 'th1' }),
+    );
+  });
+
+  it('throws when the database rejects the write', async () => {
+    mockRpc.mockResolvedValue({ data: null, error: { message: 'Only administrators can manage theorems' } });
+    await expect(adminUpsertTheorem(makeTheoremDraft())).rejects.toThrow(
+      'Only administrators can manage theorems',
+    );
+  });
+});
+
+describe('adminDeleteTheorem', () => {
+  it('deletes and resolves', async () => {
+    mockRpc.mockResolvedValue({ data: null, error: null });
+    await expect(adminDeleteTheorem('th1')).resolves.toBeUndefined();
+    expect(mockRpc).toHaveBeenCalledWith('admin_delete_theorem', { p_id: 'th1' });
+  });
+
+  it('throws when the row is missing', async () => {
+    mockRpc.mockResolvedValue({ data: null, error: { message: 'Theorem not found' } });
+    await expect(adminDeleteTheorem('th1')).rejects.toThrow('Theorem not found');
   });
 });

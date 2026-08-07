@@ -16,6 +16,9 @@ import { ProfilePage } from '@/pages/ProfilePage';
 import { ProgressPage } from '@/pages/ProgressPage';
 import { QuestionBankPage } from '@/pages/QuestionBankPage';
 import { QuestionDetailPage } from '@/pages/QuestionDetailPage';
+import { TheoremsPage } from '@/pages/TheoremsPage';
+import { TheoremDetailPage } from '@/pages/TheoremDetailPage';
+import { FlashcardSessionPage } from '@/pages/FlashcardSessionPage';
 
 export function App() {
   return (
@@ -31,6 +34,9 @@ export function App() {
                 <Route path="/dashboard" element={<DashboardPage />} />
                 <Route path="/questions" element={<QuestionBankPage />} />
                 <Route path="/questions/:id" element={<QuestionDetailPage />} />
+                <Route path="/theorems" element={<TheoremsPage />} />
+                <Route path="/theorems/flashcards" element={<FlashcardSessionPage />} />
+                <Route path="/theorems/:id" element={<TheoremDetailPage />} />
                 <Route path="/practice" element={<PracticePage />} />
                 <Route path="/bookmarks" element={<BookmarksPage />} />
                 <Route path="/progress" element={<ProgressPage />} />
