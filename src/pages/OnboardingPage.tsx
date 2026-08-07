@@ -11,7 +11,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAuth } from '@/hooks/useAuth';
 import { useCourses } from '@/hooks/useCourses';
 import { setUserCourses, updateProfileOnboarding } from '@/lib/db';
-import { cn } from '@/lib/cn';
 import type { Course } from '@/types';
 
 const YEAR_LEVELS = ['1st Year', '2nd Year', '3rd Year', '4th Year', '5th Year or more'];
@@ -306,19 +305,18 @@ export function OnboardingPage() {
                 )}
               </div>
 
-              <div className="flex flex-col gap-1.5">
-                <Label>Are you a member of UPMMC?</Label>
-                <div className="flex flex-col gap-1">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                <span className="text-sm font-medium text-stone-700 dark:text-stone-300">
+                  Are you a member of UPMMC?
+                </span>
+                <div className="flex items-center gap-3">
                   {[
                     { value: true, label: 'Yes' },
                     { value: false, label: 'No' },
                   ].map(({ value, label }) => (
                     <label
                       key={label}
-                      className={cn(
-                        'flex cursor-pointer items-center gap-2.5 rounded-lg border border-stone-200 px-3 py-2.5 text-sm transition-colors',
-                        'has-[:checked]:border-brand-700 has-[:checked]:bg-brand-50 dark:border-stone-800 dark:has-[:checked]:border-brand-500 dark:has-[:checked]:bg-brand-950/40',
-                      )}
+                      className="flex cursor-pointer items-center gap-1.5 text-sm text-stone-900 dark:text-stone-100"
                     >
                       <input
                         type="radio"
@@ -327,7 +325,7 @@ export function OnboardingPage() {
                         onChange={() => setUpmmcMember(value)}
                         className="size-4 shrink-0 accent-brand-800 dark:accent-brand-400"
                       />
-                      <span className="text-stone-900 dark:text-stone-100">{label}</span>
+                      {label}
                     </label>
                   ))}
                 </div>
