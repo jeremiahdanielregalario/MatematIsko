@@ -17,6 +17,7 @@ import type { Course } from '@/types';
 const YEAR_LEVELS = ['1st Year', '2nd Year', '3rd Year', '4th Year', '5th Year or more'];
 
 const DEGREE_PROGRAMS = [
+  'BS Mathematics',
   'BA Anthropology',
   'BS Applied Physics',
   'BA Applied Psychology',
@@ -69,7 +70,6 @@ const DEGREE_PROGRAMS = [
   'BS Mechanical Engineering',
   'BS Metallurgical Engineering',
   'BS Mining Engineering',
-  'BS Mathematics',
   'BS Molecular Biology and Biotechnology',
   'B Music',
   'BA Philippine Studies',
