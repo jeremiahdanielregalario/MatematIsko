@@ -3,7 +3,16 @@ import { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import type { Course } from '@/types';
 
-const DEFAULT_COURSE_CODES = ['MATH 20', 'MATH 21', 'MATH 22', 'MATH 23', 'MATH 122', 'MATH 162'];
+const DEFAULT_COURSE_CODES = [
+  'MATH 20',
+  'MATH 21',
+  'MATH 22',
+  'MATH 23',
+  'MATH 40',
+  'STAT 101',
+  'MATH 122',
+  'MATH 162',
+];
 
 function courseNumber(code: string): number {
   return parseFloat(code.replace('MATH', '').trim()) || 0;
