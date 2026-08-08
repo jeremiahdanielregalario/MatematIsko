@@ -9,13 +9,16 @@ vi.mock('./supabase', () => ({
 }));
 
 import {
+  adminDeleteCourse,
   adminDeleteQuestion,
   adminDeleteTheorem,
   adminDeleteTopic,
   adminIsAdmin,
+  adminUpsertCourse,
   adminUpsertQuestion,
   adminUpsertTheorem,
   adminUpsertTopic,
+  type CourseDraft,
   type QuestionDraft,
   type TheoremDraft,
 } from './admin';
@@ -223,5 +226,61 @@ describe('adminDeleteTheorem', () => {
   it('throws when the row is missing', async () => {
     mockRpc.mockResolvedValue({ data: null, error: { message: 'Theorem not found' } });
     await expect(adminDeleteTheorem('th1')).rejects.toThrow('Theorem not found');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Courses
+// ---------------------------------------------------------------------------
+
+const course = {
+  id: 'cr1',
+  code: 'MATH 158',
+  name: 'Introduction to Discrete Mathematics',
+  description: null,
+  created_at: '2024-01-01',
+};
+
+describe('adminUpsertCourse', () => {
+  it('creates a course and returns it', async () => {
+    mockRpc.mockResolvedValue({ data: course, error: null });
+    const draft: CourseDraft = { code: 'MATH 158', name: 'Introduction to Discrete Mathematics', description: null };
+    const result = await adminUpsertCourse(draft);
+    expect(result).toEqual(course);
+    expect(mockRpc).toHaveBeenCalledWith('admin_upsert_course', {
+      p_id: null,
+      p_code: 'MATH 158',
+      p_name: 'Introduction to Discrete Mathematics',
+      p_description: null,
+    });
+  });
+
+  it('passes an existing id through for updates', async () => {
+    mockRpc.mockResolvedValue({ data: course, error: null });
+    await adminUpsertCourse({ id: 'cr1', code: 'MATH 158', name: 'Intro to DM', description: null });
+    expect(mockRpc).toHaveBeenCalledWith(
+      'admin_upsert_course',
+      expect.objectContaining({ p_id: 'cr1' }),
+    );
+  });
+
+  it('throws on a permission error', async () => {
+    mockRpc.mockResolvedValue({ data: null, error: { message: 'Only administrators can manage courses' } });
+    await expect(adminUpsertCourse({ code: 'X', name: 'Y', description: null })).rejects.toThrow(
+      'Only administrators can manage courses',
+    );
+  });
+});
+
+describe('adminDeleteCourse', () => {
+  it('deletes and resolves', async () => {
+    mockRpc.mockResolvedValue({ data: null, error: null });
+    await expect(adminDeleteCourse('cr1')).resolves.toBeUndefined();
+    expect(mockRpc).toHaveBeenCalledWith('admin_delete_course', { p_id: 'cr1' });
+  });
+
+  it('throws when the row is missing', async () => {
+    mockRpc.mockResolvedValue({ data: null, error: { message: 'Course not found' } });
+    await expect(adminDeleteCourse('cr1')).rejects.toThrow('Course not found');
   });
 });

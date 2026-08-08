@@ -1,5 +1,5 @@
 import { supabase, isSupabaseConfigured } from './supabase';
-import type { Difficulty, Question, Theorem, Topic } from '@/types';
+import type { Difficulty, Question, Theorem, Topic, Course } from '@/types';
 
 function notConfigured(): never {
   throw new Error(
@@ -121,5 +121,36 @@ export async function adminDeleteTheorem(id: string): Promise<void> {
   if (!isSupabaseConfigured) notConfigured();
   if (!supabase) notConfigured();
   const { error } = await supabase.rpc('admin_delete_theorem', { p_id: id });
+  if (error) throw new Error(error.message);
+}
+
+// ---------------------------------------------------------------------------
+// Courses
+// ---------------------------------------------------------------------------
+
+export interface CourseDraft {
+  id?: string;
+  code: string;
+  name: string;
+  description: string | null;
+}
+
+export async function adminUpsertCourse(draft: CourseDraft): Promise<Course> {
+  if (!isSupabaseConfigured) notConfigured();
+  if (!supabase) notConfigured();
+  const { data, error } = await supabase.rpc('admin_upsert_course', {
+    p_id: draft.id ?? null,
+    p_code: draft.code,
+    p_name: draft.name,
+    p_description: draft.description,
+  });
+  if (error) throw new Error(error.message);
+  return data as Course;
+}
+
+export async function adminDeleteCourse(id: string): Promise<void> {
+  if (!isSupabaseConfigured) notConfigured();
+  if (!supabase) notConfigured();
+  const { error } = await supabase.rpc('admin_delete_course', { p_id: id });
   if (error) throw new Error(error.message);
 }
