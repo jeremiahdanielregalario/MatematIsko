@@ -20,7 +20,7 @@ import { applyFilterAndSort, pickRandom } from '@/lib/questionFilter';
 import type { Difficulty, QuestionFilter, QuestionWithMeta } from '@/types';
 
 const EMPTY_QUESTIONS: QuestionWithMeta[] = [];
-const PAGE_SIZE = 24;
+const PAGE_SIZE = 12;
 
 const SORT_OPTIONS: { value: NonNullable<QuestionFilter['sort']>; label: string }[] = [
   { value: 'newest', label: 'Newest first' },
