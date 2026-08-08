@@ -1,6 +1,7 @@
 import type { User } from '@supabase/supabase-js';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { UP_ACCESS_MESSAGE, isApprovedUpEmail } from '@/lib/auth';
+import { SESSION_EXPIRED_MESSAGE, SESSION_LIFETIME_MS, SESSION_START_KEY } from '@/lib/constants';
 import { ensureProfile, getProfile } from '@/lib/db';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import type { Profile } from '@/types';
@@ -21,6 +22,26 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+function getSessionStart(): number {
+  const raw = localStorage.getItem(SESSION_START_KEY);
+  const parsed = raw ? Number(raw) : NaN;
+  return Number.isFinite(parsed) ? parsed : Date.now();
+}
+
+function ensureSessionStart(): void {
+  if (!localStorage.getItem(SESSION_START_KEY)) {
+    localStorage.setItem(SESSION_START_KEY, String(Date.now()));
+  }
+}
+
+function clearSessionStart(): void {
+  localStorage.removeItem(SESSION_START_KEY);
+}
+
+function isSessionExpired(): boolean {
+  return Date.now() - getSessionStart() >= SESSION_LIFETIME_MS;
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [rawUser, setRawUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -28,7 +49,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authError, setAuthError] = useState<string | null>(null);
 
   // Session + domain gate. A `user` is only ever exposed to the rest of the
-  // app after their email is confirmed to end in @up.edu.ph.
+  // app after their email is confirmed to end in @up.edu.ph. Sessions are also
+  // time-boxed: after SESSION_LIFETIME_MS the user must sign in again.
   useEffect(() => {
     if (!supabase) {
       setLoading(false);
@@ -37,24 +59,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     let cancelled = false;
     const client = supabase;
 
-    const { data } = client.auth.onAuthStateChange((_event, session) => {
-      const nextUser = session?.user ?? null;
-      if (!nextUser) {
-        setRawUser(null);
-        setProfile(null);
-        setLoading(false);
-        return;
-      }
-      if (!isApprovedUpEmail(nextUser.email)) {
+    const acceptUser = (user: User) => {
+      if (!isApprovedUpEmail(user.email)) {
         setRawUser(null);
         setProfile(null);
         setAuthError(UP_ACCESS_MESSAGE);
+        clearSessionStart();
         void client.auth.signOut();
-        setLoading(false);
+        return;
+      }
+      if (isSessionExpired()) {
+        setRawUser(null);
+        setProfile(null);
+        setAuthError(SESSION_EXPIRED_MESSAGE);
+        clearSessionStart();
+        void client.auth.signOut();
         return;
       }
       setAuthError(null);
-      setRawUser(nextUser);
+      setRawUser(user);
+    };
+
+    const { data } = client.auth.onAuthStateChange((event, session) => {
+      const nextUser = session?.user ?? null;
+      if (!nextUser) {
+        clearSessionStart();
+        setRawUser(null);
+        setProfile(null);
+        setLoading(false);
+        return;
+      }
+      if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
+        ensureSessionStart();
+      }
+      acceptUser(nextUser);
       setLoading(false);
     });
 
@@ -64,15 +102,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (cancelled) return;
         const user = sessionData.session?.user ?? null;
         if (user) {
-          if (!isApprovedUpEmail(user.email)) {
-            setRawUser(null);
-            setProfile(null);
-            setAuthError(UP_ACCESS_MESSAGE);
-            void client.auth.signOut();
-          } else {
-            setRawUser(user);
-            setAuthError(null);
-          }
+          ensureSessionStart();
+          acceptUser(user);
         }
         setLoading(false);
       })
@@ -85,6 +116,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       data.subscription.unsubscribe();
     };
   }, []);
+
+  // Force sign-out while the tab stays open once the session window elapses.
+  useEffect(() => {
+    if (!rawUser || !supabase) return;
+    const client = supabase;
+    const remaining = getSessionStart() + SESSION_LIFETIME_MS - Date.now();
+    if (remaining <= 0) {
+      void client.auth.signOut();
+      return;
+    }
+    const timerId = window.setTimeout(() => {
+      void client.auth.signOut();
+    }, remaining);
+    return () => window.clearTimeout(timerId);
+  }, [rawUser]);
 
   // Load (and lazily create) the profile row for an approved user.
   useEffect(() => {
@@ -133,6 +179,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = useCallback(async () => {
     if (!supabase) return;
     await supabase.auth.signOut();
+    clearSessionStart();
     setRawUser(null);
     setProfile(null);
     setAuthError(null);
