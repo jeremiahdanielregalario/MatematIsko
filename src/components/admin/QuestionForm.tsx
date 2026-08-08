@@ -117,6 +117,7 @@ export function QuestionForm({ initial, courses, topics, onSaved, onCancel }: Qu
   };
 
   const previewBlocks = [
+    { label: 'Title', value: draft.title },
     { label: 'Question', value: draft.question_text },
     { label: 'Hint', value: draft.hint ?? '' },
     { label: 'Answer', value: draft.answer },
