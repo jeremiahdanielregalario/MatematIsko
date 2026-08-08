@@ -1,5 +1,5 @@
-import { SearchX, Shuffle } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { ChevronLeft, ChevronRight, SearchX, Shuffle } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ErrorState } from '@/components/common/ErrorState';
 import { EmptyState } from '@/components/common/EmptyState';
@@ -20,6 +20,7 @@ import { applyFilterAndSort, pickRandom } from '@/lib/questionFilter';
 import type { Difficulty, QuestionFilter, QuestionWithMeta } from '@/types';
 
 const EMPTY_QUESTIONS: QuestionWithMeta[] = [];
+const PAGE_SIZE = 24;
 
 const SORT_OPTIONS: { value: NonNullable<QuestionFilter['sort']>; label: string }[] = [
   { value: 'newest', label: 'Newest first' },
@@ -41,6 +42,7 @@ export function QuestionBankPage() {
   const [searchInput, setSearchInput] = useState('');
   const search = useDebounce(searchInput, 250);
   const [sort, setSort] = useState<NonNullable<QuestionFilter['sort']>>('newest');
+  const [page, setPage] = useState(1);
 
   const { data: loaded, loading, error, reload } = useQuestions();
   const { data: coursesData } = useCourses();
@@ -64,6 +66,18 @@ export function QuestionBankPage() {
     const merged = baseQuestions.map((q) => mergeMutations(q, mutations));
     return applyFilterAndSort(merged, filter);
   }, [baseQuestions, mutations, filter]);
+
+  // Reset to first page whenever filters or sort change.
+  useEffect(() => {
+    setPage(1);
+  }, [filter]);
+
+  const totalPages = Math.max(1, Math.ceil(questions.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages);
+  const pagedQuestions = useMemo(
+    () => questions.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE),
+    [questions, safePage],
+  );
 
   const years = useMemo(
     () => [...new Set(baseQuestions.map((q) => q.year))].sort((a, b) => b - a),
@@ -198,16 +212,43 @@ export function QuestionBankPage() {
           }
         />
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {questions.map((question) => (
-            <QuestionCard
-              key={question.id}
-              question={question}
-              onToggleBookmark={mutations.toggleBookmark}
-              onSetStatus={mutations.setStatus}
-            />
-          ))}
-        </div>
+        <>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {pagedQuestions.map((question) => (
+              <QuestionCard
+                key={question.id}
+                question={question}
+                onToggleBookmark={mutations.toggleBookmark}
+                onSetStatus={mutations.setStatus}
+              />
+            ))}
+          </div>
+          {totalPages > 1 ? (
+            <div className="flex items-center justify-center gap-3 pt-2">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={safePage <= 1}
+                onClick={() => setPage((p) => p - 1)}
+              >
+                <ChevronLeft className="size-4" />
+                Previous
+              </Button>
+              <span className="text-sm text-stone-500 dark:text-stone-400">
+                Page {safePage} of {totalPages}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={safePage >= totalPages}
+                onClick={() => setPage((p) => p + 1)}
+              >
+                Next
+                <ChevronRight className="size-4" />
+              </Button>
+            </div>
+          ) : null}
+        </>
       )}
     </div>
   );
