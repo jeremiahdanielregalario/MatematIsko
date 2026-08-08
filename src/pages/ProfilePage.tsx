@@ -1,11 +1,23 @@
-import { BookOpenText, GraduationCap, LogOut, ShieldCheck, UserRound } from 'lucide-react';
-import { useCallback } from 'react';
+import {
+  GraduationCap,
+  Loader2,
+  LogOut,
+  Pencil,
+  Save,
+  ShieldCheck,
+  UserRound,
+  X,
+} from 'lucide-react';
+import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { CoursePicker } from '@/components/courses/CoursePicker';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
 import { useAsync } from '@/hooks/useAsync';
-import { getUserCourses } from '@/lib/db';
+import { useCourseScope } from '@/hooks/useCourseScope';
+import { useCourses } from '@/hooks/useCourses';
+import { getUserCourses, setUserCourses } from '@/lib/db';
 
 function InfoRow({
   label,
@@ -31,7 +43,14 @@ export function ProfilePage() {
   const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
   const fetchCourses = useCallback(() => (user ? getUserCourses(user.id) : Promise.resolve([])), [user]);
-  const { data: courses, loading: coursesLoading } = useAsync(fetchCourses);
+  const { data: courses, loading: coursesLoading, reload: reloadCourses } = useAsync(fetchCourses);
+  const { data: allCourses } = useCourses();
+  const { refresh: refreshCourseScope } = useCourseScope();
+
+  const [editingCourses, setEditingCourses] = useState(false);
+  const [selectedCourseIds, setSelectedCourseIds] = useState<string[]>([]);
+  const [savingCourses, setSavingCourses] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   if (!user) return null;
 
@@ -42,6 +61,37 @@ export function ProfilePage() {
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
+  };
+
+  const startEditingCourses = () => {
+    setSelectedCourseIds((courses ?? []).map((course) => course.id));
+    setSaveError(null);
+    setEditingCourses(true);
+  };
+
+  const cancelEditingCourses = () => {
+    setSaveError(null);
+    setEditingCourses(false);
+  };
+
+  const handleSaveCourses = async () => {
+    if (!user) return;
+    if (selectedCourseIds.length === 0) {
+      setSaveError('Please choose at least one math course to study.');
+      return;
+    }
+    setSaveError(null);
+    setSavingCourses(true);
+    try {
+      await setUserCourses(user.id, selectedCourseIds);
+      reloadCourses();
+      refreshCourseScope();
+      setEditingCourses(false);
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+    } finally {
+      setSavingCourses(false);
+    }
   };
 
   const infoRows = [
@@ -109,10 +159,49 @@ export function ProfilePage() {
             <CardTitle className="text-xl">Courses you're studying</CardTitle>
             <CardDescription>The math courses you picked to focus on.</CardDescription>
           </div>
-          <BookOpenText className="size-5 text-stone-400" />
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={editingCourses ? cancelEditingCourses : startEditingCourses}
+            disabled={savingCourses}
+          >
+            {editingCourses ? <X className="size-4" /> : <Pencil className="size-4" />}
+            {editingCourses ? 'Cancel' : 'Edit'}
+          </Button>
         </CardHeader>
-        <CardContent>
-          {coursesLoading ? (
+        <CardContent className="space-y-4">
+          {editingCourses ? (
+            <>
+              <CoursePicker
+                courses={allCourses ?? []}
+                value={selectedCourseIds}
+                onChange={setSelectedCourseIds}
+              />
+              {saveError ? (
+                <p role="alert" className="text-sm font-medium text-red-600 dark:text-red-400">
+                  {saveError}
+                </p>
+              ) : null}
+              <div className="flex items-center justify-end gap-2">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={cancelEditingCourses}
+                  disabled={savingCourses}
+                >
+                  Cancel
+                </Button>
+                <Button type="button" onClick={() => void handleSaveCourses()} disabled={savingCourses}>
+                  {savingCourses ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    <Save className="size-4" />
+                  )}
+                  Save courses
+                </Button>
+              </div>
+            </>
+          ) : coursesLoading ? (
             <p className="py-2 text-sm text-stone-400 dark:text-stone-500">Loading courses&hellip;</p>
           ) : courses && courses.length > 0 ? (
             <ul className="space-y-2">
