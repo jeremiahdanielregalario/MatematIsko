@@ -1,4 +1,4 @@
-import { X } from 'lucide-react';
+import { Check, HelpCircle, X } from 'lucide-react';
 import { useState } from 'react';
 import type { PracticeAnswer, AnswerResult } from '@/lib/practice';
 import type { QuestionWithMeta } from '@/types';
@@ -41,14 +41,29 @@ export function PracticeSession({ questions, onAnswer, onComplete, onQuit }: Pra
     reveal.reset();
   };
 
-  const answerButtonClass = (variant: AnswerResult) =>
-    cn(
-      'h-11 flex-1',
-      variant === 'correct' &&
-        'bg-emerald-600 text-white hover:bg-emerald-500 dark:bg-emerald-600 dark:hover:bg-emerald-500',
-      variant === 'incorrect' && 'bg-red-600 text-white hover:bg-red-500 dark:bg-red-700 dark:hover:bg-red-600',
-      variant === 'unsure' && 'bg-amber-500 text-white hover:bg-amber-400 dark:bg-amber-600 dark:hover:bg-amber-500',
-    );
+  const answerButtons: { variant: AnswerResult; icon: typeof Check; label: string; activeClass: string }[] = [
+    {
+      variant: 'correct',
+      icon: Check,
+      label: 'Correct',
+      activeClass:
+        'border-emerald-600 bg-emerald-600 text-white hover:border-emerald-500 hover:bg-emerald-500 dark:border-emerald-500 dark:bg-emerald-600 dark:hover:bg-emerald-500',
+    },
+    {
+      variant: 'incorrect',
+      icon: X,
+      label: 'Incorrect',
+      activeClass:
+        'border-red-600 bg-red-600 text-white hover:border-red-500 hover:bg-red-500 dark:border-red-500 dark:bg-red-600 dark:hover:bg-red-500',
+    },
+    {
+      variant: 'unsure',
+      icon: HelpCircle,
+      label: 'Not sure',
+      activeClass:
+        'border-amber-500 bg-amber-500 text-white hover:border-amber-400 hover:bg-amber-400 dark:border-amber-500 dark:bg-amber-500 dark:hover:bg-amber-400',
+    },
+  ];
 
   return (
     <div className="mx-auto max-w-3xl space-y-4">
@@ -110,27 +125,20 @@ export function PracticeSession({ questions, onAnswer, onComplete, onQuit }: Pra
       </Card>
 
       <div className="flex flex-col gap-2 sm:flex-row">
-        <button
-          type="button"
-          className={answerButtonClass('correct')}
-          onClick={() => handleAnswer('correct')}
-        >
-          Correct
-        </button>
-        <button
-          type="button"
-          className={answerButtonClass('incorrect')}
-          onClick={() => handleAnswer('incorrect')}
-        >
-          Incorrect
-        </button>
-        <button
-          type="button"
-          className={answerButtonClass('unsure')}
-          onClick={() => handleAnswer('unsure')}
-        >
-          Not sure
-        </button>
+        {answerButtons.map(({ variant, icon: Icon, label, activeClass }) => (
+          <button
+            key={variant}
+            type="button"
+            className={cn(
+              'flex h-11 flex-1 items-center justify-center gap-2 rounded-lg border text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600',
+              activeClass,
+            )}
+            onClick={() => handleAnswer(variant)}
+          >
+            <Icon className="size-4" aria-hidden="true" />
+            {label}
+          </button>
+        ))}
       </div>
     </div>
   );
