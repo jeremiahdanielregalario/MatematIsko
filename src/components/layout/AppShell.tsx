@@ -11,6 +11,7 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/cn';
 import { Logo } from '@/components/Logo';
+import { CourseStudyModal } from '@/components/courses/CourseStudyModal';
 import { ThemeToggle } from './ThemeToggle';
 import { UserMenu } from './UserMenu';
 
@@ -115,6 +116,8 @@ export function AppShell() {
           </div>
         </nav>
       ) : null}
+
+      <CourseStudyModal />
     </div>
   );
 }

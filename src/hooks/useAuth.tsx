@@ -13,11 +13,15 @@ interface AuthContextValue {
   /** Non-null when the signed-in email is not allowed to use the app. */
   authError: string | null;
   configured: boolean;
+  /** True right after a fresh sign-in (not on session restore), until acknowledged. */
+  justSignedIn: boolean;
   signInWithGoogle: () => Promise<void>;
   signInWithEmail: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   /** Re-fetch the current user's profile row and update context state. */
   refreshProfile: () => Promise<void>;
+  /** Clear the "just signed in" flag once the study picker has been shown/dismissed. */
+  acknowledgeSignIn: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -47,6 +51,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [justSignedIn, setJustSignedIn] = useState(false);
 
   // Session + domain gate. A `user` is only ever exposed to the rest of the
   // app after their email is confirmed to end in @up.edu.ph. Sessions are also
@@ -86,8 +91,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         clearSessionStart();
         setRawUser(null);
         setProfile(null);
+        setJustSignedIn(false);
         setLoading(false);
         return;
+      }
+      if (event === 'SIGNED_IN') {
+        setJustSignedIn(true);
       }
       if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
         ensureSessionStart();
@@ -191,6 +200,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (next) setProfile(next);
   }, [rawUser]);
 
+  const acknowledgeSignIn = useCallback(() => {
+    setJustSignedIn(false);
+  }, []);
+
   const value = useMemo<AuthContextValue>(
     () => ({
       user: rawUser,
@@ -198,12 +211,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       loading,
       authError,
       configured: isSupabaseConfigured,
+      justSignedIn,
       signInWithGoogle,
       signInWithEmail,
       signOut,
       refreshProfile,
+      acknowledgeSignIn,
     }),
-    [rawUser, profile, loading, authError, signInWithGoogle, signInWithEmail, signOut, refreshProfile],
+    [
+      rawUser,
+      profile,
+      loading,
+      authError,
+      justSignedIn,
+      signInWithGoogle,
+      signInWithEmail,
+      signOut,
+      refreshProfile,
+      acknowledgeSignIn,
+    ],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

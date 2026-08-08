@@ -1,24 +1,25 @@
 import {
-  ArrowRight,
-  Bookmark,
   BookOpenText,
+  Bookmark,
   CheckCircle2,
+  Layers,
   Shuffle,
-  Sparkles,
   Target,
 } from 'lucide-react';
+import { useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { CourseCard, type CourseStats } from '@/components/courses/CourseCard';
 import { ErrorState } from '@/components/common/ErrorState';
 import { EmptyState } from '@/components/common/EmptyState';
 import { LoadingState } from '@/components/common/LoadingState';
 import { ProgressCard } from '@/components/common/ProgressCard';
-import { QuestionCard } from '@/components/questions/QuestionCard';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
+import { useCourseScope } from '@/hooks/useCourseScope';
+import { useCourses } from '@/hooks/useCourses';
 import { useQuestions } from '@/hooks/useQuestions';
 import { computeStats } from '@/lib/stats';
 import { pickRandom } from '@/lib/questionFilter';
-import type { QuestionWithMeta } from '@/types';
 
 function greeting(): string {
   const hour = new Date().getHours();
@@ -31,6 +32,30 @@ export function DashboardPage() {
   const { profile } = useAuth();
   const navigate = useNavigate();
   const { data, loading, error, reload } = useQuestions();
+  const { data: coursesData } = useCourses();
+  const { courseIds } = useCourseScope();
+
+  const courses = useMemo(
+    () => (coursesData ?? []).filter((course) => courseIds === null || courseIds.includes(course.id)),
+    [coursesData, courseIds],
+  );
+
+  const questions = useMemo(() => data ?? [], [data]);
+
+  const stats = useMemo(() => computeStats(questions), [questions]);
+
+  const statsByCourse = useMemo(() => {
+    const map = new Map<string, CourseStats>();
+    for (const q of questions) {
+      const entry = map.get(q.course_id) ?? { total: 0, mastered: 0, learning: 0 };
+      entry.total += 1;
+      const status = q.progress?.status ?? 'unseen';
+      if (status === 'mastered') entry.mastered += 1;
+      if (status === 'learning') entry.learning += 1;
+      map.set(q.course_id, entry);
+    }
+    return map;
+  }, [questions]);
 
   if (loading) return <LoadingState label="Loading your dashboard" />;
   if (error) {
@@ -43,23 +68,7 @@ export function DashboardPage() {
     );
   }
 
-  const questions = data ?? [];
-  const stats = computeStats(questions);
-
   const firstName = profile?.full_name?.split(/\s+/)[0] ?? 'student';
-
-  const recent = [...questions]
-    .filter((q) => q.progress?.last_attempted_at)
-    .sort((a, b) => (b.progress?.last_attempted_at ?? '').localeCompare(a.progress?.last_attempted_at ?? ''))
-    .slice(0, 3);
-
-  const recommended = [...questions]
-    .sort((a, b) => {
-      const rank = (q: QuestionWithMeta) =>
-        (q.bookmarked ? 4 : 0) + (q.progress?.status === 'learning' ? 3 : 0) + (q.progress?.status === 'unseen' ? 1 : 0);
-      return rank(b) - rank(a);
-    })
-    .slice(0, 3);
 
   const startRandom = () => {
     const random = pickRandom(questions);
@@ -74,7 +83,7 @@ export function DashboardPage() {
             {greeting()}, {firstName}.
           </h1>
           <p className="mt-1 text-stone-500 dark:text-stone-400">
-            Ready to review? {stats.unseen > 0 ? `${stats.unseen} questions left to try.` : 'You have seen every question in the bank.'}
+            Pick a course to review, or dive into a random problem.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -92,93 +101,62 @@ export function DashboardPage() {
       </section>
 
       <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <ProgressCard label="Questions available" value={stats.total} icon={<BookOpenText className="size-4" />} />
-        <ProgressCard label="Completed" value={stats.completed} icon={<CheckCircle2 className="size-4 text-emerald-600 dark:text-emerald-400" />} hint="Attempted at least once" />
-        <ProgressCard label="Mastered" value={stats.mastered} icon={<Sparkles className="size-4 text-brand-700 dark:text-brand-400" />} />
-        <ProgressCard label="Bookmarked" value={stats.bookmarked} icon={<Bookmark className="size-4 text-amber-600 dark:text-amber-400" />} />
-      </section>
-
-      <section className="rounded-xl border border-stone-200 bg-white p-5 dark:border-stone-800 dark:bg-stone-900">
-        <div className="mb-2 flex items-center justify-between text-sm">
-          <span className="font-medium text-stone-700 dark:text-stone-200">Overall mastery</span>
-          <span className="font-semibold text-stone-900 dark:text-stone-100">
-            {stats.masteryRate !== null ? `${stats.masteryRate}%` : '—'}
-          </span>
-        </div>
-        <div
-          className="h-2.5 overflow-hidden rounded-full bg-stone-100 dark:bg-stone-800"
-          role="progressbar"
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={stats.masteryRate ?? 0}
-          aria-label="Overall mastery progress"
-        >
-          <div
-            className="h-full rounded-full bg-gradient-to-r from-brand-700 to-brand-500 transition-all duration-500 dark:from-brand-500 dark:to-brand-300"
-            style={{ width: `${stats.masteryRate ?? 0}%` }}
-          />
-        </div>
-      </section>
-
-      {recent.length > 0 ? (
-        <section>
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="font-serif text-xl font-semibold text-stone-900 dark:text-stone-100">
-              Continue studying
-            </h2>
-            <Link
-              to="/progress"
-              className="inline-flex items-center gap-1 text-sm font-medium text-brand-800 hover:underline dark:text-brand-300"
-            >
-              View progress <ArrowRight className="size-4" />
-            </Link>
-          </div>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {recent.map((q) => (
-              <QuestionCard
-                key={q.id}
-                question={q}
-                onToggleBookmark={() => undefined}
-                onSetStatus={undefined}
-              />
-            ))}
-          </div>
-        </section>
-      ) : (
-        <EmptyState
-          icon={<Shuffle className="size-8" />}
-          title="Nothing attempted yet"
-          description="Attempt your first problem to start tracking your study progress."
-          action={
-            <Button asChild>
-              <Link to="/questions">Browse questions</Link>
-            </Button>
+        <ProgressCard
+          label="Questions available"
+          value={stats.total}
+          icon={<Layers className="size-4" />}
+        />
+        <ProgressCard
+          label="Mastered"
+          value={stats.mastered}
+          icon={<CheckCircle2 className="size-4" />}
+          hint={
+            stats.masteryRate === null
+              ? 'Answer questions to start tracking.'
+              : `${stats.masteryRate}% of attempted questions mastered`
           }
         />
-      )}
+        <ProgressCard
+          label="Learning"
+          value={stats.learning}
+          icon={<BookOpenText className="size-4" />}
+        />
+        <ProgressCard
+          label="Bookmarked"
+          value={stats.bookmarked}
+          icon={<Bookmark className="size-4" />}
+        />
+      </section>
 
-      {recommended.length > 0 ? (
-        <section>
-          <div className="mb-3">
-            <h2 className="font-serif text-xl font-semibold text-stone-900 dark:text-stone-100">
-              Recommended for you
-            </h2>
-            <p className="text-sm text-stone-500 dark:text-stone-400">
-              Bookmarked and in-progress questions worth revisiting.
-            </p>
-          </div>
+      <section className="space-y-4">
+        <h2 className="font-serif text-2xl font-bold tracking-tight text-stone-900 dark:text-stone-50">
+          What are you studying?
+        </h2>
+        {courses.length > 0 ? (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {recommended.map((q) => (
-              <QuestionCard
-                key={q.id}
-                question={q}
-                onToggleBookmark={() => undefined}
-                onSetStatus={undefined}
-              />
+            {courses.map((course) => (
+              <Link
+                key={course.id}
+                to={`/courses/${course.id}`}
+                className="rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+              >
+                <CourseCard course={course} stats={statsByCourse.get(course.id) ?? { total: 0, mastered: 0, learning: 0 }} />
+              </Link>
             ))}
           </div>
-        </section>
-      ) : null}
+        ) : (
+          <EmptyState
+            icon={<Layers className="size-8" />}
+            title="No courses selected yet"
+            description="Choose the math courses you want to study so they show up here."
+            action={
+              <Button asChild>
+                <Link to="/profile">Choose courses</Link>
+              </Button>
+            }
+          />
+        )}
+      </section>
     </div>
   );
 }
