@@ -124,7 +124,7 @@ function CourseCheckbox({
 }
 
 export function OnboardingPage() {
-  const { user, profile, loading } = useAuth();
+  const { user, profile, loading, refreshProfile } = useAuth();
   const navigate = useNavigate();
   const { data: courses, loading: coursesLoading, error: coursesError, reload } = useCourses();
 
@@ -191,6 +191,7 @@ export function OnboardingPage() {
         upmmc_member: upmmcMember,
       });
       await setUserCourses(user.id, selectedCourseIds);
+      await refreshProfile();
       navigate('/dashboard', { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');

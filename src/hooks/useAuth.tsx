@@ -15,6 +15,8 @@ interface AuthContextValue {
   signInWithGoogle: () => Promise<void>;
   signInWithEmail: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+  /** Re-fetch the current user's profile row and update context state. */
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -136,6 +138,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setAuthError(null);
   }, []);
 
+  const refreshProfile = useCallback(async () => {
+    if (!rawUser || !supabase) return;
+    const next = await getProfile(rawUser.id);
+    if (next) setProfile(next);
+  }, [rawUser]);
+
   const value = useMemo<AuthContextValue>(
     () => ({
       user: rawUser,
@@ -146,8 +154,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       signInWithGoogle,
       signInWithEmail,
       signOut,
+      refreshProfile,
     }),
-    [rawUser, profile, loading, authError, signInWithGoogle, signInWithEmail, signOut],
+    [rawUser, profile, loading, authError, signInWithGoogle, signInWithEmail, signOut, refreshProfile],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
