@@ -45,8 +45,9 @@ export function QuestionBankPage() {
   const { data: loaded, loading, error, reload } = useQuestions();
   const { data: coursesData } = useCourses();
   const { courseIds } = useCourseScope();
-  const courses = (coursesData ?? []).filter(
-    (course) => courseIds === null || courseIds.includes(course.id),
+  const courses = useMemo(
+    () => (coursesData ?? []).filter((course) => courseIds === null || courseIds.includes(course.id)),
+    [coursesData, courseIds],
   );
 
   const baseQuestions = loaded ?? EMPTY_QUESTIONS;

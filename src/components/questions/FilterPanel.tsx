@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { FilterX } from 'lucide-react';
 import type { Course, Difficulty, QuestionFilter, Topic } from '@/types';
 import { cn } from '@/lib/cn';
@@ -29,7 +30,7 @@ function FilterField({ label, value, onValueChange, placeholder, children, class
         <SelectTrigger className="h-9 text-sm">
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent position="item-aligned">
           <SelectItem value="all">{placeholder ?? 'All'}</SelectItem>
           {children}
         </SelectContent>
@@ -47,7 +48,7 @@ interface FilterPanelProps {
   className?: string;
 }
 
-export function FilterPanel({ courses, topics, years, filter, onChange, className }: FilterPanelProps) {
+export const FilterPanel = memo(function FilterPanel({ courses, topics, years, filter, onChange, className }: FilterPanelProps) {
   const set = <K extends keyof QuestionFilter>(key: K, value: QuestionFilter[K] | undefined) => {
     const next = { ...filter, [key]: value };
     if (key === 'courseId') {
@@ -161,4 +162,4 @@ export function FilterPanel({ courses, topics, years, filter, onChange, classNam
       </div>
     </div>
   );
-}
+});
