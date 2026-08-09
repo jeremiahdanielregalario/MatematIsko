@@ -6,8 +6,10 @@ const Card = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
     <div
       ref={ref}
       className={cn(
-        'rounded-xl border border-stone-200 bg-white text-stone-900 shadow-sm',
+        'relative overflow-hidden rounded-xl border border-stone-200 bg-white text-stone-900 shadow-sm',
+        'before:absolute before:inset-x-0 before:top-0 before:h-0.5 before:bg-gradient-to-r before:from-brand-700 before:via-brand-400 before:to-brand-700 before:content-[""]',
         'dark:border-stone-800 dark:bg-stone-900 dark:text-stone-100',
+        'dark:before:from-brand-500 dark:before:via-brand-300 dark:before:to-brand-500',
         className,
       )}
       {...props}
