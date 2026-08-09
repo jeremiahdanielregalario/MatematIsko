@@ -8,6 +8,11 @@ interface MasteryButtonProps {
 
 const OPTIONS: { value: ProgressStatus; label: string; active: string }[] = [
   {
+    value: 'unseen',
+    label: 'Not yet taken',
+    active: 'bg-stone-200 text-stone-800 dark:bg-stone-700 dark:text-stone-100',
+  },
+  {
     value: 'learning',
     label: 'Learning',
     active: 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300',
@@ -24,7 +29,7 @@ export function MasteryButton({ status, onChange }: MasteryButtonProps) {
     <div
       role="group"
       aria-label="Mastery status"
-      className="inline-flex items-center rounded-lg border border-stone-200 bg-stone-50 p-0.5 dark:border-stone-800 dark:bg-stone-900"
+      className="inline-flex flex-wrap items-center rounded-lg border border-stone-200 bg-stone-50 p-0.5 dark:border-stone-800 dark:bg-stone-900"
     >
       {OPTIONS.map((option) => {
         const active = status === option.value;
@@ -36,7 +41,7 @@ export function MasteryButton({ status, onChange }: MasteryButtonProps) {
             onClick={(event) => {
               event.preventDefault();
               event.stopPropagation();
-              onChange(active ? 'unseen' : option.value);
+              onChange(option.value);
             }}
             className={cn(
               'rounded-md px-3 py-1 text-xs font-medium transition-colors',

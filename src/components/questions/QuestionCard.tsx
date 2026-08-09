@@ -41,7 +41,7 @@ export function QuestionCard({ question, onToggleBookmark, onSetStatus, classNam
         />
       </div>
 
-      <div className="min-w-0">
+      <div className="min-w-0 overflow-hidden">
         <h3 className="mb-1 font-serif text-lg font-semibold leading-snug text-stone-900 dark:text-stone-100">
           <Link
             to={`/questions/${question.id}`}
@@ -50,8 +50,10 @@ export function QuestionCard({ question, onToggleBookmark, onSetStatus, classNam
             <MathRenderer inline>{question.title}</MathRenderer>
           </Link>
         </h3>
-        <div className="line-clamp-3 text-stone-600 dark:text-stone-300">
-          <MathRenderer preview>{question.question_text}</MathRenderer>
+        <div className="min-w-0 overflow-hidden text-sm text-stone-600 dark:text-stone-300">
+          <div className="line-clamp-3">
+            <MathRenderer preview>{question.question_text}</MathRenderer>
+          </div>
         </div>
       </div>
 

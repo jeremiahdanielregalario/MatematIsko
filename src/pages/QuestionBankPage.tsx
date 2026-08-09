@@ -174,7 +174,7 @@ export function QuestionBankPage() {
         <div className="flex items-center justify-end gap-2">
           <Label className="text-xs text-stone-500 dark:text-stone-400">Sort by</Label>
           <Select value={sort} onValueChange={(value) => setSort(value as NonNullable<QuestionFilter['sort']>)}>
-            <SelectTrigger className="h-9 w-56 text-sm">
+            <SelectTrigger className="h-10 w-full text-sm sm:w-56">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

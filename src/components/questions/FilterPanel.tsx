@@ -27,7 +27,7 @@ function FilterField({ label, value, onValueChange, placeholder, children, class
     <div className={cn('flex flex-col gap-1.5', className)}>
       <Label className="text-xs text-stone-500 dark:text-stone-400">{label}</Label>
       <Select value={value} onValueChange={onValueChange}>
-        <SelectTrigger className="h-9 text-sm">
+        <SelectTrigger className="h-10 text-sm">
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent position="item-aligned">
@@ -67,7 +67,7 @@ export const FilterPanel = memo(function FilterPanel({ courses, topics, years, f
   return (
     <div
       className={cn(
-        'grid grid-cols-2 gap-3 rounded-xl border border-stone-200 bg-white p-4 sm:grid-cols-3 lg:grid-cols-6 dark:border-stone-800 dark:bg-stone-900',
+        'grid grid-cols-2 gap-3 rounded-xl border border-stone-200 bg-white p-4 sm:grid-cols-3 lg:grid-cols-6 max-[360px]:grid-cols-1 dark:border-stone-800 dark:bg-stone-900',
         className,
       )}
     >

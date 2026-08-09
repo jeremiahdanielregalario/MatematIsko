@@ -66,7 +66,7 @@ export function AppShell() {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-8xl flex-1 px-4 pb-24 pt-8 sm:px-6 md:pb-12">
+      <main className="mx-auto w-full max-w-8xl flex-1 px-4 pb-mobile-nav pt-8 sm:px-6 md:pb-12">
         {loading ? (
           <div className="flex h-64 items-center justify-center text-sm text-stone-400">
             Loading&hellip;
@@ -78,7 +78,7 @@ export function AppShell() {
         )}
       </main>
 
-      <footer className="border-t border-stone-200 py-6 dark:border-stone-800">
+      <footer className="hidden border-t border-stone-200 py-6 dark:border-stone-800 md:block">
         <div className="mx-auto flex w-full max-w-8xl flex-col items-center gap-1 px-4 text-center text-xs text-stone-500 dark:text-stone-400 sm:px-6">
           <span className="inline-flex items-center gap-1.5 font-medium">
             <Home className="size-3.5" />
