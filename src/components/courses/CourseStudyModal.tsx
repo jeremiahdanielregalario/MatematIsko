@@ -43,7 +43,7 @@ export function CourseStudyModal() {
 
   return (
     <Dialog open onOpenChange={(open) => !open && dismiss()}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md p-6">
         <DialogTitle className="flex items-center gap-2 text-xl">
           <GraduationCap className="size-5 text-brand-700 dark:text-brand-300" />
           What would you like to study today?
@@ -51,7 +51,7 @@ export function CourseStudyModal() {
         <DialogDescription>
           Pick a course to jump right in. You can switch anytime from the dashboard.
         </DialogDescription>
-        <div className="mt-2 space-y-2">
+        <div className="mt-2 min-h-0 flex-1 space-y-2 overflow-y-auto pr-1">
           {loading ? (
             <div className="flex items-center justify-center gap-2 py-6 text-sm text-stone-400 dark:text-stone-500">
               <Loader2 className="size-4 animate-spin" />
