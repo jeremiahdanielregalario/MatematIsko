@@ -115,7 +115,7 @@ function FlashcardDeck({ theorems, onRate, onFinish }: FlashcardSessionProps) {
 
           {/* Back: statement */}
           <div className="absolute inset-0 [transform:rotateY(180deg)] [backface-visibility:hidden]">
-            <Card className="flex h-full min-h-80 flex-col p-6 shadow-md">
+            <Card className="flex h-full min-h-80 flex-col overflow-y-auto p-6 shadow-md">
               <TheoremStatement theorem={current} className="flex-1" />
             </Card>
           </div>
