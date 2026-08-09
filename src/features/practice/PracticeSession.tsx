@@ -86,12 +86,12 @@ export function PracticeSession({ questions, onAnswer, onComplete, onQuit }: Pra
         aria-label="Practice progress"
       >
         <div
-          className="h-full rounded-full bg-brand-700 transition-all duration-300 dark:bg-brand-400"
+          className="h-full rounded-full bg-brand-700 transition-all duration-300 ease-out dark:bg-brand-400"
           style={{ width: `${progress}%` }}
         />
       </div>
 
-      <Card>
+      <Card key={question.id} className="animate-slide-up">
         <CardContent className="space-y-5 p-6">
           <div className="flex flex-wrap items-center gap-2 text-xs text-stone-500 dark:text-stone-400">
             <span className="font-mono font-semibold text-brand-900 dark:text-brand-300">
@@ -130,7 +130,7 @@ export function PracticeSession({ questions, onAnswer, onComplete, onQuit }: Pra
             key={variant}
             type="button"
             className={cn(
-              'flex h-11 flex-1 items-center justify-center gap-2 rounded-lg border text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600',
+              'flex h-11 flex-1 items-center justify-center gap-2 rounded-lg border text-sm font-semibold transition-all duration-150 active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600',
               activeClass,
             )}
             onClick={() => handleAnswer(variant)}

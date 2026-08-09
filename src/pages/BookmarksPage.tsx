@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { EmptyState } from '@/components/common/EmptyState';
 import { ErrorState } from '@/components/common/ErrorState';
 import { LoadingState } from '@/components/common/LoadingState';
+import { Reveal } from '@/components/common/Reveal';
 import { QuestionCard } from '@/components/questions/QuestionCard';
 import { SearchBar } from '@/components/questions/SearchBar';
 import { Button } from '@/components/ui/button';
@@ -122,13 +123,15 @@ export function BookmarksPage() {
         />
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {bookmarks.map((question) => (
-            <QuestionCard
-              key={question.id}
-              question={question}
-              onToggleBookmark={mutations.toggleBookmark}
-              onSetStatus={mutations.setStatus}
-            />
+          {bookmarks.map((question, index) => (
+            <Reveal key={question.id} delay={index * 45} className="h-full">
+              <QuestionCard
+                question={question}
+                className="h-full"
+                onToggleBookmark={mutations.toggleBookmark}
+                onSetStatus={mutations.setStatus}
+              />
+            </Reveal>
           ))}
         </div>
       )}

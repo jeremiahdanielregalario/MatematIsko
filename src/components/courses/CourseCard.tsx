@@ -1,5 +1,6 @@
 import { ArrowRight, CheckCircle2, Layers } from 'lucide-react';
 import { Card } from '@/components/ui/card';
+import { ProgressBar } from '@/components/common/ProgressBar';
 import { cn } from '@/lib/cn';
 import type { Course } from '@/types';
 
@@ -21,7 +22,7 @@ export function CourseCard({ course, stats, className }: CourseCardProps) {
   return (
     <Card
       className={cn(
-        'group relative flex flex-col gap-3 p-5 transition-shadow hover:shadow-md',
+        'group relative flex flex-col gap-3 p-5 transition-all duration-200 hover:-translate-y-1 hover:shadow-md',
         'focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-brand-600',
         className,
       )}
@@ -54,12 +55,7 @@ export function CourseCard({ course, stats, className }: CourseCardProps) {
         </span>
       </div>
 
-      <div className="h-1.5 w-full overflow-hidden rounded-full bg-stone-200 dark:bg-stone-800">
-        <div
-          className="h-full rounded-full bg-brand-700 transition-all dark:bg-brand-400"
-          style={{ width: `${mastery}%` }}
-        />
-      </div>
+      <ProgressBar value={mastery} label={`${course.code} mastery`} />
       <span className="text-xs font-medium text-stone-500 dark:text-stone-400">
         {mastery}% mastered
       </span>

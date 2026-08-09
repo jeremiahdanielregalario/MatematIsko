@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { EmptyState } from '@/components/common/EmptyState';
 import { ErrorState } from '@/components/common/ErrorState';
 import { LoadingState } from '@/components/common/LoadingState';
+import { Reveal } from '@/components/common/Reveal';
 import { TheoremCard } from '@/components/theorems/TheoremCard';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -162,12 +163,14 @@ export function TheoremsPage() {
         />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredTheorems.map((theorem) => (
-            <TheoremCard
-              key={theorem.id}
-              theorem={theorem}
-              onSetStatus={setStatus}
-            />
+          {filteredTheorems.map((theorem, index) => (
+            <Reveal key={theorem.id} delay={index * 45} className="h-full">
+              <TheoremCard
+                theorem={theorem}
+                className="h-full"
+                onSetStatus={setStatus}
+              />
+            </Reveal>
           ))}
         </div>
       )}

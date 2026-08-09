@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ErrorState } from '@/components/common/ErrorState';
 import { EmptyState } from '@/components/common/EmptyState';
 import { LoadingState } from '@/components/common/LoadingState';
+import { Reveal } from '@/components/common/Reveal';
 import { FilterPanel } from '@/components/questions/FilterPanel';
 import { QuestionCard } from '@/components/questions/QuestionCard';
 import { SearchBar } from '@/components/questions/SearchBar';
@@ -214,13 +215,15 @@ export function QuestionBankPage() {
       ) : (
         <>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {pagedQuestions.map((question) => (
-              <QuestionCard
-                key={question.id}
-                question={question}
-                onToggleBookmark={mutations.toggleBookmark}
-                onSetStatus={mutations.setStatus}
-              />
+            {pagedQuestions.map((question, index) => (
+              <Reveal key={question.id} delay={(index % PAGE_SIZE) * 45} className="h-full">
+                <QuestionCard
+                  question={question}
+                  className="h-full"
+                  onToggleBookmark={mutations.toggleBookmark}
+                  onSetStatus={mutations.setStatus}
+                />
+              </Reveal>
             ))}
           </div>
           {totalPages > 1 ? (

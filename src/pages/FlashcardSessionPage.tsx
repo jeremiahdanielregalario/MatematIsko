@@ -84,8 +84,9 @@ function FlashcardDeck({ theorems, onRate, onFinish }: FlashcardSessionProps) {
         aria-label="Flip card"
       >
         <div
+          key={current.id}
           className={cn(
-            'relative min-h-80 transition-transform duration-500 [transform-style:preserve-3d]',
+            'relative min-h-80 animate-fade-in transition-transform duration-500 [transform-style:preserve-3d]',
             side === 'back' && '[transform:rotateY(180deg)]',
           )}
         >

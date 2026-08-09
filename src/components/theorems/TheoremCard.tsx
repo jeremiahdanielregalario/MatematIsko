@@ -19,7 +19,7 @@ export function TheoremCard({ theorem, onSetStatus, className }: TheoremCardProp
   return (
     <Card
       className={cn(
-        'group relative flex flex-col gap-3 p-5 transition-shadow hover:shadow-md',
+        'group relative flex flex-col gap-3 p-5 transition-all duration-200 hover:-translate-y-1 hover:shadow-md',
         'focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-brand-600',
         className,
       )}

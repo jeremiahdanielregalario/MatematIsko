@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom';
 import { EmptyState } from '@/components/common/EmptyState';
 import { ErrorState } from '@/components/common/ErrorState';
 import { LoadingState } from '@/components/common/LoadingState';
+import { ProgressBar } from '@/components/common/ProgressBar';
 import { ProgressCard } from '@/components/common/ProgressCard';
+import { Reveal } from '@/components/common/Reveal';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useQuestions } from '@/hooks/useQuestions';
@@ -40,10 +42,18 @@ export function ProgressPage() {
       </header>
 
       <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <ProgressCard label="Total questions" value={stats.total} icon={<BookOpenText className="size-4" />} />
-        <ProgressCard label="Completed" value={stats.completed} icon={<CheckCircle2 className="size-4 text-emerald-600 dark:text-emerald-400" />} />
-        <ProgressCard label="Mastered" value={stats.mastered} icon={<Sparkles className="size-4 text-brand-700 dark:text-brand-400" />} />
-        <ProgressCard label="Bookmarked" value={stats.bookmarked} icon={<Bookmark className="size-4 text-amber-600 dark:text-amber-400" />} />
+        <Reveal delay={0} className="h-full">
+          <ProgressCard label="Total questions" value={stats.total} icon={<BookOpenText className="size-4" />} className="h-full" />
+        </Reveal>
+        <Reveal delay={75} className="h-full">
+          <ProgressCard label="Completed" value={stats.completed} icon={<CheckCircle2 className="size-4 text-emerald-600 dark:text-emerald-400" />} className="h-full" />
+        </Reveal>
+        <Reveal delay={150} className="h-full">
+          <ProgressCard label="Mastered" value={stats.mastered} icon={<Sparkles className="size-4 text-brand-700 dark:text-brand-400" />} className="h-full" />
+        </Reveal>
+        <Reveal delay={225} className="h-full">
+          <ProgressCard label="Bookmarked" value={stats.bookmarked} icon={<Bookmark className="size-4 text-amber-600 dark:text-amber-400" />} className="h-full" />
+        </Reveal>
       </section>
 
       <div className="grid gap-6 lg:grid-cols-2">
@@ -84,19 +94,11 @@ export function ProgressPage() {
                       {topic.mastered}/{topic.total} · {topic.masteryPercent}%
                     </span>
                   </div>
-                  <div
-                    className="h-2 overflow-hidden rounded-full bg-stone-100 dark:bg-stone-800"
-                    role="progressbar"
-                    aria-valuemin={0}
-                    aria-valuemax={100}
-                    aria-valuenow={topic.masteryPercent}
-                    aria-label={`${topic.topicName} mastery`}
-                  >
-                    <div
-                      className="h-full rounded-full bg-brand-700 transition-all duration-500 dark:bg-brand-400"
-                      style={{ width: `${topic.masteryPercent}%` }}
-                    />
-                  </div>
+                  <ProgressBar
+                    value={topic.masteryPercent}
+                    label={`${topic.topicName} mastery`}
+                    className="h-2 bg-stone-100 dark:bg-stone-800"
+                  />
                 </div>
               ))
             )}

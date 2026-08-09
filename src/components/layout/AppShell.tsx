@@ -72,7 +72,9 @@ export function AppShell() {
             Loading&hellip;
           </div>
         ) : (
-          <Outlet />
+          <div key={location.pathname} className="animate-page-in">
+            <Outlet />
+          </div>
         )}
       </main>
 

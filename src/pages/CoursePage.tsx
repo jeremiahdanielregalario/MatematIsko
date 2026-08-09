@@ -5,10 +5,10 @@ import { EmptyState } from '@/components/common/EmptyState';
 import { LoadingState } from '@/components/common/LoadingState';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { ProgressBar } from '@/components/common/ProgressBar';
 import { useCourses } from '@/hooks/useCourses';
 import { useCourseScope } from '@/hooks/useCourseScope';
 import { useQuestions } from '@/hooks/useQuestions';
-import { cn } from '@/lib/cn';
 import type { TopicWithStats } from '@/types';
 
 export function CoursePage() {
@@ -125,21 +125,12 @@ export function CoursePage() {
           <p className="text-sm font-medium text-stone-500 dark:text-stone-400">Mastery</p>
           <div className="mt-2 flex items-center gap-2">
             <p className="text-3xl font-bold text-stone-900 dark:text-stone-100">{masteryPercent}%</p>
-            <div
-              className="h-2 flex-1 overflow-hidden rounded-full bg-stone-100 dark:bg-stone-800"
-              role="progressbar"
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-valuenow={masteryPercent}
-              aria-label={`${course.name} mastery`}
-            >
-              <div
-                className={cn(
-                  'h-full rounded-full bg-gradient-to-r from-brand-700 to-brand-500 transition-all duration-500 dark:from-brand-500 dark:to-brand-300',
-                )}
-                style={{ width: `${masteryPercent}%` }}
-              />
-            </div>
+            <ProgressBar
+              value={masteryPercent}
+              label={`${course.name} mastery`}
+              className="h-2 flex-1 bg-stone-100 dark:bg-stone-800"
+              barClassName="bg-gradient-to-r from-brand-700 to-brand-500 dark:from-brand-500 dark:to-brand-300"
+            />
           </div>
         </Card>
       </section>
@@ -159,7 +150,7 @@ export function CoursePage() {
               <Link
                 key={topic.id}
                 to={`/questions?course=${course.id}&topic=${topic.id}`}
-                className="group rounded-xl border border-stone-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-stone-800 dark:bg-stone-900"
+                className="group rounded-xl border border-stone-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md dark:border-stone-800 dark:bg-stone-900"
               >
                 <h3 className="font-semibold text-stone-900 group-hover:text-brand-800 dark:text-stone-100 dark:group-hover:text-brand-300">
                   {topic.name}
@@ -168,19 +159,11 @@ export function CoursePage() {
                   {topic.question_count} question{topic.question_count === 1 ? '' : 's'} ·{' '}
                   {topic.mastery_percent}% mastered
                 </p>
-                <div
-                  className="mt-3 h-1.5 overflow-hidden rounded-full bg-stone-100 dark:bg-stone-800"
-                  role="progressbar"
-                  aria-valuemin={0}
-                  aria-valuemax={100}
-                  aria-valuenow={topic.mastery_percent}
-                  aria-label={`${topic.name} mastery`}
-                >
-                  <div
-                    className="h-full rounded-full bg-brand-700 transition-all duration-500 dark:bg-brand-400"
-                    style={{ width: `${topic.mastery_percent}%` }}
-                  />
-                </div>
+                <ProgressBar
+                  value={topic.mastery_percent}
+                  label={`${topic.name} mastery`}
+                  className="mt-3 h-1.5 bg-stone-100 dark:bg-stone-800"
+                />
               </Link>
             ))}
           </div>

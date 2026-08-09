@@ -10,6 +10,7 @@ import {
 import { Navigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Reveal } from '@/components/common/Reveal';
 import { Logo } from '@/components/Logo';
 import { MathRenderer } from '@/components/math/MathRenderer';
 import { RevealSection } from '@/components/questions/RevealSection';
@@ -183,16 +184,18 @@ export function LandingPage() {
 
         <section className="mt-20" aria-label="Features">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {FEATURES.map((feature) => (
-              <Card key={feature.title} className="p-5">
-                <feature.icon className="mb-3 size-6 text-brand-700 dark:text-brand-400" />
-                <h3 className="mb-1 font-semibold text-stone-900 dark:text-stone-100">
-                  {feature.title}
-                </h3>
-                <p className="text-sm leading-relaxed text-stone-600 dark:text-stone-400">
-                  {feature.description}
-                </p>
-              </Card>
+            {FEATURES.map((feature, index) => (
+              <Reveal key={feature.title} delay={index * 80} className="h-full">
+                <Card className="h-full p-5 transition-all duration-200 hover:-translate-y-1 hover:shadow-md">
+                  <feature.icon className="mb-3 size-6 text-brand-700 dark:text-brand-400" />
+                  <h3 className="mb-1 font-semibold text-stone-900 dark:text-stone-100">
+                    {feature.title}
+                  </h3>
+                  <p className="text-sm leading-relaxed text-stone-600 dark:text-stone-400">
+                    {feature.description}
+                  </p>
+                </Card>
+              </Reveal>
             ))}
           </div>
         </section>

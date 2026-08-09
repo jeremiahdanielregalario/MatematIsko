@@ -13,6 +13,7 @@ import { ErrorState } from '@/components/common/ErrorState';
 import { EmptyState } from '@/components/common/EmptyState';
 import { LoadingState } from '@/components/common/LoadingState';
 import { ProgressCard } from '@/components/common/ProgressCard';
+import { Reveal } from '@/components/common/Reveal';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useCourseScope } from '@/hooks/useCourseScope';
@@ -79,7 +80,7 @@ export function DashboardPage() {
     <div className="space-y-8">
       <section className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="font-serif text-3xl font-bold tracking-tight text-stone-900 dark:text-stone-50">
+          <h1 className="animate-fade-in-down font-serif text-3xl font-bold tracking-tight text-stone-900 dark:text-stone-50">
             {greeting()}, {firstName}.
           </h1>
           <p className="mt-1 text-stone-500 dark:text-stone-400">
@@ -101,31 +102,43 @@ export function DashboardPage() {
       </section>
 
       <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <ProgressCard
-          label="Questions available"
-          value={stats.total}
-          icon={<Layers className="size-4" />}
-        />
-        <ProgressCard
-          label="Mastered"
-          value={stats.mastered}
-          icon={<CheckCircle2 className="size-4" />}
-          hint={
-            stats.masteryRate === null
-              ? 'Answer questions to start tracking.'
-              : `${stats.masteryRate}% of attempted questions mastered`
-          }
-        />
-        <ProgressCard
-          label="Learning"
-          value={stats.learning}
-          icon={<BookOpenText className="size-4" />}
-        />
-        <ProgressCard
-          label="Bookmarked"
-          value={stats.bookmarked}
-          icon={<Bookmark className="size-4" />}
-        />
+        <Reveal delay={0} className="h-full">
+          <ProgressCard
+            label="Questions available"
+            value={stats.total}
+            icon={<Layers className="size-4" />}
+            className="h-full"
+          />
+        </Reveal>
+        <Reveal delay={75} className="h-full">
+          <ProgressCard
+            label="Mastered"
+            value={stats.mastered}
+            icon={<CheckCircle2 className="size-4" />}
+            hint={
+              stats.masteryRate === null
+                ? 'Answer questions to start tracking.'
+                : `${stats.masteryRate}% of attempted questions mastered`
+            }
+            className="h-full"
+          />
+        </Reveal>
+        <Reveal delay={150} className="h-full">
+          <ProgressCard
+            label="Learning"
+            value={stats.learning}
+            icon={<BookOpenText className="size-4" />}
+            className="h-full"
+          />
+        </Reveal>
+        <Reveal delay={225} className="h-full">
+          <ProgressCard
+            label="Bookmarked"
+            value={stats.bookmarked}
+            icon={<Bookmark className="size-4" />}
+            className="h-full"
+          />
+        </Reveal>
       </section>
 
       <section className="space-y-4">
@@ -134,14 +147,15 @@ export function DashboardPage() {
         </h2>
         {courses.length > 0 ? (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {courses.map((course) => (
-              <Link
-                key={course.id}
-                to={`/courses/${course.id}`}
-                className="rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-              >
-                <CourseCard course={course} stats={statsByCourse.get(course.id) ?? { total: 0, mastered: 0, learning: 0 }} />
-              </Link>
+            {courses.map((course, index) => (
+              <Reveal key={course.id} delay={index * 60} className="h-full">
+                <Link
+                  to={`/courses/${course.id}`}
+                  className="block h-full rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+                >
+                  <CourseCard course={course} stats={statsByCourse.get(course.id) ?? { total: 0, mastered: 0, learning: 0 }} className="h-full" />
+                </Link>
+              </Reveal>
             ))}
           </div>
         ) : (
