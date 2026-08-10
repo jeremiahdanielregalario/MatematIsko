@@ -7,9 +7,9 @@ import { useAuth } from '@/hooks/useAuth';
  * onboarding (degree program + year level are required) to /onboarding.
  */
 export function RequireOnboarding() {
-  const { user, profile, loading } = useAuth();
+  const { user, profile, loading, profileLoading } = useAuth();
 
-  if (loading) {
+  if (loading || profileLoading) {
     return <LoadingState label="Checking your profile" />;
   }
 

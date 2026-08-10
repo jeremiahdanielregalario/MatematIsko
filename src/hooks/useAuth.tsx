@@ -10,6 +10,8 @@ interface AuthContextValue {
   user: User | null;
   profile: Profile | null;
   loading: boolean;
+  /** True while the profile row for the current user is being fetched/created. */
+  profileLoading: boolean;
   /** Non-null when the signed-in email is not allowed to use the app. */
   authError: string | null;
   configured: boolean;
@@ -50,6 +52,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [rawUser, setRawUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [profileLoading, setProfileLoading] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [justSignedIn, setJustSignedIn] = useState(false);
 
@@ -145,9 +148,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!rawUser || !supabase) {
       setProfile(null);
+      setProfileLoading(false);
       return;
     }
     let cancelled = false;
+    setProfileLoading(true);
     void (async () => {
       const existing = await getProfile(rawUser.id);
       if (cancelled) return;
@@ -164,6 +169,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!cancelled) setProfile(created);
     })().catch(() => {
       if (!cancelled) setProfile(null);
+    }).finally(() => {
+      if (!cancelled) setProfileLoading(false);
     });
     return () => {
       cancelled = true;
@@ -196,8 +203,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const refreshProfile = useCallback(async () => {
     if (!rawUser || !supabase) return;
-    const next = await getProfile(rawUser.id);
-    if (next) setProfile(next);
+    setProfileLoading(true);
+    try {
+      const next = await getProfile(rawUser.id);
+      if (next) setProfile(next);
+    } finally {
+      setProfileLoading(false);
+    }
   }, [rawUser]);
 
   const acknowledgeSignIn = useCallback(() => {
@@ -209,6 +221,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       user: rawUser,
       profile,
       loading,
+      profileLoading,
       authError,
       configured: isSupabaseConfigured,
       justSignedIn,
@@ -222,6 +235,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       rawUser,
       profile,
       loading,
+      profileLoading,
       authError,
       justSignedIn,
       signInWithGoogle,

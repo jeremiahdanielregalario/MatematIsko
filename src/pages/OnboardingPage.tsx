@@ -91,7 +91,7 @@ const DEGREE_PROGRAMS = [
 ];
 
 export function OnboardingPage() {
-  const { user, profile, loading, refreshProfile } = useAuth();
+  const { user, profile, loading, profileLoading, refreshProfile } = useAuth();
   const navigate = useNavigate();
   const { data: courses, loading: coursesLoading, error: coursesError, reload } = useCourses();
 
@@ -102,7 +102,7 @@ export function OnboardingPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  if (loading) return <LoadingState label="Preparing your setup" />;
+  if (loading || profileLoading) return <LoadingState label="Preparing your setup" />;
 
   if (!user) return <Navigate to="/" replace />;
 
