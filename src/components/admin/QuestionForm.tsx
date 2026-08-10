@@ -260,7 +260,7 @@ export function QuestionForm({ initial, courses, topics, onSaved, onCancel }: Qu
         <PreviewBox value={draft.question_text} emptyLabel="Nothing to preview" />
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="grid gap-4 lg:grid-cols-2">
         <div className="space-y-1.5">
           <Label htmlFor="admin-hint">Hint (optional)</Label>
           <Textarea
@@ -270,6 +270,9 @@ export function QuestionForm({ initial, courses, topics, onSaved, onCancel }: Qu
             onChange={(event) => set('hint', event.target.value.trim() === '' ? null : event.target.value)}
             placeholder="A small nudge before revealing the answer."
           />
+        </div>
+        <div className="space-y-1.5">
+          <Label className="text-stone-400 dark:text-stone-500">Hint — preview</Label>
           <PreviewBox value={draft.hint ?? ''} emptyLabel="No hint yet" />
         </div>
 
@@ -281,6 +284,9 @@ export function QuestionForm({ initial, courses, topics, onSaved, onCancel }: Qu
             value={draft.answer}
             onChange={(event) => set('answer', event.target.value)}
           />
+        </div>
+        <div className="space-y-1.5">
+          <Label className="text-stone-400 dark:text-stone-500">Answer — preview</Label>
           <PreviewBox value={draft.answer} emptyLabel="No answer yet" />
         </div>
 
@@ -292,6 +298,9 @@ export function QuestionForm({ initial, courses, topics, onSaved, onCancel }: Qu
             value={draft.solution}
             onChange={(event) => set('solution', event.target.value)}
           />
+        </div>
+        <div className="space-y-1.5">
+          <Label className="text-stone-400 dark:text-stone-500">Solution — preview</Label>
           <PreviewBox value={draft.solution} emptyLabel="No solution yet" />
         </div>
       </div>
