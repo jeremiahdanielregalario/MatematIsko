@@ -1,16 +1,18 @@
-import { BookOpenText, GraduationCap, Landmark } from 'lucide-react';
+import { BookOpenText, Flag, GraduationCap, Landmark } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/cn';
 import { QuestionAdminSection } from '@/components/admin/QuestionAdminSection';
 import { TheoremAdminSection } from '@/components/admin/TheoremAdminSection';
 import { CourseAdminSection } from '@/components/admin/CourseAdminSection';
+import { ReportsAdminSection } from '@/components/admin/ReportsAdminSection';
 
-type AdminTab = 'courses' | 'questions' | 'theorems';
+type AdminTab = 'courses' | 'questions' | 'theorems' | 'reports';
 
 const TABS: { value: AdminTab; label: string; icon: typeof BookOpenText }[] = [
   { value: 'courses', label: 'Courses', icon: GraduationCap },
   { value: 'questions', label: 'Questions', icon: BookOpenText },
   { value: 'theorems', label: 'Theorems', icon: Landmark },
+  { value: 'reports', label: 'Reports', icon: Flag },
 ];
 
 export function AdminPage() {
@@ -45,6 +47,7 @@ export function AdminPage() {
       {tab === 'courses' && <CourseAdminSection />}
       {tab === 'questions' && <QuestionAdminSection />}
       {tab === 'theorems' && <TheoremAdminSection />}
+      {tab === 'reports' && <ReportsAdminSection />}
     </div>
   );
 }

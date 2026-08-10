@@ -106,6 +106,48 @@ export const DIFFICULTY_ORDER: Record<Difficulty, number> = {
 };
 
 // ---------------------------------------------------------------------------
+// Question Reports
+// ---------------------------------------------------------------------------
+
+export type ReportCategory = 'rendering' | 'question' | 'hint' | 'answer' | 'solution' | 'other';
+
+export type ReportStatus = 'open' | 'resolved';
+
+export interface QuestionReport {
+  id: string;
+  question_id: string;
+  user_id: string;
+  category: ReportCategory;
+  description: string;
+  status: ReportStatus;
+  created_at: string;
+}
+
+export type TheoremReportCategory = 'rendering' | 'statement' | 'formal_notation' | 'name' | 'other';
+
+export interface TheoremReport {
+  id: string;
+  theorem_id: string;
+  user_id: string;
+  category: TheoremReportCategory;
+  description: string;
+  status: ReportStatus;
+  created_at: string;
+}
+
+export interface QuestionReportRow extends QuestionReport {
+  question_title?: string;
+  course_code?: string;
+  user_email?: string;
+}
+
+export interface TheoremReportRow extends TheoremReport {
+  theorem_name?: string;
+  course_code?: string;
+  user_email?: string;
+}
+
+// ---------------------------------------------------------------------------
 // Named Theorems
 // ---------------------------------------------------------------------------
 

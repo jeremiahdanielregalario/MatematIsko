@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ErrorState } from '@/components/common/ErrorState';
 import { LoadingState } from '@/components/common/LoadingState';
+import { ReportButton } from '@/components/common/ReportButton';
 import { MathRenderer } from '@/components/math/MathRenderer';
 import { TheoremStatement } from '@/components/theorems/TheoremStatement';
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +12,7 @@ import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/cn';
 import { useAuth } from '@/hooks/useAuth';
 import { upsertTheoremProgress } from '@/lib/db';
+import { submitTheoremReport } from '@/lib/reports';
 import { useTheorems } from '@/hooks/useTheorems';
 import type { ProgressStatus, TheoremWithMeta } from '@/types';
 
@@ -64,7 +66,13 @@ function FlashcardDeck({ theorems, onRate, onFinish }: FlashcardSessionProps) {
         <span>
           Card {index + 1} of {deck.length}
         </span>
-        <span className="flex items-center gap-2">
+        <div className="flex items-center gap-2">
+          <ReportButton
+            kind="theorem"
+            onSubmit={(category, description) =>
+              submitTheoremReport(current.id, category as never, description)
+            }
+          />
           <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
             <Check className="size-3.5" />
             {results.filter((r) => r.status === 'mastered').length} mastered
@@ -73,7 +81,7 @@ function FlashcardDeck({ theorems, onRate, onFinish }: FlashcardSessionProps) {
             <X className="size-3.5" />
             {results.filter((r) => r.status === 'learning').length} learning
           </span>
-        </span>
+        </div>
       </div>
 
       {/* Card */}

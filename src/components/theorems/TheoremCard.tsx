@@ -1,10 +1,12 @@
 import { ArrowUpRight, Landmark } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { MathRenderer } from '@/components/math/MathRenderer';
+import { ReportButton } from '@/components/common/ReportButton';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { MasteryButton } from '@/components/questions/MasteryButton';
 import { cn } from '@/lib/cn';
+import { submitTheoremReport } from '@/lib/reports';
 import type { ProgressStatus, TheoremWithMeta } from '@/types';
 
 interface TheoremCardProps {
@@ -51,10 +53,18 @@ export function TheoremCard({ theorem, onSetStatus, className }: TheoremCardProp
           <Landmark className="size-4" />
           View theorem
         </Link>
-        <MasteryButton
-          status={status}
-          onChange={(next) => onSetStatus(theorem.id, next)}
-        />
+        <div className="flex items-center gap-1">
+          <ReportButton
+            kind="theorem"
+            onSubmit={(category, description) =>
+              submitTheoremReport(theorem.id, category as never, description)
+            }
+          />
+          <MasteryButton
+            status={status}
+            onChange={(next) => onSetStatus(theorem.id, next)}
+          />
+        </div>
       </div>
     </Card>
   );

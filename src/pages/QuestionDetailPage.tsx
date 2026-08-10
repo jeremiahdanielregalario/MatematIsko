@@ -6,6 +6,7 @@ import { BookmarkButton } from '@/components/questions/BookmarkButton';
 import { DifficultyBadge } from '@/components/questions/DifficultyBadge';
 import { MasteryButton } from '@/components/questions/MasteryButton';
 import { RevealSection } from '@/components/questions/RevealSection';
+import { ReportButton } from '@/components/common/ReportButton';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { MathRenderer } from '@/components/math/MathRenderer';
@@ -16,6 +17,7 @@ import { useReveal } from '@/hooks/useReveal';
 import { useRevealKeyboard } from '@/hooks/useRevealKeyboard';
 import { mergeMutations } from '@/lib/mutations';
 import { pickRandom } from '@/lib/questionFilter';
+import { submitQuestionReport } from '@/lib/reports';
 
 export function QuestionDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -76,10 +78,18 @@ export function QuestionDetailPage() {
                 {merged.exam_name} · No. {merged.question_number}
               </span>
             </div>
-            <BookmarkButton
-              bookmarked={merged.bookmarked}
-              onToggleBookmark={(next) => mutations.toggleBookmark(merged.id, next)}
-            />
+            <div className="flex items-center gap-1">
+              <ReportButton
+                kind="question"
+                onSubmit={(category, description) =>
+                  submitQuestionReport(merged.id, category as never, description)
+                }
+              />
+              <BookmarkButton
+                bookmarked={merged.bookmarked}
+                onToggleBookmark={(next) => mutations.toggleBookmark(merged.id, next)}
+              />
+            </div>
           </div>
           <h1 className="mt-3 font-serif text-2xl font-bold leading-tight tracking-tight text-stone-900 dark:text-stone-50">
             <MathRenderer inline>{merged.title}</MathRenderer>

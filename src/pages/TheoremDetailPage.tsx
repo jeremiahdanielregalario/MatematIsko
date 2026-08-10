@@ -2,6 +2,7 @@ import { ArrowLeft, ChevronLeft, ChevronRight, Eye, EyeOff } from 'lucide-react'
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ErrorState } from '@/components/common/ErrorState';
 import { LoadingState } from '@/components/common/LoadingState';
+import { ReportButton } from '@/components/common/ReportButton';
 import { TheoremStatement } from '@/components/theorems/TheoremStatement';
 import { MasteryButton } from '@/components/questions/MasteryButton';
 import { Button } from '@/components/ui/button';
@@ -12,6 +13,7 @@ import { useTheorem } from '@/hooks/useTheorem';
 import { useTheoremMutations } from '@/hooks/useTheoremMutations';
 import { useTheorems } from '@/hooks/useTheorems';
 import { mergeTheoremMutations } from '@/lib/mutations';
+import { submitTheoremReport } from '@/lib/reports';
 import { useState } from 'react';
 
 export function TheoremDetailPage() {
@@ -75,10 +77,18 @@ export function TheoremDetailPage() {
                 </Badge>
               ) : null}
             </div>
-            <MasteryButton
-              status={merged.progress?.status ?? 'unseen'}
-              onChange={(next) => mutations.setStatus(merged.id, next)}
-            />
+            <div className="flex items-center gap-1">
+              <ReportButton
+                kind="theorem"
+                onSubmit={(category, description) =>
+                  submitTheoremReport(merged.id, category as never, description)
+                }
+              />
+              <MasteryButton
+                status={merged.progress?.status ?? 'unseen'}
+                onChange={(next) => mutations.setStatus(merged.id, next)}
+              />
+            </div>
           </div>
           <h1 className="mt-3 font-serif text-2xl font-bold leading-tight tracking-tight text-stone-900 dark:text-stone-50">
             <MathRenderer inline>{merged.name}</MathRenderer>

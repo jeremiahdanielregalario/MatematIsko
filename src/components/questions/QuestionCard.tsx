@@ -1,8 +1,10 @@
 import { ArrowUpRight, BookMarked } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { ProgressStatus, QuestionWithMeta } from '@/types';
+import { submitQuestionReport } from '@/lib/reports';
 import { cn } from '@/lib/cn';
 import { MathRenderer } from '@/components/math/MathRenderer';
+import { ReportButton } from '@/components/common/ReportButton';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { BookmarkButton } from './BookmarkButton';
@@ -74,15 +76,21 @@ export function QuestionCard({ question, onToggleBookmark, onSetStatus, classNam
             </Badge>
           ) : null}
         </div>
-        {onSetStatus ? (
-          <div onClick={(event) => event.stopPropagation()}>
+        <div className="flex items-center gap-1" onClick={(event) => event.stopPropagation()}>
+          <ReportButton
+            kind="question"
+            onSubmit={(category, description) =>
+              submitQuestionReport(question.id, category as never, description)
+            }
+          />
+          {onSetStatus ? (
             <MasteryButton status={status} onChange={(next) => onSetStatus(question.id, next)} />
-          </div>
-        ) : (
-          <span className="inline-flex items-center gap-1 text-xs font-medium text-brand-800 opacity-0 transition-opacity group-hover:opacity-100 dark:text-brand-300">
-            Open <ArrowUpRight className="size-3.5" />
-          </span>
-        )}
+          ) : (
+            <span className="inline-flex items-center gap-1 text-xs font-medium text-brand-800 opacity-0 transition-opacity group-hover:opacity-100 dark:text-brand-300">
+              Open <ArrowUpRight className="size-3.5" />
+            </span>
+          )}
+        </div>
       </div>
     </Card>
   );
