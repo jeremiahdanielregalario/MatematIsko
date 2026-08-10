@@ -89,8 +89,8 @@ export function ReportDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent>
-        <DialogTitle className="font-serif text-lg font-semibold text-stone-900 dark:text-stone-100">
+      <DialogContent className="p-6">
+        <DialogTitle className="pr-8 font-serif text-lg font-semibold text-stone-900 dark:text-stone-100">
           Report an Issue
         </DialogTitle>
         <DialogDescription className="text-sm text-stone-500 dark:text-stone-400">
