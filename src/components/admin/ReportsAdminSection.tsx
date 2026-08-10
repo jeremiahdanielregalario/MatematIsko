@@ -41,7 +41,7 @@ function QuestionReportItem({ report, onToggle }: QuestionReportItemProps) {
           </div>
           <button
             type="button"
-            onClick={() => navigate(`/questions/${report.question_id}`)}
+            onClick={() => navigate(`/admin?tab=questions&edit=${report.question_id}`)}
             className="mt-1 text-left text-sm font-medium text-stone-900 hover:text-brand-700 hover:underline dark:text-stone-100 dark:hover:text-brand-400"
           >
             {report.question_title ?? 'Unknown question'}
@@ -64,11 +64,11 @@ function QuestionReportItem({ report, onToggle }: QuestionReportItemProps) {
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => navigate(`/questions/${report.question_id}`)}
+          onClick={() => navigate(`/admin?tab=questions&edit=${report.question_id}`)}
           className="text-stone-500 dark:text-stone-400"
         >
           <ExternalLink className="size-4" />
-          View
+          Edit question
         </Button>
         {report.status === 'open' ? (
           <Button
@@ -116,7 +116,7 @@ function TheoremReportItem({ report, onToggle }: TheoremReportItemProps) {
           </div>
           <button
             type="button"
-            onClick={() => navigate(`/theorems/${report.theorem_id}`)}
+            onClick={() => navigate(`/admin?tab=theorems&edit=${report.theorem_id}`)}
             className="mt-1 text-left text-sm font-medium text-stone-900 hover:text-brand-700 hover:underline dark:text-stone-100 dark:hover:text-brand-400"
           >
             {report.theorem_name ?? 'Unknown theorem'}
@@ -139,11 +139,11 @@ function TheoremReportItem({ report, onToggle }: TheoremReportItemProps) {
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => navigate(`/theorems/${report.theorem_id}`)}
+          onClick={() => navigate(`/admin?tab=theorems&edit=${report.theorem_id}`)}
           className="text-stone-500 dark:text-stone-400"
         >
           <ExternalLink className="size-4" />
-          View
+          Edit theorem
         </Button>
         {report.status === 'open' ? (
           <Button

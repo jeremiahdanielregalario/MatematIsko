@@ -1,5 +1,5 @@
 import { Plus, SearchX } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { AdminQuestionList } from '@/components/admin/AdminQuestionList';
 import { QuestionForm } from '@/components/admin/QuestionForm';
 import { EmptyState } from '@/components/common/EmptyState';
@@ -24,7 +24,13 @@ import type { QuestionWithMeta } from '@/types';
 const ALL_COURSES = '__all';
 const EMPTY_QUESTIONS: QuestionWithMeta[] = [];
 
-export function QuestionAdminSection() {
+interface QuestionAdminSectionProps {
+  /** Question id to open in the editor (e.g. from a report). Cleared via onEditHandled once applied. */
+  editId?: string | null;
+  onEditHandled?: () => void;
+}
+
+export function QuestionAdminSection({ editId, onEditHandled }: QuestionAdminSectionProps) {
   const { data: loaded, loading, error, reload } = useQuestions();
   const { data: coursesData } = useCourses();
   const { data: topicsData } = useTopics();
@@ -38,6 +44,15 @@ export function QuestionAdminSection() {
   const [search, setSearch] = useState('');
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!editId || loading || questions.length === 0) return;
+    const target = questions.find((question) => question.id === editId);
+    if (!target) return;
+    setSelected(target);
+    if (target.course_id) setCourseFilter(target.course_id);
+    onEditHandled?.();
+  }, [editId, loading, questions, onEditHandled]);
 
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -68,7 +83,10 @@ export function QuestionAdminSection() {
     setDeleteError(null);
     void adminDeleteQuestion(question.id)
       .then(() => {
-        if (selected?.id === question.id) setSelected(null);
+        if (selected?.id === question.id) {
+          setSelected(null);
+          onEditHandled?.();
+        }
         reload();
       })
       .catch((err: unknown) => {
@@ -90,7 +108,13 @@ export function QuestionAdminSection() {
             {questions.length} questions · changes apply to the live site immediately
           </p>
         </div>
-        <Button variant="outline" onClick={() => setSelected(null)}>
+        <Button
+          variant="outline"
+          onClick={() => {
+            setSelected(null);
+            onEditHandled?.();
+          }}
+        >
           <Plus className="size-4" />
           New question
         </Button>
@@ -152,8 +176,12 @@ export function QuestionAdminSection() {
           onSaved={() => {
             reload();
             setSelected(null);
+            onEditHandled?.();
           }}
-          onCancel={() => setSelected(null)}
+          onCancel={() => {
+            setSelected(null);
+            onEditHandled?.();
+          }}
         />
       </div>
     </div>

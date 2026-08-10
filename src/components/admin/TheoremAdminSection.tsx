@@ -1,5 +1,5 @@
 import { Plus, SearchX } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { AdminTheoremList } from '@/components/admin/AdminTheoremList';
 import { TheoremForm } from '@/components/admin/TheoremForm';
 import { EmptyState } from '@/components/common/EmptyState';
@@ -24,7 +24,13 @@ import type { TheoremWithMeta } from '@/types';
 const ALL_COURSES = '__all';
 const EMPTY_THEOREMS: TheoremWithMeta[] = [];
 
-export function TheoremAdminSection() {
+interface TheoremAdminSectionProps {
+  /** Theorem id to open in the editor (e.g. from a report). Cleared via onEditHandled once applied. */
+  editId?: string | null;
+  onEditHandled?: () => void;
+}
+
+export function TheoremAdminSection({ editId, onEditHandled }: TheoremAdminSectionProps) {
   const { data: loaded, loading, error, reload } = useTheorems();
   const { data: coursesData } = useCourses();
   const { data: topicsData } = useTopics();
@@ -38,6 +44,15 @@ export function TheoremAdminSection() {
   const [search, setSearch] = useState('');
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!editId || loading || theorems.length === 0) return;
+    const target = theorems.find((theorem) => theorem.id === editId);
+    if (!target) return;
+    setSelected(target);
+    if (target.course_id) setCourseFilter(target.course_id);
+    onEditHandled?.();
+  }, [editId, loading, theorems, onEditHandled]);
 
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -67,7 +82,10 @@ export function TheoremAdminSection() {
     setDeleteError(null);
     void adminDeleteTheorem(theorem.id)
       .then(() => {
-        if (selected?.id === theorem.id) setSelected(null);
+        if (selected?.id === theorem.id) {
+          setSelected(null);
+          onEditHandled?.();
+        }
         reload();
       })
       .catch((err: unknown) => {
@@ -89,7 +107,13 @@ export function TheoremAdminSection() {
             {theorems.length} theorems · changes apply to the live site immediately
           </p>
         </div>
-        <Button variant="outline" onClick={() => setSelected(null)}>
+        <Button
+          variant="outline"
+          onClick={() => {
+            setSelected(null);
+            onEditHandled?.();
+          }}
+        >
           <Plus className="size-4" />
           New theorem
         </Button>
@@ -151,8 +175,12 @@ export function TheoremAdminSection() {
           onSaved={() => {
             reload();
             setSelected(null);
+            onEditHandled?.();
           }}
-          onCancel={() => setSelected(null)}
+          onCancel={() => {
+            setSelected(null);
+            onEditHandled?.();
+          }}
         />
       </div>
     </div>

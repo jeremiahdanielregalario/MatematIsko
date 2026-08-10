@@ -77,8 +77,6 @@ export function QuestionForm({ initial, courses, topics, onSaved, onCancel }: Qu
     [topics, draft.course_id],
   );
 
-  const selectedCourse = courses.find((course) => course.id === draft.course_id);
-
   const requiredFilled =
     draft.course_id !== '' &&
     (draft.topic_id !== '' || newTopicName.trim() !== '') &&
@@ -116,14 +114,6 @@ export function QuestionForm({ initial, courses, topics, onSaved, onCancel }: Qu
     }
   };
 
-  const previewBlocks = [
-    { label: 'Title', value: draft.title },
-    { label: 'Question', value: draft.question_text },
-    { label: 'Hint', value: draft.hint ?? '' },
-    { label: 'Answer', value: draft.answer },
-    { label: 'Solution', value: draft.solution },
-  ].filter((block) => block.value.trim() !== '');
-
   return (
     <Card className="space-y-5 p-5">
       <div className="flex items-center justify-between">
@@ -143,7 +133,7 @@ export function QuestionForm({ initial, courses, topics, onSaved, onCancel }: Qu
             onClick={() => setShowPreview((current) => !current)}
           >
             <Eye className="size-4" />
-            {showPreview ? 'Hide preview' : 'Preview'}
+            {showPreview ? 'Hide previews' : 'Show previews'}
           </Button>
           <Button type="button" variant="ghost" size="sm" onClick={onCancel}>
             <X className="size-4" />
@@ -216,27 +206,6 @@ export function QuestionForm({ initial, courses, topics, onSaved, onCancel }: Qu
         />
       </div>
 
-      <div className="space-y-1.5">
-        <Label htmlFor="admin-title">Title</Label>
-        <Input
-          id="admin-title"
-          value={draft.title}
-          onChange={(event) => set('title', event.target.value)}
-          placeholder="e.g. Limits of rational functions"
-        />
-      </div>
-
-      <div className="space-y-1.5">
-        <Label htmlFor="admin-question-text">Question text</Label>
-        <Textarea
-          id="admin-question-text"
-          className="min-h-32 font-mono text-xs"
-          value={draft.question_text}
-          onChange={(event) => set('question_text', event.target.value)}
-          placeholder={'Find $\\lim_{x \\to 2} \\frac{x^2 - 4}{x - 2}$.'}
-        />
-      </div>
-
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="space-y-1.5">
           <Label htmlFor="admin-year">Year</Label>
@@ -269,57 +238,63 @@ export function QuestionForm({ initial, courses, topics, onSaved, onCancel }: Qu
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor="admin-hint">Hint (optional)</Label>
-        <Textarea
-          id="admin-hint"
-          className="min-h-16 font-mono text-xs"
-          value={draft.hint ?? ''}
-          onChange={(event) => set('hint', event.target.value.trim() === '' ? null : event.target.value)}
-          placeholder="A small nudge before revealing the answer."
+        <Label htmlFor="admin-title">Title</Label>
+        <Input
+          id="admin-title"
+          value={draft.title}
+          onChange={(event) => set('title', event.target.value)}
+          placeholder="e.g. Limits of rational functions"
         />
+        <PreviewBox value={draft.title} emptyLabel="Nothing to preview" />
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor="admin-answer">Answer</Label>
+        <Label htmlFor="admin-question-text">Question text</Label>
         <Textarea
-          id="admin-answer"
-          className="min-h-16 font-mono text-xs"
-          value={draft.answer}
-          onChange={(event) => set('answer', event.target.value)}
+          id="admin-question-text"
+          className="min-h-32 font-mono text-xs"
+          value={draft.question_text}
+          onChange={(event) => set('question_text', event.target.value)}
+          placeholder={'Find $\\lim_{x \\to 2} \\frac{x^2 - 4}{x - 2}$.'}
         />
+        <PreviewBox value={draft.question_text} emptyLabel="Nothing to preview" />
       </div>
 
-      <div className="space-y-1.5">
-        <Label htmlFor="admin-solution">Solution</Label>
-        <Textarea
-          id="admin-solution"
-          className="min-h-28 font-mono text-xs"
-          value={draft.solution}
-          onChange={(event) => set('solution', event.target.value)}
-        />
-      </div>
-
-      {showPreview && previewBlocks.length > 0 ? (
-        <div className="space-y-4 rounded-lg border border-stone-200 bg-stone-50 p-4 dark:border-stone-800 dark:bg-stone-900/60">
-          <p className="text-sm font-semibold text-stone-700 dark:text-stone-300">Live preview</p>
-          {previewBlocks.map((block) => (
-            <div key={block.label}>
-              <p className="mb-1 text-xs font-medium uppercase tracking-wide text-stone-400">
-                {block.label}
-              </p>
-              <div className="rounded-md bg-white px-3 py-2 dark:bg-stone-950">
-                <MathRenderer>{block.value}</MathRenderer>
-              </div>
-            </div>
-          ))}
-          {selectedCourse ? (
-            <p className="text-xs text-stone-400">
-              Will be filed under {selectedCourse.code}
-              {newTopicName.trim() !== '' ? ` · new topic “${newTopicName.trim()}”` : ''}
-            </p>
-          ) : null}
+      <div className="grid gap-4 lg:grid-cols-3">
+        <div className="space-y-1.5">
+          <Label htmlFor="admin-hint">Hint (optional)</Label>
+          <Textarea
+            id="admin-hint"
+            className="min-h-24 font-mono text-xs"
+            value={draft.hint ?? ''}
+            onChange={(event) => set('hint', event.target.value.trim() === '' ? null : event.target.value)}
+            placeholder="A small nudge before revealing the answer."
+          />
+          <PreviewBox value={draft.hint ?? ''} emptyLabel="No hint yet" />
         </div>
-      ) : null}
+
+        <div className="space-y-1.5">
+          <Label htmlFor="admin-answer">Answer</Label>
+          <Textarea
+            id="admin-answer"
+            className="min-h-24 font-mono text-xs"
+            value={draft.answer}
+            onChange={(event) => set('answer', event.target.value)}
+          />
+          <PreviewBox value={draft.answer} emptyLabel="No answer yet" />
+        </div>
+
+        <div className="space-y-1.5">
+          <Label htmlFor="admin-solution">Solution</Label>
+          <Textarea
+            id="admin-solution"
+            className="min-h-24 font-mono text-xs"
+            value={draft.solution}
+            onChange={(event) => set('solution', event.target.value)}
+          />
+          <PreviewBox value={draft.solution} emptyLabel="No solution yet" />
+        </div>
+      </div>
 
       {error ? (
         <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/50 dark:text-red-400">
@@ -337,5 +312,22 @@ export function QuestionForm({ initial, courses, topics, onSaved, onCancel }: Qu
         </Button>
       </div>
     </Card>
+  );
+}
+
+interface PreviewBoxProps {
+  value: string;
+  emptyLabel?: string;
+}
+
+function PreviewBox({ value, emptyLabel = 'Nothing to preview' }: PreviewBoxProps) {
+  return (
+    <div className="mt-2 rounded-md border border-dashed border-stone-200 bg-white px-3 py-2 dark:border-stone-700 dark:bg-stone-950">
+      {value.trim() !== '' ? (
+        <MathRenderer>{value}</MathRenderer>
+      ) : (
+        <p className="text-xs italic text-stone-400 dark:text-stone-600">{emptyLabel}</p>
+      )}
+    </div>
   );
 }
