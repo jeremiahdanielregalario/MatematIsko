@@ -180,7 +180,7 @@ export function CoursePage() {
               {recent.map((q) => (
                 <li key={q.id}>
                   <Link
-                    to={`/questions/${q.id}`}
+                    to={`/questions/${q.id}?course=${course.id}`}
                     className="flex items-center justify-between gap-3 px-5 py-3 text-sm transition-colors hover:bg-stone-50 dark:hover:bg-stone-800/50"
                   >
                     <span className="min-w-0 truncate font-medium text-stone-800 dark:text-stone-100">

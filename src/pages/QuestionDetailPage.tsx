@@ -1,5 +1,5 @@
 import { ArrowLeft, Shuffle } from 'lucide-react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ErrorState } from '@/components/common/ErrorState';
 import { LoadingState } from '@/components/common/LoadingState';
 import { BookmarkButton } from '@/components/questions/BookmarkButton';
@@ -22,6 +22,7 @@ import { submitQuestionReport } from '@/lib/reports';
 export function QuestionDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { data: question, loading, error, reload } = useQuestion(id);
 
   const { data: loadedQuestions = null } = useQuestions();
@@ -46,18 +47,51 @@ export function QuestionDetailPage() {
 
   const merged = mergeMutations(question, mutations);
 
-  const nextRandom = () => {
-    const random = pickRandom(allQuestions.filter((q) => q.id !== question.id));
+  // Carry the study context (course/topic/filters) through detail navigation so
+  // the "next question" button stays within what the student is focusing on.
+  const contextCourse = searchParams.get('course') ?? question.course_id;
+  const contextTopic = searchParams.get('topic') ?? undefined;
+
+  // "Next" carries the context so the study session stays within the same
+  // course/topic. The fallback to the question's own course keeps focus even
+  // when the student arrived via a deep link.
+  const contextPath = (nextId: string) => {
+    const params = new URLSearchParams(searchParams);
+    params.set('course', contextCourse);
+    if (contextTopic) params.set('topic', contextTopic);
+    return `/questions/${nextId}?${params.toString()}`;
+  };
+
+  const nextInContext = () => {
+    let pool = allQuestions.filter((q) => q.id !== question.id);
+    if (contextTopic) {
+      const topicPool = pool.filter((q) => q.topic_id === contextTopic);
+      if (topicPool.length > 0) pool = topicPool;
+    } else if (contextCourse) {
+      const coursePool = pool.filter((q) => q.course_id === contextCourse);
+      if (coursePool.length > 0) pool = coursePool;
+    }
+    const random = pickRandom(pool);
     if (random) {
       reveal.reset();
-      navigate(`/questions/${random.id}`);
+      navigate(contextPath(random.id));
     }
   };
+
+  // "Back" only keeps the context that was explicitly in the URL.
+  const backPath = () => {
+    const params = new URLSearchParams(searchParams);
+    const query = params.toString();
+    return query ? `/questions?${query}` : '/questions';
+  };
+
+  const inTopic = Boolean(contextTopic);
+  const inCourse = Boolean(contextCourse) && !inTopic;
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <Link
-        to="/questions"
+        to={backPath()}
         className="inline-flex items-center gap-1.5 text-sm font-medium text-stone-500 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-100"
       >
         <ArrowLeft className="size-4" />
@@ -134,9 +168,13 @@ export function QuestionDetailPage() {
                 onChange={(next) => mutations.setStatus(merged.id, next)}
               />
             </div>
-            <Button variant="outline" size="sm" onClick={nextRandom}>
+            <Button variant="outline" size="sm" onClick={nextInContext}>
               <Shuffle className="size-4" />
-              Next random problem
+              {inTopic
+                ? `Next in ${merged.topic?.name ?? 'topic'}`
+                : inCourse
+                  ? `Next in ${merged.course?.code ?? 'course'}`
+                  : 'Next random problem'}
             </Button>
           </div>
         </div>

@@ -128,9 +128,22 @@ export function QuestionBankPage() {
     updateParams(changes);
   };
 
+  // Preserve the active filters so opening a question keeps the study context.
+  const questionPath = (id: string) => {
+    const params = new URLSearchParams();
+    if (courseId) params.set('course', courseId);
+    if (topicId) params.set('topic', topicId);
+    if (difficulty) params.set('difficulty', difficulty);
+    if (status) params.set('status', status);
+    const year = searchParams.get('year');
+    if (year) params.set('year', year);
+    const query = params.toString();
+    return query ? `/questions/${id}?${query}` : `/questions/${id}`;
+  };
+
   const openRandom = () => {
     const random = pickRandom(questions.length > 0 ? questions : baseQuestions);
-    if (random) navigate(`/questions/${random.id}`);
+    if (random) navigate(questionPath(random.id));
   };
 
   const hasSearchOrFilter =
@@ -220,6 +233,7 @@ export function QuestionBankPage() {
                 <QuestionCard
                   question={question}
                   className="h-full"
+                  to={questionPath(question.id)}
                   onToggleBookmark={mutations.toggleBookmark}
                   onSetStatus={mutations.setStatus}
                 />

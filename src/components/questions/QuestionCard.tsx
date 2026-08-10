@@ -16,9 +16,17 @@ interface QuestionCardProps {
   onToggleBookmark: (questionId: string, bookmarked: boolean) => void;
   onSetStatus?: (questionId: string, status: ProgressStatus) => void;
   className?: string;
+  /** Optional link target; defaults to `/questions/:id`. Use to carry filter context. */
+  to?: string;
 }
 
-export function QuestionCard({ question, onToggleBookmark, onSetStatus, className }: QuestionCardProps) {
+export function QuestionCard({
+  question,
+  onToggleBookmark,
+  onSetStatus,
+  className,
+  to,
+}: QuestionCardProps) {
   const status = question.progress?.status ?? 'unseen';
 
   return (
@@ -46,7 +54,7 @@ export function QuestionCard({ question, onToggleBookmark, onSetStatus, classNam
       <div className="min-w-0 overflow-hidden">
         <h3 className="mb-1 font-serif text-lg font-semibold leading-snug text-stone-900 dark:text-stone-100">
           <Link
-            to={`/questions/${question.id}`}
+            to={to ?? `/questions/${question.id}`}
             className="rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 after:absolute after:inset-0"
           >
             <MathRenderer inline>{question.title}</MathRenderer>
