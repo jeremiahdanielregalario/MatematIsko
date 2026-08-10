@@ -71,6 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!isApprovedUpEmail(user.email)) {
         setRawUser(null);
         setProfile(null);
+        setProfileLoading(false);
         setAuthError(UP_ACCESS_MESSAGE);
         clearSessionStart();
         void client.auth.signOut();
@@ -79,6 +80,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (isSessionExpired()) {
         setRawUser(null);
         setProfile(null);
+        setProfileLoading(false);
         setAuthError(SESSION_EXPIRED_MESSAGE);
         clearSessionStart();
         void client.auth.signOut();
@@ -86,6 +88,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       setAuthError(null);
       setRawUser(user);
+      setProfileLoading(true);
     };
 
     const { data } = client.auth.onAuthStateChange((event, session) => {
@@ -94,6 +97,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         clearSessionStart();
         setRawUser(null);
         setProfile(null);
+        setProfileLoading(false);
         setJustSignedIn(false);
         setLoading(false);
         return;
@@ -198,7 +202,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     clearSessionStart();
     setRawUser(null);
     setProfile(null);
+    setProfileLoading(false);
     setAuthError(null);
+    setJustSignedIn(false);
   }, []);
 
   const refreshProfile = useCallback(async () => {
