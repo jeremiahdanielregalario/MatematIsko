@@ -52,7 +52,7 @@ export function TheoremForm({ initial, courses, topics, onSaved, onCancel }: The
     initial ? toDraft(initial) : emptyDraft(),
   );
   const [newTopicName, setNewTopicName] = useState('');
-  const [showPreview, setShowPreview] = useState(false);
+  const [showPreview, setShowPreview] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

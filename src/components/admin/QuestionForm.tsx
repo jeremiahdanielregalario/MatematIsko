@@ -62,7 +62,7 @@ function toDraft(question: Question): QuestionDraft {
 export function QuestionForm({ initial, courses, topics, onSaved, onCancel }: QuestionFormProps) {
   const [draft, setDraft] = useState<QuestionDraft>(() => (initial ? toDraft(initial) : emptyDraft()));
   const [newTopicName, setNewTopicName] = useState('');
-  const [showPreview, setShowPreview] = useState(false);
+  const [showPreview, setShowPreview] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
