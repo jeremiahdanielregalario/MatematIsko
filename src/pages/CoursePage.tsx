@@ -9,6 +9,7 @@ import { ProgressBar } from '@/components/common/ProgressBar';
 import { useCourses } from '@/hooks/useCourses';
 import { useCourseScope } from '@/hooks/useCourseScope';
 import { useQuestions } from '@/hooks/useQuestions';
+import { pickRandom } from '@/lib/questionFilter';
 import type { TopicWithStats } from '@/types';
 
 export function CoursePage() {
@@ -45,7 +46,7 @@ export function CoursePage() {
         description="This course does not exist or has no questions yet."
         action={
           <Button asChild>
-            <Link to="/questions">Browse the question bank</Link>
+            <Link to="/courses">Browse courses</Link>
           </Button>
         }
       />
@@ -74,6 +75,14 @@ export function CoursePage() {
     }))
     .sort((a, b) => a.name.localeCompare(b.name));
 
+  // Starting question for a topic/course study run (unmastered first, else any).
+  const studyEntry = (pool: typeof courseQuestions) => {
+    const unmastered = pool.filter((q) => q.progress?.status !== 'mastered');
+    return pickRandom(unmastered.length > 0 ? unmastered : pool);
+  };
+  const topicEntry = (topicId: string) =>
+    studyEntry(courseQuestions.filter((q) => q.topic_id === topicId));
+
   const mastered = courseQuestions.filter((q) => q.progress?.status === 'mastered').length;
   const masteryPercent = courseQuestions.length === 0 ? 0 : Math.round((mastered / courseQuestions.length) * 100);
 
@@ -82,14 +91,16 @@ export function CoursePage() {
     .sort((a, b) => (b.progress?.last_attempted_at ?? '').localeCompare(a.progress?.last_attempted_at ?? ''))
     .slice(0, 5);
 
+  const courseEntry = studyEntry(courseQuestions);
+
   return (
     <div className="space-y-8">
       <Link
-        to="/questions"
+        to="/courses"
         className="inline-flex items-center gap-1.5 text-sm font-medium text-stone-500 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-100"
       >
         <ArrowLeft className="size-4" />
-        Question bank
+        Courses
       </Link>
 
       <section className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -102,12 +113,14 @@ export function CoursePage() {
           </h1>
           <p className="mt-2 max-w-2xl text-stone-600 dark:text-stone-400">{course.description}</p>
         </div>
-        <Button asChild>
-          <Link to={`/questions?course=${course.id}`}>
-            All {course.code} questions
-            <ArrowRight className="size-4" />
-          </Link>
-        </Button>
+        {courseEntry ? (
+          <Button asChild>
+            <Link to={`/questions/${courseEntry.id}?course=${course.id}`}>
+              Start studying
+              <ArrowRight className="size-4" />
+            </Link>
+          </Button>
+        ) : null}
       </section>
 
       <section className="grid gap-4 sm:grid-cols-3">
@@ -146,26 +159,33 @@ export function CoursePage() {
           />
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {topics.map((topic) => (
-              <Link
-                key={topic.id}
-                to={`/questions?course=${course.id}&topic=${topic.id}`}
-                className="group rounded-xl border border-stone-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md dark:border-stone-800 dark:bg-stone-900"
-              >
-                <h3 className="font-semibold text-stone-900 group-hover:text-brand-800 dark:text-stone-100 dark:group-hover:text-brand-300">
-                  {topic.name}
-                </h3>
-                <p className="mt-1 text-sm text-stone-500 dark:text-stone-400">
-                  {topic.question_count} question{topic.question_count === 1 ? '' : 's'} ·{' '}
-                  {topic.mastery_percent}% mastered
-                </p>
-                <ProgressBar
-                  value={topic.mastery_percent}
-                  label={`${topic.name} mastery`}
-                  className="mt-3 h-1.5 bg-stone-100 dark:bg-stone-800"
-                />
-              </Link>
-            ))}
+            {topics.map((topic) => {
+              const entry = topicEntry(topic.id);
+              return (
+                <Link
+                  key={topic.id}
+                  to={
+                    entry
+                      ? `/questions/${entry.id}?course=${course.id}&topic=${topic.id}`
+                      : `/courses/${course.id}`
+                  }
+                  className="group rounded-xl border border-stone-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md dark:border-stone-800 dark:bg-stone-900"
+                >
+                  <h3 className="font-semibold text-stone-900 group-hover:text-brand-800 dark:text-stone-100 dark:group-hover:text-brand-300">
+                    {topic.name}
+                  </h3>
+                  <p className="mt-1 text-sm text-stone-500 dark:text-stone-400">
+                    {topic.question_count} question{topic.question_count === 1 ? '' : 's'} ·{' '}
+                    {topic.mastery_percent}% mastered
+                  </p>
+                  <ProgressBar
+                    value={topic.mastery_percent}
+                    label={`${topic.name} mastery`}
+                    className="mt-3 h-1.5 bg-stone-100 dark:bg-stone-800"
+                  />
+                </Link>
+              );
+            })}
           </div>
         )}
       </section>

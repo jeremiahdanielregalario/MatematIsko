@@ -12,7 +12,7 @@ export function NotFoundPage() {
         Page not found
       </h1>
       <p className="max-w-md text-sm text-stone-500 dark:text-stone-400">
-        This page drifted out of the domain. Head back to the landing page or the question bank.
+        This page drifted out of the domain. Head back to the landing page or your courses.
       </p>
       <Button asChild>
         <Link to="/">Go home</Link>

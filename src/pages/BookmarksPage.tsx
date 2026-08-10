@@ -116,7 +116,7 @@ export function BookmarksPage() {
               </Button>
             ) : (
               <Button asChild>
-                <Link to="/questions">Browse the question bank</Link>
+                <Link to="/courses">Browse courses</Link>
               </Button>
             )
           }

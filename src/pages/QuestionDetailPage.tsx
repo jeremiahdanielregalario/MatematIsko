@@ -78,12 +78,8 @@ export function QuestionDetailPage() {
     }
   };
 
-  // "Back" only keeps the context that was explicitly in the URL.
-  const backPath = () => {
-    const params = new URLSearchParams(searchParams);
-    const query = params.toString();
-    return query ? `/questions?${query}` : '/questions';
-  };
+  // "Back" returns to the course page, which is the study home for the topic.
+  const backPath = `/courses/${contextCourse}`;
 
   const inTopic = Boolean(contextTopic);
   const inCourse = Boolean(contextCourse) && !inTopic;
@@ -91,11 +87,11 @@ export function QuestionDetailPage() {
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <Link
-        to={backPath()}
+        to={backPath}
         className="inline-flex items-center gap-1.5 text-sm font-medium text-stone-500 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-100"
       >
         <ArrowLeft className="size-4" />
-        Back to question bank
+        Back to course
       </Link>
 
       <Card className="overflow-hidden">

@@ -10,6 +10,7 @@ import { AdminPage } from '@/pages/AdminPage';
 import { AuthCallbackPage } from '@/pages/AuthCallbackPage';
 import { BookmarksPage } from '@/pages/BookmarksPage';
 import { CoursePage } from '@/pages/CoursePage';
+import { CoursesPage } from '@/pages/CoursesPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { LandingPage } from '@/pages/LandingPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
@@ -17,7 +18,6 @@ import { OnboardingPage } from '@/pages/OnboardingPage';
 import { PracticePage } from '@/pages/PracticePage';
 import { ProfilePage } from '@/pages/ProfilePage';
 import { ProgressPage } from '@/pages/ProgressPage';
-import { QuestionBankPage } from '@/pages/QuestionBankPage';
 import { QuestionDetailPage } from '@/pages/QuestionDetailPage';
 import { TheoremsPage } from '@/pages/TheoremsPage';
 import { TheoremDetailPage } from '@/pages/TheoremDetailPage';
@@ -38,7 +38,8 @@ export function App() {
               <Route element={<RequireOnboarding />}>
                 <Route element={<AppShell />}>
                   <Route path="/dashboard" element={<DashboardPage />} />
-                  <Route path="/questions" element={<QuestionBankPage />} />
+                  <Route path="/courses" element={<CoursesPage />} />
+                  <Route path="/courses/:courseId" element={<CoursePage />} />
                   <Route path="/questions/:id" element={<QuestionDetailPage />} />
                   <Route path="/theorems" element={<TheoremsPage />} />
                   <Route path="/theorems/flashcards" element={<FlashcardSessionPage />} />
@@ -46,7 +47,6 @@ export function App() {
                   <Route path="/practice" element={<PracticePage />} />
                   <Route path="/bookmarks" element={<BookmarksPage />} />
                   <Route path="/progress" element={<ProgressPage />} />
-                  <Route path="/courses/:courseId" element={<CoursePage />} />
                   <Route path="/profile" element={<ProfilePage />} />
                   <Route
                     path="/admin"

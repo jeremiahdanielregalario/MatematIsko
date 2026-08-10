@@ -24,8 +24,8 @@ import { useRevealKeyboard } from '@/hooks/useRevealKeyboard';
 const FEATURES = [
   {
     icon: Layers,
-    title: 'Organized question bank',
-    description: 'Browse real math exam questions filtered by course, topic, difficulty, and year.',
+    title: 'Study by course and topic',
+    description: 'Real past exam questions organized by course and topic, so you can focus on what you are currently learning.',
   },
   {
     icon: Target,
