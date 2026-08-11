@@ -90,4 +90,69 @@ describe('getRecommendedQuestions', () => {
   it('returns an empty list when everything is mastered', () => {
     expect(getRecommendedQuestions([mastered('a'), mastered('b')])).toEqual([]);
   });
+
+  it('spreads recommendations across as many courses as possible', () => {
+    const result = getRecommendedQuestions([
+      unseen('a1', 'topic-1', '2024-01-01'),
+      unseen('b1', 'topic-1', '2024-01-01'),
+      unseen('c1', 'topic-1', '2024-01-01'),
+      unseen('a2', 'topic-1', '2024-01-02'),
+      unseen('b2', 'topic-1', '2024-01-02'),
+      unseen('c2', 'topic-1', '2024-01-02'),
+    ].map((q, index) => {
+      const courses = ['course-a', 'course-b', 'course-c'];
+      return {
+        ...q,
+        course_id: courses[index % 3],
+        topic_id: `topic-${index % 3}`,
+        course: {
+          id: courses[index % 3],
+          code: courses[index % 3].toUpperCase(),
+          name: courses[index % 3],
+          description: null,
+          created_at: '2024-01-01',
+        },
+        topic: {
+          id: `topic-${index % 3}`,
+          course_id: courses[index % 3],
+          name: `Topic ${index % 3}`,
+          description: null,
+        },
+      };
+    }));
+    expect(result.map((q) => q.id)).toEqual(['a2', 'b2', 'c2', 'a1', 'b1', 'c1']);
+  });
+
+  it('fills extra slots from courses with more questions after a balanced rotation', () => {
+    const courseA = {
+      id: 'course-a',
+      code: 'A',
+      name: 'Course A',
+      description: null,
+      created_at: '2024-01-01',
+    };
+    const courseB = {
+      id: 'course-b',
+      code: 'B',
+      name: 'Course B',
+      description: null,
+      created_at: '2024-01-01',
+    };
+    const question = (id: string, courseId: string, topicId: string) =>
+      makeQuestion({
+        id,
+        course_id: courseId,
+        topic_id: topicId,
+        course: courseId === 'course-a' ? courseA : courseB,
+        topic: { id: topicId, course_id: courseId, name: topicId, description: null },
+      });
+    const result = getRecommendedQuestions([
+      question('a1', 'course-a', 'topic-a'),
+      question('a2', 'course-a', 'topic-a'),
+      question('b1', 'course-b', 'topic-b'),
+      question('b2', 'course-b', 'topic-b'),
+      question('b3', 'course-b', 'topic-b'),
+    ]);
+    expect(result.map((q) => q.id)).toEqual(['a1', 'b1', 'a2', 'b2', 'b3']);
+  });
 });
