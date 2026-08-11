@@ -4,23 +4,28 @@ import {
   CheckCircle2,
   Layers,
   Shuffle,
+  Sparkles,
   Target,
 } from 'lucide-react';
 import { useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { CourseCard, type CourseStats } from '@/components/courses/CourseCard';
 import { ErrorState } from '@/components/common/ErrorState';
 import { EmptyState } from '@/components/common/EmptyState';
 import { LoadingState } from '@/components/common/LoadingState';
 import { ProgressCard } from '@/components/common/ProgressCard';
 import { Reveal } from '@/components/common/Reveal';
+import { QuestionCard } from '@/components/questions/QuestionCard';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
-import { useCourseScope } from '@/hooks/useCourseScope';
-import { useCourses } from '@/hooks/useCourses';
+import { useQuestionMutations } from '@/hooks/useQuestionMutations';
 import { useQuestions } from '@/hooks/useQuestions';
-import { computeStats } from '@/lib/stats';
+import { mergeMutations } from '@/lib/mutations';
 import { pickRandom } from '@/lib/questionFilter';
+import { getRecommendedQuestions } from '@/lib/recommendations';
+import { computeStats } from '@/lib/stats';
+import type { QuestionWithMeta } from '@/types';
+
+const EMPTY_QUESTIONS: QuestionWithMeta[] = [];
 
 function greeting(): string {
   const hour = new Date().getHours();
@@ -33,30 +38,20 @@ export function DashboardPage() {
   const { profile } = useAuth();
   const navigate = useNavigate();
   const { data, loading, error, reload } = useQuestions();
-  const { data: coursesData } = useCourses();
-  const { courseIds } = useCourseScope();
 
-  const courses = useMemo(
-    () => (coursesData ?? []).filter((course) => courseIds === null || courseIds.includes(course.id)),
-    [coursesData, courseIds],
+  const questions = useMemo(() => data ?? EMPTY_QUESTIONS, [data]);
+
+  const getQuestion = (id: string) => questions.find((q) => q.id === id);
+  const mutations = useQuestionMutations(getQuestion);
+
+  const merged = useMemo(
+    () => questions.map((q) => mergeMutations(q, mutations)),
+    [questions, mutations],
   );
 
-  const questions = useMemo(() => data ?? [], [data]);
+  const stats = useMemo(() => computeStats(merged), [merged]);
 
-  const stats = useMemo(() => computeStats(questions), [questions]);
-
-  const statsByCourse = useMemo(() => {
-    const map = new Map<string, CourseStats>();
-    for (const q of questions) {
-      const entry = map.get(q.course_id) ?? { total: 0, mastered: 0, learning: 0 };
-      entry.total += 1;
-      const status = q.progress?.status ?? 'unseen';
-      if (status === 'mastered') entry.mastered += 1;
-      if (status === 'learning') entry.learning += 1;
-      map.set(q.course_id, entry);
-    }
-    return map;
-  }, [questions]);
+  const recommended = useMemo(() => getRecommendedQuestions(merged), [merged]);
 
   if (loading) return <LoadingState label="Loading your dashboard" />;
   if (error) {
@@ -84,7 +79,7 @@ export function DashboardPage() {
             {greeting()}, {firstName}.
           </h1>
           <p className="mt-1 text-stone-500 dark:text-stone-400">
-            Pick a course to review, or dive into a random problem.
+            Here are the questions we think you should tackle next.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -143,29 +138,30 @@ export function DashboardPage() {
 
       <section className="space-y-4">
         <h2 className="font-serif text-2xl font-bold tracking-tight text-stone-900 dark:text-stone-50">
-          What are you studying?
+          Recommended for you
         </h2>
-        {courses.length > 0 ? (
+        {recommended.length > 0 ? (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {courses.map((course, index) => (
-              <Reveal key={course.id} delay={index * 60} className="h-full">
-                <Link
-                  to={`/courses/${course.id}`}
-                  className="block h-full rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-                >
-                  <CourseCard course={course} stats={statsByCourse.get(course.id) ?? { total: 0, mastered: 0, learning: 0 }} className="h-full" />
-                </Link>
+            {recommended.map((question, index) => (
+              <Reveal key={question.id} delay={index * 60} className="h-full">
+                <QuestionCard
+                  question={question}
+                  className="h-full"
+                  to={`/questions/${question.id}?course=${question.course_id}`}
+                  onToggleBookmark={mutations.toggleBookmark}
+                  onSetStatus={mutations.setStatus}
+                />
               </Reveal>
             ))}
           </div>
         ) : (
           <EmptyState
-            icon={<Layers className="size-8" />}
-            title="No courses selected yet"
-            description="Choose the math courses you want to study so they show up here."
+            icon={<Sparkles className="size-8" />}
+            title="No questions to recommend yet"
+            description="Once you have questions to study, we will surface the ones from your weakest topics here."
             action={
               <Button asChild>
-                <Link to="/profile">Choose courses</Link>
+                <Link to="/courses">Browse courses</Link>
               </Button>
             }
           />
