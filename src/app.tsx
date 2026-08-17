@@ -34,6 +34,8 @@ export function App() {
             <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/auth/callback" element={<AuthCallbackPage />} />
+            <Route path="/blogs" element={<BlogsPage />} />
+            <Route path="/blogs/:slug" element={<BlogPostPage />} />
 
             <Route element={<RequireAuth />}>
               <Route path="/onboarding" element={<OnboardingPage />} />
@@ -48,9 +50,7 @@ export function App() {
                   <Route path="/theorems/:id" element={<TheoremDetailPage />} />
                   <Route path="/practice" element={<PracticePage />} />
                   <Route path="/bookmarks" element={<BookmarksPage />} />
-                  <Route path="/blogs" element={<BlogsPage />} />
                   <Route path="/blogs/new" element={<WriteBlogPage />} />
-                  <Route path="/blogs/:slug" element={<BlogPostPage />} />
                   <Route path="/profile" element={<ProfilePage />} />
                   <Route
                     path="/admin"

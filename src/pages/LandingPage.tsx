@@ -2,12 +2,13 @@ import {
   Bookmark,
   Infinity as InfinityIcon,
   Layers,
+  PenLine,
   ShieldCheck,
   Target,
   TriangleAlert,
   Wrench,
 } from 'lucide-react';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Link, Navigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Reveal } from '@/components/common/Reveal';
@@ -69,7 +70,14 @@ export function LandingPage() {
       <header className="border-b border-stone-200 dark:border-stone-800">
         <div className="mx-auto flex h-16 w-full max-w-8xl items-center justify-between px-4 sm:px-6">
           <Logo size="sm" />
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-3">
+            <Link
+              to="/blogs"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-stone-600 transition-colors hover:text-stone-900 dark:text-stone-300 dark:hover:text-stone-50"
+            >
+              <PenLine className="size-3.5" />
+              Blogs
+            </Link>
             <ThemeToggle />
             {user ? (
               <Button variant="outline" size="sm" onClick={() => void signOut()}>
