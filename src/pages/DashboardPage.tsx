@@ -3,6 +3,7 @@ import {
   BookOpenText,
   Bookmark,
   CheckCircle2,
+  Download,
   Layers,
   RefreshCw,
   Shuffle,
@@ -21,6 +22,7 @@ import { QuestionCard } from '@/components/questions/QuestionCard';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
+import { usePwaInstall } from '@/hooks/usePwaInstall';
 import { useQuestionMutations } from '@/hooks/useQuestionMutations';
 import { useQuestions } from '@/hooks/useQuestions';
 import { cn } from '@/lib/cn';
@@ -132,6 +134,7 @@ function OverviewTab({
   firstName: string;
 }) {
   const navigate = useNavigate();
+  const { install, isInstallable } = usePwaInstall();
   const recommended = useMemo(() => getRecommendedQuestions(merged), [merged]);
 
   const startRandom = () => {
@@ -161,6 +164,12 @@ function OverviewTab({
               Start Practice
             </Link>
           </Button>
+          {isInstallable && (
+            <Button variant="outline" onClick={() => void install()}>
+              <Download className="size-4" />
+              Install App
+            </Button>
+          )}
         </div>
       </section>
 
