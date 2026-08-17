@@ -27,7 +27,27 @@ export default defineConfig({
       description:
         'MatematIsko is an interactive mathematics exam-review platform for UP students. Browse, practice, and master calculus, linear algebra, and more.',
       viewport: 'width=device-width, initial-scale=1.0, viewport-fit=cover',
+      'theme-color': '#7b1113',
+      'apple-mobile-web-app-capable': 'yes',
+      'apple-mobile-web-app-status-bar-style': 'black-translucent',
+      'apple-mobile-web-app-title': 'MatematIsko',
     },
+    tags: [
+      {
+        tag: 'link',
+        attrs: {
+          rel: 'manifest',
+          href: '/manifest.json',
+        },
+      },
+      {
+        tag: 'link',
+        attrs: {
+          rel: 'apple-touch-icon',
+          href: '/icons/icon.svg',
+        },
+      },
+    ],
   },
   server: {
     port: 3000,
