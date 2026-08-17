@@ -386,14 +386,14 @@ function NoteSection({
       </button>
 
       {open && (
-        <div className="mt-3 grid gap-6 xl:grid-cols-[1fr_180px]">
-          <div className="rounded-2xl border border-stone-200 bg-stone-50 p-6 sm:p-8 dark:border-stone-700 dark:bg-stone-900">
+        <>
+          <div className="mt-3 rounded-2xl border border-stone-200 bg-stone-50 p-6 sm:p-8 dark:border-stone-700 dark:bg-stone-900">
             <NoteContent content={note.content} headingIds={headingIds} />
           </div>
 
           {headings.length > 0 && (
-            <nav className="hidden xl:block" aria-label={`Table of contents for ${note.title}`}>
-              <div className="sticky top-24">
+            <nav className="mt-6 hidden xl:block" aria-label={`Table of contents for ${note.title}`}>
+              <div className="sticky top-24 max-h-[calc(100dvh-8rem)] overflow-y-auto">
                 <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-stone-400 dark:text-stone-500">
                   On this page
                 </h4>
@@ -421,7 +421,7 @@ function NoteSection({
               </div>
             </nav>
           )}
-        </div>
+        </>
       )}
     </div>
   );
