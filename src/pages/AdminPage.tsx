@@ -61,7 +61,7 @@ export function AdminPage() {
         Admin
       </h1>
 
-      <div className="flex items-center gap-1 rounded-lg border border-stone-200 bg-stone-50 p-1 dark:border-stone-800 dark:bg-stone-900">
+      <div className="flex items-center gap-1 overflow-x-auto rounded-lg border border-stone-200 bg-stone-50 p-1 scrollbar-none dark:border-stone-800 dark:bg-stone-900">
         {TABS.map(({ value, label, icon: Icon }) => (
           <button
             key={value}
