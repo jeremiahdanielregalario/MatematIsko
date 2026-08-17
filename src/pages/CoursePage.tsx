@@ -1,5 +1,5 @@
 import { ArrowLeft, ArrowRight, BookOpenText, FileText } from 'lucide-react';
-import { Link, Navigate, useSearchParams, useParams } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useSearchParams, useParams } from 'react-router-dom';
 import { EmptyState } from '@/components/common/EmptyState';
 import { ErrorState } from '@/components/common/ErrorState';
 import { LoadingState } from '@/components/common/LoadingState';
@@ -150,7 +150,7 @@ function QuestionsTab({
   courseId: string | undefined;
   questions: { id: string; course_id: string; topic?: { id: string; name: string } | null }[];
 }) {
-  const [, navigate] = useSearchParams();
+  const navigate = useNavigate();
 
   const byTopic = new Map<string, TopicWithStats>();
 

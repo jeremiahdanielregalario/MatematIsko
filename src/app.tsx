@@ -49,7 +49,7 @@ export function App() {
                   <Route path="/practice" element={<PracticePage />} />
                   <Route path="/bookmarks" element={<BookmarksPage />} />
                   <Route path="/blogs" element={<BlogsPage />} />
-                  <Route path="/blogs/write" element={<WriteBlogPage />} />
+                  <Route path="/blogs/new" element={<WriteBlogPage />} />
                   <Route path="/blogs/:slug" element={<BlogPostPage />} />
                   <Route path="/profile" element={<ProfilePage />} />
                   <Route

@@ -91,7 +91,7 @@ export function BlogsPage() {
           </p>
         </section>
         <Button asChild>
-          <Link to="/blogs/write">
+          <Link to="/blogs/new">
             <PenLine className="size-4" />
             Write a Post
           </Link>

@@ -56,7 +56,7 @@ export function BlogPostPage() {
         .eq('slug', slug)
         .eq('published', true)
         .eq('approval_status', 'approved')
-        .single()
+        .maybeSingle()
         .then(({ data, error: err }) => {
           if (err) setError(err.message);
           else setPost(data as BlogPostWithAuthor);
