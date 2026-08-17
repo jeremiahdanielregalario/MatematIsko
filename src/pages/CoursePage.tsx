@@ -3,7 +3,6 @@ import { Link, Navigate, useNavigate, useSearchParams, useParams } from 'react-r
 import { EmptyState } from '@/components/common/EmptyState';
 import { ErrorState } from '@/components/common/ErrorState';
 import { LoadingState } from '@/components/common/LoadingState';
-import { CourseNotesView } from '@/components/courses/CourseNotesView';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useCourses } from '@/hooks/useCourses';
@@ -266,5 +265,29 @@ function NotesTab({ courseId }: { courseId: string | undefined }) {
     );
   }
 
-  return <CourseNotesView notes={notes} />;
+  return (
+    <div className="grid gap-4 sm:grid-cols-2">
+      {notes.map((note) => (
+        <Link
+          key={note.id}
+          to={`/courses/${courseId}/notes/${note.id}`}
+          className="group block"
+        >
+          <Card className="transition-all duration-200 hover:-translate-y-1 hover:shadow-md group-hover:border-brand-300 dark:group-hover:border-brand-700">
+            <CardContent className="p-5">
+              <div className="mb-3 flex size-10 items-center justify-center rounded-xl bg-brand-50 text-brand-700 transition-colors group-hover:bg-brand-100 dark:bg-brand-900/30 dark:text-brand-300 dark:group-hover:bg-brand-900/50">
+                <FileText className="size-5" />
+              </div>
+              <h3 className="font-serif text-lg font-bold leading-snug text-stone-900 group-hover:text-brand-700 dark:text-stone-50 dark:group-hover:text-brand-300">
+                {note.title}
+              </h3>
+              <p className="mt-2 line-clamp-2 text-sm text-stone-500 dark:text-stone-400">
+                {note.content.replace(/[#*$`\\]/g, '').slice(0, 120)}...
+              </p>
+            </CardContent>
+          </Card>
+        </Link>
+      ))}
+    </div>
+  );
 }

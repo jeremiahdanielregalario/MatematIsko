@@ -10,6 +10,7 @@ import { AdminPage } from '@/pages/AdminPage';
 import { AuthCallbackPage } from '@/pages/AuthCallbackPage';
 import { BookmarksPage } from '@/pages/BookmarksPage';
 import { CoursePage } from '@/pages/CoursePage';
+import { CourseNoteDetailPage } from '@/pages/CourseNoteDetailPage';
 import { CoursesPage } from '@/pages/CoursesPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { LandingPage } from '@/pages/LandingPage';
@@ -45,6 +46,7 @@ export function App() {
                   <Route path="/dashboard" element={<DashboardPage />} />
                   <Route path="/courses" element={<CoursesPage />} />
                   <Route path="/courses/:courseId" element={<CoursePage />} />
+                  <Route path="/courses/:courseId/notes/:noteId" element={<CourseNoteDetailPage />} />
                   <Route path="/questions/:id" element={<QuestionDetailPage />} />
                   <Route path="/theorems" element={<TheoremsPage />} />
                   <Route path="/theorems/flashcards" element={<FlashcardSessionPage />} />
