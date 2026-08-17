@@ -6,7 +6,6 @@ import { EmptyState } from '@/components/common/EmptyState';
 import { ErrorState } from '@/components/common/ErrorState';
 import { LoadingState } from '@/components/common/LoadingState';
 import { Button } from '@/components/ui/button';
-import { useAuth } from '@/hooks/useAuth';
 import type { BlogPostWithAuthor } from '@/types';
 
 function formatDate(dateStr: string): string {
@@ -34,13 +33,12 @@ function getInitials(name: string | null): string {
 
 export function BlogPostPage() {
   const { slug } = useParams<{ slug: string }>();
-  const { user } = useAuth();
   const [post, setPost] = useState<BlogPostWithAuthor | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!slug || !user) {
+    if (!slug) {
       setLoading(false);
       return;
     }
@@ -63,7 +61,7 @@ export function BlogPostPage() {
           setLoading(false);
         });
     });
-  }, [slug, user]);
+  }, [slug]);
 
   if (loading) return <LoadingState label="Loading post" />;
   if (error) return <ErrorState title="Could not load post" message={error} />;

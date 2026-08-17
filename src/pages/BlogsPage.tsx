@@ -10,17 +10,11 @@ import { useAuth } from '@/hooks/useAuth';
 import type { BlogPostWithAuthor } from '@/types';
 
 function useBlogPosts() {
-  const { user } = useAuth();
   const [posts, setPosts] = useState<BlogPostWithAuthor[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!user) {
-      setLoading(false);
-      return;
-    }
-
     import('@/lib/supabase').then(({ supabase, isSupabaseConfigured }) => {
       if (!isSupabaseConfigured || !supabase) {
         setLoading(false);
@@ -38,7 +32,7 @@ function useBlogPosts() {
           setLoading(false);
         });
     });
-  }, [user]);
+  }, []);
 
   return { posts, loading, error };
 }
@@ -68,6 +62,7 @@ function getInitials(name: string | null): string {
 
 export function BlogsPage() {
   const { posts, loading, error } = useBlogPosts();
+  const { user } = useAuth();
   const [search, setSearch] = useState('');
 
   const filtered = posts.filter(
@@ -91,12 +86,14 @@ export function BlogsPage() {
               Stories, guides, and reflections from the UP Math community.
             </p>
           </section>
-          <Button asChild>
-            <Link to="/blogs/new">
-              <PenLine className="size-4" />
-              Write a Post
-            </Link>
-          </Button>
+          {user && (
+            <Button asChild>
+              <Link to="/blogs/new">
+                <PenLine className="size-4" />
+                Write a Post
+              </Link>
+            </Button>
+          )}
         </div>
 
         <div className="mt-6">
