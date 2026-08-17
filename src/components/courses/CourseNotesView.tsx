@@ -163,7 +163,7 @@ function BlockRenderer({
   if (block.type === 'normal') {
     const md = block.heading ? `### ${block.heading}\n${block.body}` : block.body;
     return (
-      <div ref={ref} className="py-2">
+      <div ref={ref} className="py-2 prose-headings:font-serif">
         <MathRenderer>{md}</MathRenderer>
       </div>
     );
@@ -184,7 +184,7 @@ function BlockRenderer({
           {style.label}
         </span>
         {headingText && (
-          <span className="text-sm font-semibold text-stone-700 dark:text-stone-200">
+          <span className="text-sm font-semibold font-serif text-stone-700 dark:text-stone-200">
             <ReactMarkdown
               remarkPlugins={[remarkMath, remarkGfm]}
               rehypePlugins={[[rehypeKatex, { throwOnError: false }]]}
@@ -212,7 +212,7 @@ function NoteContent({
   const blocks = useMemo(() => splitIntoBlocks(content), [content]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 prose-headings:font-serif">
       {blocks.map((block, i) => (
         <BlockRenderer key={i} block={block} headingIds={headingIds} />
       ))}
@@ -249,53 +249,6 @@ function ReadingProgress({ target }: { target: React.RefObject<HTMLDivElement | 
         style={{ width: `${progress}%` }}
       />
     </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Table of Contents (desktop sidebar)
-// ---------------------------------------------------------------------------
-
-function TableOfContents({
-  headings,
-  activeId,
-  onNavigate,
-}: {
-  headings: Heading[];
-  activeId: string | null;
-  onNavigate: (id: string) => void;
-}) {
-  if (headings.length === 0) return null;
-
-  return (
-    <nav className="hidden xl:block" aria-label="Table of contents">
-      <div className="sticky top-24">
-        <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-stone-400 dark:text-stone-500">
-          On this page
-        </h4>
-        <ul className="space-y-0.5 border-l border-stone-200 dark:border-stone-700">
-          {headings.map((h) => (
-            <li key={h.id}>
-              <button
-                type="button"
-                onClick={() => onNavigate(h.id)}
-                className={cn(
-                  'block w-full truncate border-l-2 py-1 text-[13px] leading-snug transition-all duration-200',
-                  h.level === 1 && 'pl-3 font-medium',
-                  h.level === 2 && 'pl-6',
-                  h.level === 3 && 'pl-9 text-[12px]',
-                  activeId === h.id
-                    ? 'border-brand-500 text-brand-700 dark:border-brand-400 dark:text-brand-300'
-                    : 'border-transparent text-stone-500 hover:border-stone-300 hover:text-stone-700 dark:text-stone-400 dark:hover:border-stone-600 dark:hover:text-stone-200',
-                )}
-              >
-                {h.text}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </nav>
   );
 }
 
@@ -388,11 +341,15 @@ function NoteSection({
   headings,
   headingIds,
   defaultOpen,
+  activeId,
+  onNavigate,
 }: {
   note: CourseNote;
   headings: Heading[];
   headingIds: Map<string, string>;
   defaultOpen?: boolean;
+  activeId: string | null;
+  onNavigate: (id: string) => void;
 }) {
   const [open, setOpen] = useState(defaultOpen ?? true);
 
@@ -428,18 +385,44 @@ function NoteSection({
         </div>
       </button>
 
-      <div
-        className={cn(
-          'grid transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]',
-          open ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0',
-        )}
-      >
-        <div className="overflow-hidden">
+      {open && (
+        <div className="mt-3 grid gap-6 xl:grid-cols-[1fr_180px]">
           <div className="rounded-2xl border border-stone-200 bg-stone-50 p-6 sm:p-8 dark:border-stone-700 dark:bg-stone-900">
             <NoteContent content={note.content} headingIds={headingIds} />
           </div>
+
+          {headings.length > 0 && (
+            <nav className="hidden xl:block" aria-label={`Table of contents for ${note.title}`}>
+              <div className="sticky top-24">
+                <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-stone-400 dark:text-stone-500">
+                  On this page
+                </h4>
+                <ul className="space-y-0.5 border-l border-stone-200 dark:border-stone-700">
+                  {headings.map((h) => (
+                    <li key={h.id}>
+                      <button
+                        type="button"
+                        onClick={() => onNavigate(h.id)}
+                        className={cn(
+                          'block w-full truncate border-l-2 py-1 text-[13px] leading-snug transition-all duration-200',
+                          h.level === 1 && 'pl-3 font-medium',
+                          h.level === 2 && 'pl-6',
+                          h.level === 3 && 'pl-9 text-[12px]',
+                          activeId === h.id
+                            ? 'border-brand-500 text-brand-700 dark:border-brand-400 dark:text-brand-300'
+                            : 'border-transparent text-stone-500 hover:border-stone-300 hover:text-stone-700 dark:text-stone-400 dark:hover:border-stone-600 dark:hover:text-stone-200',
+                        )}
+                      >
+                        {h.text}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </nav>
+          )}
         </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -536,27 +519,21 @@ export function CourseNotesView({ notes }: CourseNotesViewProps) {
         onNavigate={scrollTo}
       />
 
-      <div className="mt-6 gap-8 xl:mt-0 xl:grid xl:grid-cols-[1fr_220px]">
-        <div className="space-y-6">
-          {notes.map((note) => {
-            const noteHeadings = extractHeadings(note.content);
-            return (
-              <NoteSection
-                key={note.id}
-                note={note}
-                headings={noteHeadings}
-                headingIds={headingIds}
-                defaultOpen={true}
-              />
-            );
-          })}
-        </div>
-
-        <TableOfContents
-          headings={allHeadings}
-          activeId={activeId}
-          onNavigate={scrollTo}
-        />
+      <div className="mt-6 space-y-6">
+        {notes.map((note) => {
+          const noteHeadings = extractHeadings(note.content);
+          return (
+            <NoteSection
+              key={note.id}
+              note={note}
+              headings={noteHeadings}
+              headingIds={headingIds}
+              defaultOpen={true}
+              activeId={activeId}
+              onNavigate={scrollTo}
+            />
+          );
+        })}
       </div>
     </div>
   );
