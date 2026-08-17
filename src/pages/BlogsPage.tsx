@@ -81,30 +81,32 @@ export function BlogsPage() {
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <section>
-          <h1 className="font-serif text-3xl font-bold tracking-tight text-stone-900 dark:text-stone-50">
-            Blogs
-          </h1>
-          <p className="mt-2 text-stone-500 dark:text-stone-400">
-            Stories, guides, and reflections from the UP Math community.
-          </p>
-        </section>
-        <Button asChild>
-          <Link to="/blogs/new">
-            <PenLine className="size-4" />
-            Write a Post
-          </Link>
-        </Button>
-      </div>
+      <div className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm dark:border-stone-700 dark:bg-stone-800 sm:p-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <section>
+            <h1 className="font-serif text-3xl font-bold tracking-tight text-stone-900 dark:text-stone-50">
+              Blogs
+            </h1>
+            <p className="mt-2 text-stone-500 dark:text-stone-400">
+              Stories, guides, and reflections from the UP Math community.
+            </p>
+          </section>
+          <Button asChild>
+            <Link to="/blogs/new">
+              <PenLine className="size-4" />
+              Write a Post
+            </Link>
+          </Button>
+        </div>
 
-      <div>
-        <Input
-          placeholder="Search posts..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="max-w-md"
-        />
+        <div className="mt-6">
+          <Input
+            placeholder="Search posts..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="max-w-md"
+          />
+        </div>
       </div>
 
       {filtered.length === 0 ? (

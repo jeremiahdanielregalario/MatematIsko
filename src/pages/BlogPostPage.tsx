@@ -95,65 +95,69 @@ export function BlogPostPage() {
         All posts
       </Link>
 
-      {post.featured_image && (
-        <div className="overflow-hidden rounded-2xl">
-          <img
-            src={post.featured_image}
-            alt={post.title}
-            className="aspect-[2/1] w-full object-cover"
-          />
-        </div>
-      )}
+      <div className="rounded-2xl border border-stone-200 bg-white shadow-sm dark:border-stone-700 dark:bg-stone-800">
+        {post.featured_image && (
+          <div className="overflow-hidden rounded-t-2xl">
+            <img
+              src={post.featured_image}
+              alt={post.title}
+              className="aspect-[2/1] w-full object-cover"
+            />
+          </div>
+        )}
 
-      <header className="space-y-4">
-        <h1 className="font-serif text-3xl font-bold leading-tight tracking-tight text-stone-900 dark:text-stone-50 sm:text-4xl">
-          {post.title}
-        </h1>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-3">
-            {avatarUrl ? (
-              <img
-                src={avatarUrl}
-                alt={authorName}
-                className="size-10 rounded-full object-cover"
-              />
-            ) : (
-              <div className="flex size-10 items-center justify-center rounded-full bg-brand-100 text-sm font-bold text-brand-700 dark:bg-brand-900/50 dark:text-brand-300">
-                {getInitials(authorName)}
-              </div>
-            )}
-            <div>
-              <p className="text-sm font-semibold text-stone-800 dark:text-stone-100">
-                {authorName}
-              </p>
-              <div className="flex items-center gap-3 text-xs text-stone-500 dark:text-stone-400">
-                <span className="inline-flex items-center gap-1">
-                  <Calendar className="size-3" />
-                  {formatDate(post.created_at)}
-                </span>
-                <span className="inline-flex items-center gap-1">
-                  <Clock className="size-3" />
-                  {readingTime(post.content)} min read
-                </span>
+        <div className="space-y-6 p-6 sm:p-8">
+          <header className="space-y-4">
+            <h1 className="font-serif text-3xl font-bold leading-tight tracking-tight text-stone-900 dark:text-stone-50 sm:text-4xl">
+              {post.title}
+            </h1>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
+                {avatarUrl ? (
+                  <img
+                    src={avatarUrl}
+                    alt={authorName}
+                    className="size-10 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="flex size-10 items-center justify-center rounded-full bg-brand-100 text-sm font-bold text-brand-700 dark:bg-brand-900/50 dark:text-brand-300">
+                    {getInitials(authorName)}
+                  </div>
+                )}
+                <div>
+                  <p className="text-sm font-semibold text-stone-800 dark:text-stone-100">
+                    {authorName}
+                  </p>
+                  <div className="flex items-center gap-3 text-xs text-stone-500 dark:text-stone-400">
+                    <span className="inline-flex items-center gap-1">
+                      <Calendar className="size-3" />
+                      {formatDate(post.created_at)}
+                    </span>
+                    <span className="inline-flex items-center gap-1">
+                      <Clock className="size-3" />
+                      {readingTime(post.content)} min read
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
+          </header>
+
+          <div className="border-t border-stone-200 dark:border-stone-700" />
+
+          <div className="prose-headings:font-serif">
+            <MathRenderer>{post.content}</MathRenderer>
+          </div>
+
+          <div className="border-t border-stone-200 pt-6 dark:border-stone-700">
+            <Button variant="outline" asChild>
+              <Link to="/blogs">
+                <ArrowLeft className="size-4" />
+                Back to all posts
+              </Link>
+            </Button>
           </div>
         </div>
-      </header>
-
-      <div className="border-t border-stone-200 dark:border-stone-700" />
-
-      <div className="prose-headings:font-serif">
-        <MathRenderer>{post.content}</MathRenderer>
-      </div>
-
-      <div className="border-t border-stone-200 pt-6 dark:border-stone-700">
-        <Button variant="outline" asChild>
-          <Link to="/blogs">
-            <ArrowLeft className="size-4" />
-            Back to all posts
-          </Link>
-        </Button>
       </div>
     </article>
   );
