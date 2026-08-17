@@ -526,7 +526,7 @@ export function CourseNotesView({ notes }: CourseNotesViewProps) {
   if (notes.length === 0) return null;
 
   return (
-    <div ref={containerRef} className="relative">
+    <div ref={containerRef} className="relative rounded-2xl border border-stone-200 bg-white p-6 shadow-sm dark:border-stone-700 dark:bg-stone-800 sm:p-8">
       <ReadingProgress target={containerRef} />
       <BackToTop />
 
