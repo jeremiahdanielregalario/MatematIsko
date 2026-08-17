@@ -90,8 +90,8 @@ export function LandingPage() {
 
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-12 sm:px-6 sm:py-20">
         <section className="grid items-center gap-12 lg:grid-cols-[1.15fr_1fr]">
-          <div className="animate-slide-up">
-            <div className="mb-6">
+          <div className="animate-slide-up text-center lg:text-left">
+            <div className="mb-6 flex justify-center lg:justify-start">
               <Logo size="lg" />
             </div>
             <h1 className="font-serif text-4xl font-bold leading-tight tracking-tight text-stone-900 sm:text-5xl dark:text-stone-50">
