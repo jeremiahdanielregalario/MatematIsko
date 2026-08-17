@@ -1,7 +1,9 @@
 import { supabase, isSupabaseConfigured } from './supabase';
 import type {
+  BlogPost,
   Bookmark,
   Course,
+  CourseNote,
   Profile,
   ProgressStatus,
   QuestionProgress,
@@ -277,4 +279,74 @@ export async function getUserCourses(userId: string): Promise<Course[]> {
     const number = (code: string) => parseFloat(code.replace('MATH', '').trim()) || 0;
     return number(a.code) - number(b.code);
   });
+}
+
+// ---------------------------------------------------------------------------
+// Course Notes (admin CRUD)
+// ---------------------------------------------------------------------------
+
+export async function adminUpsertCourseNote(
+  courseId: string,
+  title: string,
+  content: string,
+  sortOrder: number,
+  id: string | null = null,
+): Promise<CourseNote> {
+  if (!isSupabaseConfigured) notConfigured();
+  if (!supabase) notConfigured();
+  const { data, error } = await supabase.rpc('admin_upsert_course_note', {
+    p_course_id: courseId,
+    p_title: title,
+    p_content: content,
+    p_sort_order: sortOrder,
+    p_id: id,
+  });
+  if (error) throw new Error(error.message);
+  return data as CourseNote;
+}
+
+export async function adminDeleteCourseNote(id: string): Promise<void> {
+  if (!isSupabaseConfigured) notConfigured();
+  if (!supabase) notConfigured();
+  const { error } = await supabase.rpc('admin_delete_course_note', {
+    p_id: id,
+  });
+  if (error) throw new Error(error.message);
+}
+
+// ---------------------------------------------------------------------------
+// Blog Posts (admin CRUD)
+// ---------------------------------------------------------------------------
+
+export async function adminUpsertBlogPost(
+  title: string,
+  slug: string,
+  excerpt: string,
+  content: string,
+  featuredImage: string,
+  published: boolean,
+  id: string | null = null,
+): Promise<BlogPost> {
+  if (!isSupabaseConfigured) notConfigured();
+  if (!supabase) notConfigured();
+  const { data, error } = await supabase.rpc('admin_upsert_blog_post', {
+    p_title: title,
+    p_slug: slug,
+    p_excerpt: excerpt,
+    p_content: content,
+    p_featured_image: featuredImage || null,
+    p_published: published,
+    p_id: id,
+  });
+  if (error) throw new Error(error.message);
+  return data as BlogPost;
+}
+
+export async function adminDeleteBlogPost(id: string): Promise<void> {
+  if (!isSupabaseConfigured) notConfigured();
+  if (!supabase) notConfigured();
+  const { error } = await supabase.rpc('admin_delete_blog_post', {
+    p_id: id,
+  });
+  if (error) throw new Error(error.message);
 }

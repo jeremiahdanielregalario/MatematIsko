@@ -1,23 +1,32 @@
-import { ArrowLeft, ArrowRight, BookOpenText } from 'lucide-react';
-import { Link, Navigate, useParams } from 'react-router-dom';
-import { ErrorState } from '@/components/common/ErrorState';
+import { ArrowLeft, ArrowRight, BookOpenText, FileText } from 'lucide-react';
+import { Link, Navigate, useSearchParams, useParams } from 'react-router-dom';
 import { EmptyState } from '@/components/common/EmptyState';
+import { ErrorState } from '@/components/common/ErrorState';
 import { LoadingState } from '@/components/common/LoadingState';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { ProgressBar } from '@/components/common/ProgressBar';
+import { CourseNotesView } from '@/components/courses/CourseNotesView';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { useCourses } from '@/hooks/useCourses';
+import { useCourseNotes } from '@/hooks/useCourseNotes';
 import { useCourseScope } from '@/hooks/useCourseScope';
 import { useQuestions } from '@/hooks/useQuestions';
+import { cn } from '@/lib/cn';
 import { pickRandom } from '@/lib/questionFilter';
 import type { TopicWithStats } from '@/types';
 
+type CourseTab = 'questions' | 'notes';
+
 export function CoursePage() {
   const { courseId } = useParams<{ courseId: string }>();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { data: coursesData } = useCourses();
   const { courseIds } = useCourseScope();
   const courses = coursesData ?? [];
   const { data: loaded, loading, error, reload } = useQuestions();
+
+  const activeTab = (searchParams.get('tab') as CourseTab) || 'questions';
+  const setActiveTab = (tab: CourseTab) => setSearchParams({ tab });
 
   if (loading) return <LoadingState label="Loading course" />;
 
@@ -43,179 +52,213 @@ export function CoursePage() {
       <EmptyState
         icon={<BookOpenText className="size-8" />}
         title="Course not found"
-        description="This course does not exist or has no questions yet."
+        description="This course does not exist or you do not have access."
         action={
           <Button asChild>
-            <Link to="/courses">Browse courses</Link>
+            <Link to="/courses">Back to courses</Link>
           </Button>
         }
       />
     );
   }
 
-  const courseQuestions = questions.filter((q) => q.course_id === course.id);
-
-  const topicMap = new Map<string, TopicWithStats>();
-  for (const q of courseQuestions) {
-    if (!q.topic) continue;
-    const entry = topicMap.get(q.topic.id) ?? {
-      ...q.topic,
-      question_count: 0,
-      mastered_count: 0,
-      mastery_percent: 0,
-    };
-    entry.question_count += 1;
-    if (q.progress?.status === 'mastered') entry.mastered_count += 1;
-    topicMap.set(q.topic.id, entry);
-  }
-  const topics: TopicWithStats[] = [...topicMap.values()]
-    .map((t) => ({
-      ...t,
-      mastery_percent: t.question_count === 0 ? 0 : Math.round((t.mastered_count / t.question_count) * 100),
-    }))
-    .sort((a, b) => a.name.localeCompare(b.name));
-
-  // Starting question for a topic/course study run (unmastered first, else any).
-  const studyEntry = (pool: typeof courseQuestions) => {
-    const unmastered = pool.filter((q) => q.progress?.status !== 'mastered');
-    return pickRandom(unmastered.length > 0 ? unmastered : pool);
-  };
-  const topicEntry = (topicId: string) =>
-    studyEntry(courseQuestions.filter((q) => q.topic_id === topicId));
-
-  const mastered = courseQuestions.filter((q) => q.progress?.status === 'mastered').length;
-  const masteryPercent = courseQuestions.length === 0 ? 0 : Math.round((mastered / courseQuestions.length) * 100);
-
-  const recent = [...courseQuestions]
-    .filter((q) => q.progress?.last_attempted_at)
-    .sort((a, b) => (b.progress?.last_attempted_at ?? '').localeCompare(a.progress?.last_attempted_at ?? ''))
-    .slice(0, 5);
-
-  const courseEntry = studyEntry(courseQuestions);
-
   return (
-    <div className="space-y-8">
-      <Link
-        to="/courses"
-        className="inline-flex items-center gap-1.5 text-sm font-medium text-stone-500 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-100"
-      >
-        <ArrowLeft className="size-4" />
-        Courses
-      </Link>
-
-      <section className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div className="space-y-6">
+      <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="font-mono text-sm font-semibold text-brand-900 dark:text-brand-300">
+          <Link
+            to="/courses"
+            className="mb-1 inline-flex items-center gap-1 text-sm text-stone-500 transition-colors hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-200"
+          >
+            <ArrowLeft className="size-3.5" />
+            All courses
+          </Link>
+          <h1 className="font-serif text-3xl font-bold tracking-tight text-stone-900 dark:text-stone-50">
             {course.code}
-          </p>
-          <h1 className="mt-1 font-serif text-3xl font-bold tracking-tight text-stone-900 dark:text-stone-50">
-            {course.name}
           </h1>
-          <p className="mt-2 max-w-2xl text-stone-600 dark:text-stone-400">{course.description}</p>
+          {course.name && (
+            <p className="text-stone-500 dark:text-stone-400">{course.name}</p>
+          )}
         </div>
-        {courseEntry ? (
-          <Button asChild>
-            <Link to={`/questions/${courseEntry.id}?course=${course.id}`}>
-              Start studying
-              <ArrowRight className="size-4" />
-            </Link>
-          </Button>
-        ) : null}
-      </section>
+        <Button variant="outline" asChild>
+          <Link to={`/practice?courseId=${courseId}`}>
+            Practice this course
+            <ArrowRight className="size-4" />
+          </Link>
+        </Button>
+      </header>
 
-      <section className="grid gap-4 sm:grid-cols-3">
-        <Card className="p-5">
-          <p className="text-sm font-medium text-stone-500 dark:text-stone-400">Questions</p>
-          <p className="mt-1 text-3xl font-bold text-stone-900 dark:text-stone-100">
-            {courseQuestions.length}
-          </p>
-        </Card>
-        <Card className="p-5">
-          <p className="text-sm font-medium text-stone-500 dark:text-stone-400">Mastered</p>
-          <p className="mt-1 text-3xl font-bold text-stone-900 dark:text-stone-100">{mastered}</p>
-        </Card>
-        <Card className="p-5">
-          <p className="text-sm font-medium text-stone-500 dark:text-stone-400">Mastery</p>
-          <div className="mt-2 flex items-center gap-2">
-            <p className="text-3xl font-bold text-stone-900 dark:text-stone-100">{masteryPercent}%</p>
-            <ProgressBar
-              value={masteryPercent}
-              label={`${course.name} mastery`}
-              className="h-2 flex-1 bg-stone-100 dark:bg-stone-800"
-              barClassName="bg-gradient-to-r from-brand-700 to-brand-500 dark:from-brand-500 dark:to-brand-300"
-            />
-          </div>
-        </Card>
-      </section>
+      {/* Tab bar */}
+      <div className="flex items-center gap-1 rounded-lg border border-stone-200 bg-stone-50 p-1 dark:border-stone-800 dark:bg-stone-900">
+        <TabButton
+          active={activeTab === 'questions'}
+          onClick={() => setActiveTab('questions')}
+        >
+          <BookOpenText className="size-4" />
+          Questions
+        </TabButton>
+        <TabButton
+          active={activeTab === 'notes'}
+          onClick={() => setActiveTab('notes')}
+        >
+          <FileText className="size-4" />
+          Notes
+        </TabButton>
+      </div>
 
-      <section>
-        <h2 className="mb-3 font-serif text-xl font-semibold text-stone-900 dark:text-stone-100">
-          Topics
-        </h2>
-        {topics.length === 0 ? (
-          <EmptyState
-            title="No topics yet"
-            description="There are no questions for this course yet."
-          />
-        ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {topics.map((topic) => {
-              const entry = topicEntry(topic.id);
-              return (
-                <Link
-                  key={topic.id}
-                  to={
-                    entry
-                      ? `/questions/${entry.id}?course=${course.id}&topic=${topic.id}`
-                      : `/courses/${course.id}`
-                  }
-                  className="group rounded-xl border border-stone-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md dark:border-stone-800 dark:bg-stone-900"
-                >
-                  <h3 className="font-semibold text-stone-900 group-hover:text-brand-800 dark:text-stone-100 dark:group-hover:text-brand-300">
-                    {topic.name}
-                  </h3>
-                  <p className="mt-1 text-sm text-stone-500 dark:text-stone-400">
-                    {topic.question_count} question{topic.question_count === 1 ? '' : 's'} ·{' '}
-                    {topic.mastery_percent}% mastered
-                  </p>
-                  <ProgressBar
-                    value={topic.mastery_percent}
-                    label={`${topic.name} mastery`}
-                    className="mt-3 h-1.5 bg-stone-100 dark:bg-stone-800"
-                  />
-                </Link>
-              );
-            })}
-          </div>
-        )}
-      </section>
-
-      {recent.length > 0 ? (
-        <section>
-          <h2 className="mb-3 font-serif text-xl font-semibold text-stone-900 dark:text-stone-100">
-            Recently attempted
-          </h2>
-          <Card>
-            <ul className="divide-y divide-stone-100 dark:divide-stone-800">
-              {recent.map((q) => (
-                <li key={q.id}>
-                  <Link
-                    to={`/questions/${q.id}?course=${course.id}`}
-                    className="flex items-center justify-between gap-3 px-5 py-3 text-sm transition-colors hover:bg-stone-50 dark:hover:bg-stone-800/50"
-                  >
-                    <span className="min-w-0 truncate font-medium text-stone-800 dark:text-stone-100">
-                      {q.title}
-                    </span>
-                    <span className="shrink-0 text-xs text-stone-400 dark:text-stone-500">
-                      {q.topic?.name}
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </Card>
-        </section>
-      ) : null}
+      {activeTab === 'questions' ? (
+        <QuestionsTab courseId={courseId} questions={questions} />
+      ) : (
+        <NotesTab courseId={courseId} />
+      )}
     </div>
   );
+}
+
+function TabButton({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        'inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-sm font-medium transition-colors',
+        active
+          ? 'bg-white text-stone-900 shadow-sm dark:bg-stone-800 dark:text-stone-50'
+          : 'text-stone-500 hover:text-stone-700 dark:text-stone-400 dark:hover:text-stone-200',
+      )}
+    >
+      {children}
+    </button>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Questions tab
+// ---------------------------------------------------------------------------
+
+function QuestionsTab({
+  courseId,
+  questions,
+}: {
+  courseId: string | undefined;
+  questions: { id: string; course_id: string; topic?: { id: string; name: string } | null }[];
+}) {
+  const [, navigate] = useSearchParams();
+
+  const byTopic = new Map<string, TopicWithStats>();
+
+  for (const q of questions) {
+    if (q.course_id !== courseId) continue;
+    const topic = q.topic;
+    if (!topic) continue;
+    const existing = byTopic.get(topic.id);
+    if (existing) {
+      existing.question_count += 1;
+    } else {
+      byTopic.set(topic.id, {
+        id: topic.id,
+        course_id: courseId!,
+        name: topic.name,
+        question_count: 1,
+        mastered_count: 0,
+        mastery_percent: 0,
+      });
+    }
+  }
+
+  const topics = [...byTopic.values()].sort((a, b) => a.name.localeCompare(b.name));
+  const hasTopics = topics.length > 0;
+
+  const startRandom = () => {
+    const pool = questions.filter((q) => q.course_id === courseId);
+    const pick = pickRandom(pool);
+    if (pick) navigate(`/questions/${pick.id}`);
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="font-serif text-2xl font-bold tracking-tight text-stone-900 dark:text-stone-50">
+          Topics
+        </h2>
+        <Button variant="outline" onClick={startRandom} disabled={!hasTopics}>
+          Random problem
+        </Button>
+      </div>
+
+      {!hasTopics ? (
+        <EmptyState
+          icon={<BookOpenText className="size-8" />}
+          title="No topics yet"
+          description="No questions have been added to this course yet."
+        />
+      ) : (
+        <ul className="space-y-4">
+          {topics.map((topic) => (
+            <li key={topic.id}>
+              <Link
+                to={`/questions?courseId=${courseId}&topicId=${topic.id}`}
+                className="group block"
+              >
+                <Card className="transition-colors group-hover:border-brand-300 group-hover:bg-brand-50/40 dark:group-hover:border-brand-700 dark:group-hover:bg-brand-950/40">
+                  <CardContent className="flex items-center justify-between gap-4 px-5 py-4">
+                    <div className="min-w-0">
+                      <h3 className="truncate font-semibold text-stone-800 group-hover:text-brand-700 dark:text-stone-100 dark:group-hover:text-brand-300">
+                        {topic.name}
+                      </h3>
+                      <p className="mt-0.5 text-xs text-stone-500 dark:text-stone-400">
+                        {topic.mastered_count} / {topic.question_count} mastered
+                      </p>
+                    </div>
+                    <div className="w-40 shrink-0">
+                      <ProgressBar value={topic.mastery_percent} label={`${topic.name} progress`} />
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Notes tab
+// ---------------------------------------------------------------------------
+
+function NotesTab({ courseId }: { courseId: string | undefined }) {
+  const { data: notes, loading, error, reload } = useCourseNotes(courseId);
+
+  if (loading) return <LoadingState label="Loading notes" />;
+  if (error) {
+    return (
+      <ErrorState
+        title="Could not load notes"
+        message={error}
+        onRetry={reload}
+      />
+    );
+  }
+
+  if (!notes || notes.length === 0) {
+    return (
+      <EmptyState
+        icon={<FileText className="size-8" />}
+        title="No notes yet"
+        description="Course notes will appear here once they are added."
+      />
+    );
+  }
+
+  return <CourseNotesView notes={notes} />;
 }

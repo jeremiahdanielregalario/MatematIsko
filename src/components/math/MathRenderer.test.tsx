@@ -49,7 +49,8 @@ describe('MathRenderer', () => {
   });
 
   it('renders a multi-line aligned display math block', () => {
-    const src = '$$\n\\begin{aligned}\nf\'(2) &= \\lim_{h \\to 0} \\frac{f(2 + h) - f(2)}{h} \\\\\n     &= \\lim_{h \\to 0} \\frac{(2 + h)^3 - 8}{h}.\n\\end{aligned}\n$$';
+    const src =
+      '$$\n\\begin{aligned}\nf\'(2) &= \\lim_{h \\to 0} \\frac{f(2 + h) - f(2)}{h} \\\\\n     &= \\lim_{h \\to 0} \\frac{(2 + h)^3 - 8}{h}.\n\\end{aligned}\n$$';
     const { container } = render(<MathRenderer>{src}</MathRenderer>);
     expect(container.querySelector('.katex-display')).toBeInTheDocument();
   });

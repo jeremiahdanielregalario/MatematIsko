@@ -1,0 +1,383 @@
+-- ============================================================================
+-- Rewrite: MATH 110.3 Abstract Algebra III — Unit I notes
+-- More cohesive, comprehensive, and flowing explanations.
+-- ============================================================================
+
+update public.course_notes
+set content = $BODY$# Unit I: Factorization, Ideals, UFDs, and Euclidean Domains
+
+> **Central theme.** Throughout MATH 110.1 and 110.2, we studied groups, rings, and fields in broad strokes. In this unit we narrow our focus to a single question: *When can we factor an element into irreducibles, and is that factorization unique?* The answer depends on the algebraic structure of the ring, and it connects two familiar worlds --- the integers $\mathbb{Z}$ and polynomial rings $F[x]$ --- through a chain of increasingly strong ring types: integral domains $\to$ UFDs $\to$ PIDs $\to$ Euclidean domains.
+
+# 1. The Division Algorithm for $F[x]$
+
+The starting point is an operation we already trust from arithmetic: long division. In $\mathbb{Z}$, the division algorithm says that dividing an integer $m$ by a positive integer $n$ always produces a quotient $q$ and remainder $r$ with $0 \le r < n$. This simple fact underpins everything from the Euclidean algorithm to modular arithmetic.
+
+We now ask: can we do the same thing with polynomials?
+
+### Theorem 1.3 --- Division Algorithm for $F[x]$
+
+Let $F$ be a field, and let $f(x), g(x) \in F[x]$ with $g(x) \neq 0$. Then there exist **unique** polynomials $q(x), r(x) \in F[x]$ such that
+
+$$f(x) = q(x)\,g(x) + r(x),$$
+
+where either $r(x) = 0$ or $\deg r(x) < \deg g(x)$.
+
+We call $q(x)$ the **quotient** and $r(x)$ the **remainder** upon dividing $f(x)$ by $g(x)$.
+
+> **Why uniqueness matters.** Uniqueness ensures that when we say "the" remainder, there is no ambiguity. It also means the division algorithm is a well-defined operation on $F[x]$, not just an existence result.
+
+The proof mirrors the integer case: if $g(x) \neq 0$, we compare leading terms, subtract a suitable multiple of $g(x)$, and repeat. Since the degree drops at each step, the process terminates.
+
+
+
+## 2. Polynomial Factors, the Remainder Theorem, and the Factor Theorem
+
+### Definition (Divisibility in $F[x]$)
+
+Let $F$ be a field. A polynomial $g(x) \in F[x]$ is said to **divide** $f(x)$ (written $g(x) \mid f(x)$) if there exists $q(x) \in F[x]$ with
+
+$$f(x) = q(x)\,g(x).$$
+
+In this case we call $g(x)$ a **factor** of $f(x)$.
+
+### Definition (Evaluation)
+
+If $\alpha \in F$ and $f(x) = a_0 + a_1 x + \cdots + a_n x^n$, then
+
+$$f(\alpha) = a_0 + a_1 \alpha + \cdots + a_n \alpha^n.$$
+
+Evaluation at a point is the bridge between the algebraic world of polynomial expressions and the arithmetic world of field elements. This bridge has a precise algebraic structure --- it is a **ring homomorphism**, as we will see later.
+
+### Corollary 1.4 --- Remainder Theorem
+
+Let $F$ be a field and $a \in F$. When $f(x) \in F[x]$ is divided by $x - a$, the remainder is $f(a)$.
+
+*Proof.* By the division algorithm, write $f(x) = q(x)(x - a) + r(x)$ where $\deg r < 1$, so $r$ is a constant. Evaluating at $x = a$ gives $f(a) = 0 \cdot q(a) + r = r$. $\blacksquare$
+
+### Corollary 1.5 --- Factor Theorem
+
+Let $F$ be a field, $a \in F$, and $f(x) \in F[x]$. Then
+
+$$x - a \text{ is a factor of } f(x) \quad \Longleftrightarrow \quad f(a) = 0.$$
+
+This is one of the most practical results in the course. To factor a polynomial, we hunt for roots; each root $\alpha$ yields a factor $(x - \alpha)$.
+
+### Corollary 1.6
+
+A polynomial $f(x) \in F[x]$ of positive degree $n$ has **at most** $n$ distinct zeros in $F$.
+
+> **Historical note.** Lagrange first proved this for $F = \mathbb{Z}_p$. The result can fail for arbitrary polynomial rings (e.g., $\mathbb{Z}_8[x]$ has $x^2 - 1$ with four roots), which is one reason we restrict our attention to fields.
+
+
+
+# 3. Ideals, Factor Rings, and Homomorphisms
+
+To understand *why* factorization behaves differently in different rings, we need the language of ideals and quotient structures. This section reviews the key ideas from MATH 110.1/110.2 that will drive everything that follows.
+
+## Ideals and the Ideal Test
+
+An **ideal** $I$ of a ring $R$ is a subring that "absorbs" multiplication from both sides: for every $r \in R$ and $a \in I$, both $ra$ and $ar$ lie in $I$.
+
+### Ideal Test
+
+A nonempty subset $I \subseteq R$ is an ideal if and only if:
+
+1. For all $a, b \in I$: $a - b \in I$.
+2. For all $r \in R$ and $a \in I$: $ra \in I$ and $ar \in I$.
+
+> **Key fact.** If $R$ is a ring with unity and $I$ contains a unit, then $I = R$. In particular, the only ideals of a **field** $F$ are $\{0\}$ and $F$ itself. This rigidity is precisely why fields behave so well.
+
+## Principal Ideals
+
+Let $R$ be a commutative ring with unity. For any $a \in R$, the set
+
+$$\langle a \rangle = \{ra \mid r \in R\}$$
+
+is an ideal called the **principal ideal generated by $a$**. An ideal that can be written as $\langle a \rangle$ for some single element is called a **principal ideal**.
+
+### Theorem 1.13
+
+Let $F$ be a field. Then **every** ideal of $F[x]$ is a principal ideal.
+
+> **Why this is powerful.** In $\mathbb{Z}$, every ideal is also principal ($\langle n \rangle$). Theorem 1.13 says $F[x]$ has the same property. This parallel between $\mathbb{Z}$ and $F[x]$ is not a coincidence --- both are Euclidean domains, as we will eventually prove.
+
+**Remark.** Suppose $\{0\} \neq I$ is an ideal of $F[x]$. Then $I = \langle g(x) \rangle$ where $g(x)$ is any non-zero polynomial of minimum degree in $I$. Moreover, $f(x) \mid g(x)$ if and only if $\langle f(x) \rangle \supseteq \langle g(x) \rangle$.
+
+## Factor Rings (Quotient Rings)
+
+Given an ideal $I$ of $R$, we form the **factor ring** $R/I = \{a + I \mid a \in R\}$ with operations
+
+$$(a + I) + (b + I) = (a + b) + I, \qquad (a + I)(b + I) = ab + I.$$
+
+The factor ring "mods out" the ideal --- it declares every element of $I$ to be zero. Key properties:
+
+- If $R$ is commutative, so is $R/I$.
+- If $R$ has unity $1$, then $R/I$ has unity $1 + I$.
+- If $a$ is a unit of $R$, then $a + I$ is a unit of $R/I$ with $(a + I)^{-1} = a^{-1} + I$.
+
+## Maximal and Prime Ideals
+
+An ideal $M \neq R$ is **maximal** if the only ideals containing $M$ are $M$ and $R$ itself. An ideal $P \neq R$ is **prime** if $ab \in P \implies a \in P$ or $b \in P$.
+
+The deep connection between ideals and the structure of factor rings is captured by two classical results:
+
+| Factor ring | Ideal type |
+|---|---|
+| $R/I$ is a **field** | $I$ is **maximal** |
+| $R/I$ is an **integral domain** | $I$ is **prime** |
+
+Moreover, every maximal ideal is prime.
+
+## Maximal Ideals of $F[x]$
+
+### Theorem 1.14
+
+Let $F$ be a field and $p(x) \in F[x]$. Then $\langle p(x) \rangle$ is a **maximal** ideal of $F[x]$ if and only if $p(x)$ is **irreducible** over $F$.
+
+This is the bridge between factorization and algebraic structure: irreducible polynomials generate maximal ideals, which produce fields as quotient rings. For instance, if $p(x)$ is irreducible over $\mathbb{Q}$, then $\mathbb{Q}[x]/\langle p(x) \rangle$ is a field extension of $\mathbb{Q}$.
+
+## Primes and Unique Factorization in $F[x]$
+
+### Corollary 1.5 (Primes in $F[x]$)
+
+Let $p(x)$ be irreducible over $F$. If $p(x) \mid r(x)s(x)$, then $p(x) \mid r(x)$ or $p(x) \mid s(x)$.
+
+This generalizes to products of arbitrarily many factors: if $p(x)$ is irreducible and $p(x) \mid r_1(x) r_2(x) \cdots r_n(x)$, then $p(x) \mid r_i(x)$ for some $i$.
+
+### Theorem 1.6 --- Unique Factorization in $F[x]$
+
+Let $F$ be a field. Every non-constant $f(x) \in F[x]$ factors as a product of irreducible polynomials over $F$, unique up to order and multiplication by units (non-zero constants in $F$).
+
+> **The big picture.** Theorems 1.3, 1.13, 1.14, and 1.6 collectively establish that $F[x]$ mirrors the familiar arithmetic of $\mathbb{Z}$: division works, ideals are principal, irreducibles generate maximal ideals, and factorization is unique. Our goal in the rest of this unit is to understand the *abstract* framework that makes this possible.
+
+## Ring Homomorphisms and the Evaluation Homomorphism
+
+A **ring homomorphism** $\varphi: R \to R'$ preserves addition and multiplication:
+
+$$\varphi(a + b) = \varphi(a) + \varphi(b), \qquad \varphi(ab) = \varphi(a)\varphi(b).$$
+
+An **isomorphism** is a bijective homomorphism, and we write $R \cong R'$ when one exists.
+
+### The Evaluation Homomorphism
+
+Let $F \subseteq E$ be fields and $\alpha \in E$. The map
+
+$$\varphi_\alpha: F[x] \to E, \qquad \varphi_\alpha(f(x)) = f(\alpha)$$
+
+is a ring homomorphism (the **evaluation homomorphism** at $\alpha$). It satisfies:
+
+1. $\varphi_\alpha(x) = \alpha$ (the variable $x$ is sent to $\alpha$).
+2. $\varphi_\alpha(a) = a$ for all $a \in F$ (constants are fixed).
+
+This homomorphism is the algebraic mechanism behind the Factor Theorem: $f(\alpha) = 0$ precisely when $\ker(\varphi_\alpha)$ contains $f(x)$, which happens precisely when $x - \alpha$ divides $f(x)$.
+
+### The Kernel and the First Isomorphism Theorem
+
+The **kernel** of a homomorphism $\varphi: R \to R'$ is
+
+$$\ker \varphi = \{a \in R \mid \varphi(a) = 0'\}.$$
+
+The kernel is always an ideal of $R$. The **First Isomorphism Theorem** states that the induced map
+
+$$\mu: R / \ker \varphi \to \varphi(R), \qquad a + \ker \varphi \mapsto \varphi(a)$$
+
+is a ring isomorphism, so $R / \ker \varphi \cong \varphi(R)$.
+
+
+
+# 4. Unique Factorization Domains
+
+We now step back from $F[x]$ and ask: *what abstract properties of a ring guarantee unique factorization?* This leads to the definition of a Unique Factorization Domain (UFD).
+
+## Divisibility in Commutative Rings with Unity
+
+Let $R$ be a commutative ring with unity. We say $a$ **divides** $b$ (written $a \mid b$) if $b = ac$ for some $c \in R$. Basic properties:
+
+1. $a \mid a$; $\;1 \mid a$; $\;a \mid 0$.
+2. $a$ is a unit $\iff$ $a \mid 1$.
+3. Transitivity: $a \mid b$ and $b \mid c$ implies $a \mid c$.
+4. $a \mid b \iff \langle b \rangle \subseteq \langle a \rangle$.
+
+Property (4) reveals that divisibility is really about containment of principal ideals: larger ideals correspond to smaller divisors.
+
+## Associates
+
+Two elements $a, b \in R$ are **associates** if $b = au$ for some unit $u$. Being associates is an equivalence relation, and in an integral domain:
+
+$$a \text{ and } b \text{ are associates} \;\iff\; a \mid b \text{ and } b \mid a \;\iff\; \langle a \rangle = \langle b \rangle.$$
+
+## Irreducibles and Primes
+
+Let $D$ be an integral domain, and let $0 \neq p \in D$ be a non-unit.
+
+| Concept | Definition |
+|---|---|
+| $p$ is **irreducible** | $p = ab \implies$ $a$ or $b$ is a unit |
+| $p$ is **prime** | $p \mid ab \implies$ $p \mid a$ or $p \mid b$ |
+
+### Key relationships
+
+1. Every prime is irreducible, but not conversely (in general).
+2. $p$ is prime $\iff$ $\langle p \rangle$ is a non-zero prime ideal.
+3. Any associate of an irreducible is irreducible.
+
+### Theorem 1.17
+
+In an integral domain, every prime is irreducible.
+
+> **Why the converse can fail.** In $\mathbb{Z}[\sqrt{-5}]$, the element $2$ is irreducible but not prime, since $2 \mid (1 + \sqrt{-5})(1 - \sqrt{-5}) = 6$ yet $2 \nmid (1 \pm \sqrt{-5})$. This failure is precisely what motivates the next definition.
+
+## Principal Ideal Domains and UFDs
+
+### Definition (PID)
+
+An integral domain $D$ is a **principal ideal domain** if every ideal of $D$ is principal.
+
+### Theorem 1.18
+
+In a PID, an element is irreducible if and only if it is prime.
+
+This is the key result that guarantees the equivalence of the two notions. The proof uses the fact that every ideal is principal: if $p \mid ab$ but $p \nmid a$, then $\langle p, a \rangle = \langle d \rangle$ for some $d$, and one shows $d$ is a unit, forcing $p \mid b$.
+
+### Definition (UFD)
+
+An integral domain $D$ is a **unique factorization domain** if:
+
+1. Every non-zero non-unit factors as a product of finitely many irreducibles.
+2. This factorization is unique up to order and associates.
+
+> **Remark.** In a UFD, irreducibles and primes coincide. Condition (2) is exactly the statement that "the irreducibles in a factorization act like prime numbers."
+
+## The Ascending Chain Condition and PID $\Rightarrow$ UFD
+
+### Lemma 1.19
+
+If $I_1 \subseteq I_2 \subseteq \cdots$ is an ascending chain of ideals in a commutative ring $R$, then $I = \bigcup_i I_i$ is an ideal of $R$.
+
+### Lemma 1.20 --- Ascending Chain Condition (ACC) for PIDs
+
+In a PID, every ascending chain of ideals $I_1 \subseteq I_2 \subseteq \cdots$ eventually stabilizes: there exists $r$ with $I_s = I_r$ for all $s \ge r$.
+
+This "no infinite ascent" property is the engine behind the proof that PIDs are UFDs.
+
+### Theorem 1.21 --- Every PID is a UFD
+
+*Proof sketch.* Take a non-unit $a \neq 0$. If $a$ is irreducible, we are done. Otherwise, $a = bc$ with neither $b$ nor $c$ a unit. If this process never terminates, we get an infinite strictly ascending chain $\langle a \rangle \subset \langle b \rangle \subset \langle c \rangle \subset \cdots$, contradicting the ACC. Uniqueness follows from the fact that irreducibles are prime in a PID. $\blacksquare$
+
+> **Remark.** The converse fails: there exist UFDs that are not PIDs. The ring $\mathbb{Z}[x]$ is a UFD but not a PID (the ideal $\langle 2, x \rangle$ is not principal).
+
+## Greatest Common Divisor
+
+In a UFD, the **greatest common divisor** of $a_1, \ldots, a_n$ is an element $d$ such that:
+
+1. $d \mid a_i$ for all $i$.
+2. If $c \mid a_i$ for all $i$, then $c \mid d$.
+
+The gcd is unique up to associates, and always exists in a UFD.
+
+## Content and Primitive Polynomials
+
+For a UFD $D$ and a non-zero polynomial $f(x) = a_0 + a_1 x + \cdots + a_n x^n \in D[x]$:
+
+- The **content** of $f(x)$ is a gcd of the coefficients $a_0, \ldots, a_n$.
+- $f(x)$ is **primitive** if its content is a unit (i.e., the gcd of its coefficients is a unit).
+
+Every non-zero polynomial can be written as $f(x) = c \cdot g(x)$ where $c$ is the content and $g(x)$ is primitive.
+
+## Gauss' Lemma
+
+### Lemma 1.22 --- Gauss' Lemma
+
+If $D$ is a UFD, then the product of two primitive polynomials in $D[x]$ is again primitive.
+
+> **Why this matters.** Gauss' Lemma lets us transfer factorization information between $D[x]$ and $F[x]$ (where $F$ is the field of quotients of $D$). Specifically: a primitive polynomial in $D[x]$ is irreducible in $D[x]$ if and only if it is irreducible over $F$.
+
+## Irreducibles of $D[x]$ and $D$ UFD $\Rightarrow$ $D[x]$ UFD
+
+### Lemma 1.23
+
+Let $D$ be a UFD with field of quotients $F$. If $f(x) \in D[x]$ is irreducible in $D[x]$, then $f(x)$ is irreducible over $F$.
+
+The converse holds for primitive polynomials, by Gauss' Lemma.
+
+### Theorem 1.24 --- $D$ UFD $\Rightarrow$ $D[x]$ UFD
+
+If $D$ is a UFD, then $D[x]$ is a UFD. By induction, $D[x_1, x_2, \ldots, x_n]$ is a UFD for any finite number of indeterminates.
+
+> **The payoff.** Since $\mathbb{Z}$ is a UFD (it is a Euclidean domain), so is $\mathbb{Z}[x]$, and hence $\mathbb{Z}[x_1, \ldots, x_n]$. Since any field $F$ is a UFD, so is $F[x]$, confirming Theorem 1.6 from an abstract perspective.
+
+
+
+# 5. Euclidean Domains
+
+The final and strongest structure in our hierarchy is the Euclidean domain, where a "size function" (analogous to the absolute value in $\mathbb{Z}$ or degree in $F[x]$) enables a division algorithm.
+
+### Definition (Euclidean Domain)
+
+An integral domain $D$ is a **Euclidean domain** (ED) if there exists a function
+
+$$v: D \setminus \{0\} \to \mathbb{N}_0 = \mathbb{N} \cup \{0\}$$
+
+called the **Euclidean valuation**, satisfying:
+
+1. **Multiplicativity (weak):** $v(ab) \ge v(a)$ for all $a, b \neq 0$.
+2. **Division:** For all $a, b \in D$ with $b \neq 0$, there exist $q, r \in D$ with $a = bq + r$ where $r = 0$ or $v(r) < v(b)$.
+
+> **Examples.**
+> - $\mathbb{Z}$ with $v(n) = |n|$: the usual division algorithm.
+> - $F[x]$ with $v(f) = \deg f$: polynomial long division.
+> - In both cases, $v(1)$ is the minimum value of $v$, and the units are exactly the elements $u$ with $v(u) = v(1)$.
+
+The elements $q$ and $r$ in the division condition are **not unique** in general (unlike the integer case).
+
+### Theorem 1.25 --- Every ED is a PID
+
+*Proof sketch.* Let $I$ be a non-zero ideal. Among all non-zero elements of $I$, pick one with minimum valuation. Call it $g$. Then $I = \langle g \rangle$ because for any $a \in I$, division gives $a = gq + r$ with $v(r) < v(g)$ or $r = 0$. Since $r = a - gq \in I$ and $v(g)$ was minimal, $r = 0$. $\blacksquare$
+
+### Theorem 1.26
+
+Let $D$ be an ED with valuation $v$.
+
+1. $v(1)$ is the minimum value of $v$ on $D \setminus \{0\}$.
+2. $u \in D \setminus \{0\}$ is a unit $\iff$ $v(u) = v(1)$.
+
+## Multiplicative Norms
+
+A **multiplicative norm** on an integral domain $D$ is a function $N: D \to \mathbb{Z}$ such that $N(\alpha) = 0 \iff \alpha = 0$ and $N(\alpha\beta) = N(\alpha)N(\beta)$.
+
+### Theorem 1.27
+
+Let $N$ be a multiplicative norm on $D$.
+
+1. $N(1) = 1$.
+2. If $u$ is a unit, then $|N(u)| = 1$.
+3. If every $\alpha$ with $|N(\alpha)| = 1$ is a unit, then $|N(\pi)| = p$ (prime) implies $\pi$ is irreducible.
+
+**Remark (Fermat).** Let $p$ be an odd prime in $\mathbb{Z}$. Then $p = a^2 + b^2$ for integers $a, b$ if and only if $p \equiv 1 \pmod{4}$. This classical result can be proved using the multiplicative norm $N(a + bi) = a^2 + b^2$ on $\mathbb{Z}[i]$.
+
+
+
+# Summary: The Hierarchy
+
+$$\boxed{\text{Euclidean Domain} \;\Longrightarrow\; \text{Principal Ideal Domain} \;\Longrightarrow\; \text{Unique Factorization Domain} \;\Longrightarrow\; \text{Integral Domain}}$$
+
+| Property | ED | PID | UFD | ID |
+|---|:---:|:---:|:---:|:---:|
+| Division algorithm | Yes | --- | --- | --- |
+| Every ideal is principal | Yes | Yes | --- | --- |
+| Irreducible $\iff$ prime | Yes | Yes | Yes | --- |
+| Unique factorization | Yes | Yes | Yes | --- |
+| Every ideal is prime | No | No | No | No |
+
+**Concrete examples:**
+
+| Ring | ED? | PID? | UFD? |
+|---|:---:|:---:|:---:|
+| $\mathbb{Z}$ | Yes | Yes | Yes |
+| $F[x]$ ($F$ a field) | Yes | Yes | Yes |
+| $\mathbb{Z}[x]$ | No | No | Yes |
+| $\mathbb{Z}[\sqrt{-19}]$ | No | Yes | Yes |
+
+> **A cautionary example.** Not every PID is a Euclidean domain. The ring $\mathbb{Z}[\sqrt{-19}] = \{a + b(1 + \sqrt{-19})/2 \mid a, b \in \mathbb{Z}\}$ is a PID but admits no Euclidean valuation (Motzkin, 1949). This shows that the hierarchy is strict at each level.$BODY$,
+  updated_at = now()
+where id = 'e5f6a7b8-c9d0-4e1f-a2b3-c4d5e6f7a8b9';

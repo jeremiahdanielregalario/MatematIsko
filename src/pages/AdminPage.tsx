@@ -1,4 +1,4 @@
-import { BookOpenText, Flag, GraduationCap, Landmark } from 'lucide-react';
+import { BookOpenText, FileText, Flag, GraduationCap, Landmark, PenLine } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { cn } from '@/lib/cn';
@@ -6,17 +6,21 @@ import { QuestionAdminSection } from '@/components/admin/QuestionAdminSection';
 import { TheoremAdminSection } from '@/components/admin/TheoremAdminSection';
 import { CourseAdminSection } from '@/components/admin/CourseAdminSection';
 import { ReportsAdminSection } from '@/components/admin/ReportsAdminSection';
+import { NotesAdminSection } from '@/components/admin/NotesAdminSection';
+import { BlogAdminSection } from '@/components/admin/BlogAdminSection';
 
-type AdminTab = 'courses' | 'questions' | 'theorems' | 'reports';
+type AdminTab = 'courses' | 'questions' | 'theorems' | 'notes' | 'blogs' | 'reports';
 
 const TABS: { value: AdminTab; label: string; icon: typeof BookOpenText }[] = [
   { value: 'courses', label: 'Courses', icon: GraduationCap },
   { value: 'questions', label: 'Questions', icon: BookOpenText },
   { value: 'theorems', label: 'Theorems', icon: Landmark },
+  { value: 'notes', label: 'Notes', icon: FileText },
+  { value: 'blogs', label: 'Blogs', icon: PenLine },
   { value: 'reports', label: 'Reports', icon: Flag },
 ];
 
-const VALID_TABS = new Set<AdminTab>(['courses', 'questions', 'theorems', 'reports']);
+const VALID_TABS = new Set<AdminTab>(['courses', 'questions', 'theorems', 'notes', 'blogs', 'reports']);
 
 function parseTab(value: string | null): AdminTab {
   return value !== null && VALID_TABS.has(value as AdminTab) ? (value as AdminTab) : 'questions';
@@ -83,6 +87,12 @@ export function AdminPage() {
       )}
       {tab === 'theorems' && (
         <TheoremAdminSection editId={editId} onEditHandled={clearEdit} />
+      )}
+      {tab === 'notes' && (
+        <NotesAdminSection editId={editId} onEditHandled={clearEdit} />
+      )}
+      {tab === 'blogs' && (
+        <BlogAdminSection editId={editId} onEditHandled={clearEdit} />
       )}
       {tab === 'reports' && <ReportsAdminSection />}
     </div>

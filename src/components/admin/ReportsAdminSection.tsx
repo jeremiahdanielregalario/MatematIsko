@@ -1,4 +1,4 @@
-import { Clock, Eye, EyeOff, ExternalLink, SearchX } from 'lucide-react';
+import { Clock, Eye, EyeOff, ExternalLink, SearchX, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { EmptyState } from '@/components/common/EmptyState';
@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { cn } from '@/lib/cn';
 import { formatRelativeTime } from '@/lib/format';
 import {
+  adminDeleteReport,
   adminListQuestionReports,
   adminListTheoremReports,
   adminResolveReport,
@@ -22,9 +23,10 @@ const ALL_STATUS = '__all';
 interface QuestionReportItemProps {
   report: QuestionReportRow;
   onToggle: (id: string) => void;
+  onDelete: (id: string) => void;
 }
 
-function QuestionReportItem({ report, onToggle }: QuestionReportItemProps) {
+function QuestionReportItem({ report, onToggle, onDelete }: QuestionReportItemProps) {
   const navigate = useNavigate();
   return (
     <div className="rounded-lg border border-stone-200 bg-white p-4 dark:border-stone-800 dark:bg-stone-900">
@@ -89,6 +91,14 @@ function QuestionReportItem({ report, onToggle }: QuestionReportItemProps) {
             Reopen
           </Button>
         )}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onDelete(report.id)}
+          className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950"
+        >
+          <Trash2 className="size-4" />
+        </Button>
       </div>
     </div>
   );
@@ -97,9 +107,10 @@ function QuestionReportItem({ report, onToggle }: QuestionReportItemProps) {
 interface TheoremReportItemProps {
   report: TheoremReportRow;
   onToggle: (id: string) => void;
+  onDelete: (id: string) => void;
 }
 
-function TheoremReportItem({ report, onToggle }: TheoremReportItemProps) {
+function TheoremReportItem({ report, onToggle, onDelete }: TheoremReportItemProps) {
   const navigate = useNavigate();
   return (
     <div className="rounded-lg border border-stone-200 bg-white p-4 dark:border-stone-800 dark:bg-stone-900">
@@ -164,6 +175,14 @@ function TheoremReportItem({ report, onToggle }: TheoremReportItemProps) {
             Reopen
           </Button>
         )}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onDelete(report.id)}
+          className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950"
+        >
+          <Trash2 className="size-4" />
+        </Button>
       </div>
     </div>
   );
@@ -214,6 +233,16 @@ export function ReportsAdminSection() {
       } else {
         await adminReopenReport(table, id);
       }
+      fetchReports(statusFilter);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    }
+  };
+
+  const handleDelete = async (table: 'question_reports' | 'theorem_reports', id: string) => {
+    if (!window.confirm('Delete this report permanently?')) return;
+    try {
+      await adminDeleteReport(table, id);
       fetchReports(statusFilter);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
@@ -303,6 +332,7 @@ export function ReportsAdminSection() {
                 key={report.id}
                 report={report}
                 onToggle={(id) => handleToggle('question_reports', id)}
+                onDelete={(id) => handleDelete('question_reports', id)}
               />
             ))}
           </div>
@@ -320,6 +350,7 @@ export function ReportsAdminSection() {
               key={report.id}
               report={report}
               onToggle={(id) => handleToggle('theorem_reports', id)}
+              onDelete={(id) => handleDelete('theorem_reports', id)}
             />
           ))}
         </div>

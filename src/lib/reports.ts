@@ -107,3 +107,20 @@ export async function adminReopenReport(
   });
   if (error) throw new Error(error.message);
 }
+
+// ---------------------------------------------------------------------------
+// Admin: delete
+// ---------------------------------------------------------------------------
+
+export async function adminDeleteReport(
+  table: 'question_reports' | 'theorem_reports',
+  id: string,
+): Promise<void> {
+  if (!isSupabaseConfigured) notConfigured();
+  if (!supabase) notConfigured();
+  const { error } = await supabase.rpc('admin_delete_report', {
+    p_table: table,
+    p_id: id,
+  });
+  if (error) throw new Error(error.message);
+}

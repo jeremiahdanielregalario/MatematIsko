@@ -168,6 +168,16 @@ export interface TheoremWithRelations extends Theorem {
   topic?: Topic | null;
 }
 
+export interface CourseNote {
+  id: string;
+  course_id: string;
+  title: string;
+  content: string;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface TheoremProgress {
   user_id: string;
   theorem_id: string;
@@ -178,4 +188,21 @@ export interface TheoremProgress {
 
 export interface TheoremWithMeta extends TheoremWithRelations {
   progress?: TheoremProgress | null;
+}
+
+// ---------------------------------------------------------------------------
+// Blog Posts
+// ---------------------------------------------------------------------------
+
+export interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  author_id: string | null;
+  featured_image: string | null;
+  published: boolean;
+  created_at: string;
+  updated_at: string;
 }

@@ -1,10 +1,10 @@
 import {
   Bookmark,
   BookMarked,
+  BookOpenText,
   GraduationCap,
   Home,
   LayoutDashboard,
-  LineChart,
   Target,
 } from 'lucide-react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
@@ -21,7 +21,7 @@ const NAV_ITEMS = [
   { to: '/theorems', label: 'Theorems', icon: BookMarked },
   { to: '/practice', label: 'Practice', icon: Target },
   { to: '/bookmarks', label: 'Bookmarks', icon: Bookmark },
-  { to: '/progress', label: 'Progress', icon: LineChart },
+  { to: '/blogs', label: 'Blogs', icon: BookOpenText },
 ];
 
 function navLinkClass({ isActive }: { isActive: boolean }) {

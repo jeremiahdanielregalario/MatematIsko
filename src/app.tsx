@@ -17,11 +17,12 @@ import { NotFoundPage } from '@/pages/NotFoundPage';
 import { OnboardingPage } from '@/pages/OnboardingPage';
 import { PracticePage } from '@/pages/PracticePage';
 import { ProfilePage } from '@/pages/ProfilePage';
-import { ProgressPage } from '@/pages/ProgressPage';
 import { QuestionDetailPage } from '@/pages/QuestionDetailPage';
 import { TheoremsPage } from '@/pages/TheoremsPage';
 import { TheoremDetailPage } from '@/pages/TheoremDetailPage';
 import { FlashcardSessionPage } from '@/pages/FlashcardSessionPage';
+import { BlogsPage } from '@/pages/BlogsPage';
+import { BlogPostPage } from '@/pages/BlogPostPage';
 
 export function App() {
   return (
@@ -46,7 +47,8 @@ export function App() {
                   <Route path="/theorems/:id" element={<TheoremDetailPage />} />
                   <Route path="/practice" element={<PracticePage />} />
                   <Route path="/bookmarks" element={<BookmarksPage />} />
-                  <Route path="/progress" element={<ProgressPage />} />
+                  <Route path="/blogs" element={<BlogsPage />} />
+                  <Route path="/blogs/:slug" element={<BlogPostPage />} />
                   <Route path="/profile" element={<ProfilePage />} />
                   <Route
                     path="/admin"
