@@ -21,7 +21,6 @@ import { QuestionDetailPage } from '@/pages/QuestionDetailPage';
 import { TheoremsPage } from '@/pages/TheoremsPage';
 import { TheoremDetailPage } from '@/pages/TheoremDetailPage';
 import { FlashcardSessionPage } from '@/pages/FlashcardSessionPage';
-import { PublicLayout } from '@/components/layout/PublicLayout';
 import { BlogsPage } from '@/pages/BlogsPage';
 import { BlogPostPage } from '@/pages/BlogPostPage';
 import { WriteBlogPage } from '@/pages/WriteBlogPage';
@@ -35,15 +34,14 @@ export function App() {
             <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/auth/callback" element={<AuthCallbackPage />} />
-            <Route element={<PublicLayout />}>
+
+            <Route element={<AppShell />}>
               <Route path="/blogs" element={<BlogsPage />} />
               <Route path="/blogs/:slug" element={<BlogPostPage />} />
-            </Route>
 
-            <Route element={<RequireAuth />}>
-              <Route path="/onboarding" element={<OnboardingPage />} />
-              <Route element={<RequireOnboarding />}>
-                <Route element={<AppShell />}>
+              <Route element={<RequireAuth />}>
+                <Route path="/onboarding" element={<OnboardingPage />} />
+                <Route element={<RequireOnboarding />}>
                   <Route path="/dashboard" element={<DashboardPage />} />
                   <Route path="/courses" element={<CoursesPage />} />
                   <Route path="/courses/:courseId" element={<CoursePage />} />
