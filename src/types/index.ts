@@ -203,6 +203,14 @@ export interface BlogPost {
   author_id: string | null;
   featured_image: string | null;
   published: boolean;
+  approval_status: 'pending' | 'approved' | 'rejected';
   created_at: string;
   updated_at: string;
+}
+
+export interface BlogPostWithAuthor extends BlogPost {
+  author?: {
+    full_name: string | null;
+    avatar_url: string | null;
+  } | null;
 }

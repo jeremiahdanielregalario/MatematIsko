@@ -23,6 +23,7 @@ import { TheoremDetailPage } from '@/pages/TheoremDetailPage';
 import { FlashcardSessionPage } from '@/pages/FlashcardSessionPage';
 import { BlogsPage } from '@/pages/BlogsPage';
 import { BlogPostPage } from '@/pages/BlogPostPage';
+import { WriteBlogPage } from '@/pages/WriteBlogPage';
 
 export function App() {
   return (
@@ -48,6 +49,7 @@ export function App() {
                   <Route path="/practice" element={<PracticePage />} />
                   <Route path="/bookmarks" element={<BookmarksPage />} />
                   <Route path="/blogs" element={<BlogsPage />} />
+                  <Route path="/blogs/write" element={<WriteBlogPage />} />
                   <Route path="/blogs/:slug" element={<BlogPostPage />} />
                   <Route path="/profile" element={<ProfilePage />} />
                   <Route

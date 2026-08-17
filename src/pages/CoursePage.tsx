@@ -3,7 +3,6 @@ import { Link, Navigate, useSearchParams, useParams } from 'react-router-dom';
 import { EmptyState } from '@/components/common/EmptyState';
 import { ErrorState } from '@/components/common/ErrorState';
 import { LoadingState } from '@/components/common/LoadingState';
-import { ProgressBar } from '@/components/common/ProgressBar';
 import { CourseNotesView } from '@/components/courses/CourseNotesView';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -183,6 +182,14 @@ function QuestionsTab({
     if (pick) navigate(`/questions/${pick.id}`);
   };
 
+  const startTopic = (topicId: string) => {
+    const pool = questions.filter((q) => q.course_id === courseId && q.topic?.id === topicId);
+    const pick = pickRandom(pool);
+    if (pick) {
+      navigate(`/questions/${pick.id}?course=${courseId}&topic=${topicId}`);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -204,9 +211,10 @@ function QuestionsTab({
         <ul className="space-y-4">
           {topics.map((topic) => (
             <li key={topic.id}>
-              <Link
-                to={`/questions?courseId=${courseId}&topicId=${topic.id}`}
-                className="group block"
+              <button
+                type="button"
+                onClick={() => startTopic(topic.id)}
+                className="group block w-full text-left"
               >
                 <Card className="transition-colors group-hover:border-brand-300 group-hover:bg-brand-50/40 dark:group-hover:border-brand-700 dark:group-hover:bg-brand-950/40">
                   <CardContent className="flex items-center justify-between gap-4 px-5 py-4">
@@ -218,12 +226,10 @@ function QuestionsTab({
                         {topic.mastered_count} / {topic.question_count} mastered
                       </p>
                     </div>
-                    <div className="w-40 shrink-0">
-                      <ProgressBar value={topic.mastery_percent} label={`${topic.name} progress`} />
-                    </div>
+                    <ArrowRight className="size-4 shrink-0 text-stone-400 transition-transform group-hover:translate-x-1 group-hover:text-brand-600 dark:text-stone-500 dark:group-hover:text-brand-400" />
                   </CardContent>
                 </Card>
-              </Link>
+              </button>
             </li>
           ))}
         </ul>

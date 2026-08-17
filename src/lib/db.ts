@@ -350,3 +350,59 @@ export async function adminDeleteBlogPost(id: string): Promise<void> {
   });
   if (error) throw new Error(error.message);
 }
+
+export async function adminSetBlogApproval(
+  id: string,
+  status: 'pending' | 'approved' | 'rejected',
+): Promise<BlogPost> {
+  if (!isSupabaseConfigured) notConfigured();
+  if (!supabase) notConfigured();
+  const { data, error } = await supabase.rpc('admin_set_blog_approval', {
+    p_id: id,
+    p_status: status,
+  });
+  if (error) throw new Error(error.message);
+  return data as BlogPost;
+}
+
+export async function submitBlogPost(
+  title: string,
+  slug: string,
+  excerpt: string,
+  content: string,
+  featuredImage: string,
+): Promise<BlogPost> {
+  if (!isSupabaseConfigured) notConfigured();
+  if (!supabase) notConfigured();
+  const { data, error } = await supabase.rpc('submit_blog_post', {
+    p_title: title,
+    p_slug: slug,
+    p_excerpt: excerpt,
+    p_content: content,
+    p_featured_image: featuredImage || null,
+  });
+  if (error) throw new Error(error.message);
+  return data as BlogPost;
+}
+
+export async function updateOwnBlogPost(
+  id: string,
+  title: string,
+  slug: string,
+  excerpt: string,
+  content: string,
+  featuredImage: string,
+): Promise<BlogPost> {
+  if (!isSupabaseConfigured) notConfigured();
+  if (!supabase) notConfigured();
+  const { data, error } = await supabase.rpc('update_own_blog_post', {
+    p_id: id,
+    p_title: title,
+    p_slug: slug,
+    p_excerpt: excerpt,
+    p_content: content,
+    p_featured_image: featuredImage || null,
+  });
+  if (error) throw new Error(error.message);
+  return data as BlogPost;
+}

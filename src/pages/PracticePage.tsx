@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { ErrorState } from '@/components/common/ErrorState';
 import { LoadingState } from '@/components/common/LoadingState';
 import { useCourses } from '@/hooks/useCourses';
@@ -18,13 +19,20 @@ type Phase =
   | { kind: 'results'; summary: ReturnType<typeof computePracticeResults>; filter: QuestionFilter };
 
 export function PracticePage() {
+  const [searchParams] = useSearchParams();
   const { data: loaded, loading, error, reload } = useQuestions();
   const { data: coursesData } = useCourses();
   const { courseIds } = useCourseScope();
   const courses = (coursesData ?? []).filter(
     (course) => courseIds === null || courseIds.includes(course.id),
   );
-  const [phase, setPhase] = useState<Phase>({ kind: 'setup', filter: {} });
+
+  const initialFilter: QuestionFilter = {
+    courseId: searchParams.get('courseId') ?? undefined,
+    topicId: searchParams.get('topicId') ?? undefined,
+  };
+
+  const [phase, setPhase] = useState<Phase>({ kind: 'setup', filter: initialFilter });
 
   const baseQuestions = loaded ?? [];
   const getQuestion = (id: string) => baseQuestions.find((q) => q.id === id);
