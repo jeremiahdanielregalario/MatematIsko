@@ -193,7 +193,7 @@ $$= \frac{2}{x^2} - 2\csc^2(2xz) + 8xz\cot(2xz)\csc^2(2xz). \;\blacksquare$$ $BO
     'b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d04',
     'd3485837-0c50-4398-8b0a-ffb7c9fb124c',
     'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c03',
-    'Clairaut\'s Theorem: Does a Function Exist?',
+    'Clairaut''s Theorem: Does a Function Exist?',
     $BODY$Identify, using Clairaut's Theorem, whether there exists a function on the unit disc given the following partial derivatives:
 
 $$f_{x}=e^{2xy}+x^3, \qquad f_{y}=\sec y+e^{2xy}.$$$BODY$,

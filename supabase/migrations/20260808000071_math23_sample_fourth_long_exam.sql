@@ -111,7 +111,7 @@ $$\int_0^1 -4(11 - 48t + 48t^2)\, dt = -4\left[11t - 24t^2 + 16t^3\right]_0^1 = 
     '6b7c8d9e-0f1a-4b2c-8d3e-4f5a6b7c8d04',
     'd3485837-0c50-4398-8b0a-ffb7c9fb124c',
     'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c0b',
-    'Green\'s Theorem: Work Along a Closed Path',
+    'Green''s Theorem: Work Along a Closed Path',
     $BODY$Using Green's Theorem, calculate the work done by the force field $\vec{F}(x, y) = \langle ye^x + 4xy,\, e^x - 2x^2 \rangle$ in moving a particle along the line segment from $(-1, 2)$ to $(2, -1)$ then along the portion of the parabola $y + 1 = x^2 - 2x$ from $(2, -1)$ to $(-1, 2)$.$BODY$,
     'hard',
     2023,
@@ -136,7 +136,7 @@ Since the original path $C$ is negatively oriented: $\int_C P\, dx + Q\, dy = -(
     '6b7c8d9e-0f1a-4b2c-8d3e-4f5a6b7c8d05',
     'd3485837-0c50-4398-8b0a-ffb7c9fb124c',
     'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c0b',
-    'Stokes\' Theorem: Line Integral Over a Triangle',
+    'Stokes'' Theorem: Line Integral Over a Triangle',
     $BODY$Using Stokes' Theorem, calculate $\displaystyle\oint_C \vec{F}\cdot d\vec{R}$, where
 
 $$\vec{F}(x,y,z) = \left\langle \sin x + 2y^2,\; e^y + \frac{x^2}{2},\; xz \right\rangle$$
@@ -167,7 +167,7 @@ $$= \int_{-4}^{0}\left(-4u + \frac{3u^2}{2}\right)du = \left[-2u^2 + \frac{u^3}{
     '6b7c8d9e-0f1a-4b2c-8d3e-4f5a6b7c8d06',
     'd3485837-0c50-4398-8b0a-ffb7c9fb124c',
     'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c0b',
-    'Gauss\'s Divergence Theorem: Flux Across a Cone-Sphere Boundary',
+    'Gauss''s Divergence Theorem: Flux Across a Cone-Sphere Boundary',
     $BODY$Using Gauss's Divergence Theorem, calculate $\displaystyle\oiint_S \vec{F}\cdot\vec{n}\,d\sigma$, where
 
 $$\vec{F}(x,y,z) = \left\langle x^3,\; x^2+4z+2yz,\; e^{3y} - 3x^2z \right\rangle$$
