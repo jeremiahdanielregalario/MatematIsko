@@ -30,7 +30,7 @@ values
     'Vector-Valued Functions and Parametric Surfaces',
     'Parametric surfaces, surface integrals, and surface area.'
   )
-on conflict (course_id, name) do nothing;
+on conflict (id) do nothing;
 
 insert into public.questions
   (id, course_id, topic_id, title, question_text, difficulty, year, exam_name, question_number, hint, answer, solution)

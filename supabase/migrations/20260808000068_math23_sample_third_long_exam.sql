@@ -16,7 +16,7 @@ values
     'Vector Calculus',
     'Divergence, curl, conservative vector fields, line integrals, and theorems of vector calculus.'
   )
-on conflict (course_id, name) do nothing;
+on conflict (id) do nothing;
 
 insert into public.questions
   (id, course_id, topic_id, title, question_text, difficulty, year, exam_name, question_number, hint, answer, solution)
