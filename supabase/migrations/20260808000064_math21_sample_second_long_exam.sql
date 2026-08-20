@@ -79,7 +79,7 @@ $$\frac{dy}{dx} = (\sin x)^{\cos x}\tan^{-1}(x^4)\left[\frac{\cos^2 x}{\sin x} -
     '2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e02',
     'c0000000-0000-4000-8000-000000000001',
     'e0fcbbef-0a2b-5e34-8ea3-a814bec15036',
-    'Chain Rule: Finding $h\'(3)$ Given Function Values',
+    'Chain Rule: Finding $h''(3)$ Given Function Values',
     $BODY$Two functions $f$ and $g$ are both differentiable at $x=3$. Find $h'(3)$, given the following:
 
 $$f(3)=\pi, \quad f'(3)=0, \quad g(3)=3, \quad g'(3)=-2, \quad h(x)=\left[x^2g(x)-f(x)\right]^2.$$ $BODY$,
@@ -233,7 +233,7 @@ The points of inflection are $\left(-1, -\frac{5}{3}\right)$ and $\left(1, -\fra
     '2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e07',
     'c0000000-0000-4000-8000-000000000001',
     '891e6378-0089-560a-b6e3-a958bc2ff569',
-    'Sketching $f$ From the Graph of $f\'$',
+    'Sketching $f$ From the Graph of $f''$',
     $BODY$Given that $f$ is a function that is continuous everywhere, sketch a possible graph of $f$ from the graph of $f'$ below.
 
 *(The graph of $f'$ shows: $f'$ is negative on $(-\infty, -1-\sqrt{3})$, zero at $x = -1-\sqrt{3}$, positive on $(-1-\sqrt{3}, 0)$, zero at $x = 0$, negative on $(0, 2)$, zero at $x = 2$, and positive on $(2, +\infty)$. The graph of $f'$ is increasing on $(-\infty, -1)$, has a local max at $x = -1$, decreasing on $(-1, 0)$, has a local min at $x = 0$, decreasing on $(0, 1)$, has a local max at $x = 1$, and increasing on $(1, +\infty)$.)*$BODY$,
