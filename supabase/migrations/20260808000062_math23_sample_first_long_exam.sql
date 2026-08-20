@@ -42,7 +42,7 @@ values
     'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c03',
     'd3485837-0c50-4398-8b0a-ffb7c9fb124c',
     'Partial Derivatives',
-    'First and higher-order partial derivatives, Clairaut\'s Theorem, and implicit differentiation.'
+    'First and higher-order partial derivatives, Clairaut''s Theorem, and implicit differentiation.'
   ),
   (
     'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c04',
