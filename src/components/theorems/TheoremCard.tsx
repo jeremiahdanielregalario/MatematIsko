@@ -42,10 +42,12 @@ export function TheoremCard({ theorem, onSetStatus, className }: TheoremCardProp
       </div>
 
       <div className="flex-1">
-        <MathRenderer preview inline>{theorem.name}</MathRenderer>
+        <MathRenderer preview inline>
+          {theorem.name}
+        </MathRenderer>
       </div>
 
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <Link
           to={`/theorems/${theorem.id}`}
           className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-700 hover:text-brand-800 hover:underline dark:text-brand-400 dark:hover:text-brand-300"
@@ -60,10 +62,7 @@ export function TheoremCard({ theorem, onSetStatus, className }: TheoremCardProp
               submitTheoremReport(theorem.id, category as never, description)
             }
           />
-          <MasteryButton
-            status={status}
-            onChange={(next) => onSetStatus(theorem.id, next)}
-          />
+          <MasteryButton status={status} onChange={(next) => onSetStatus(theorem.id, next)} />
         </div>
       </div>
     </Card>

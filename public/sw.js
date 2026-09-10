@@ -1,40 +1,50 @@
-const CACHE_NAME = 'matematisko-v1';
-const PRECACHE = [
-  '/',
-  '/manifest.json',
-  '/icons/icon.svg',
-];
+const CACHE_NAME = 'matematisko-static-v2';
+const PRECACHE = ['/manifest.json', '/icons/icon.svg'];
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE))
-  );
+  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE)));
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
-    )
+    (async () => {
+      const keys = await caches.keys();
+      await Promise.all(
+        keys
+          .filter((key) => key.startsWith('matematisko-') && key !== CACHE_NAME)
+          .map((key) => caches.delete(key)),
+      );
+      await self.clients.claim();
+    })(),
   );
-  self.clients.claim();
 });
 
 self.addEventListener('fetch', (event) => {
-  if (event.request.method !== 'GET') return;
+  const request = event.request;
+  const url = new URL(request.url);
+  // Authenticated APIs, navigation HTML and third-party requests stay network-only.
+  if (
+    request.method !== 'GET' ||
+    url.origin !== self.location.origin ||
+    request.headers.has('authorization') ||
+    url.search ||
+    !PRECACHE.includes(url.pathname)
+  )
+    return;
 
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      const fetched = fetch(event.request).then((response) => {
-        if (response && response.status === 200) {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+    (async () => {
+      const cache = await caches.open(CACHE_NAME);
+      try {
+        const response = await fetch(request);
+        if (response.ok && response.type === 'basic') {
+          await cache.put(request, response.clone());
         }
         return response;
-      }).catch(() => cached);
-
-      return cached || fetched;
-    })
+      } catch {
+        return (await cache.match(request)) || Response.error();
+      }
+    })(),
   );
 });

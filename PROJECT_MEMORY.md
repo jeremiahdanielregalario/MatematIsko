@@ -117,7 +117,7 @@ Google OAuth and email/password sign-in exist. Approved access means an exact `u
 
 The client imposes an eight-hour session window through localStorage and a sign-out timer (`src/lib/constants.ts`). This is client behavior, not proof of a server-enforced eight-hour expiry. Onboarding is considered complete when degree program and year level are present.
 
-Course scope represents selected courses; `null` means unrestricted and `[]` represents no selected courses. **Current caveat:** several `db.ts` queries only apply the course filter for a nonempty array, so `[]` currently falls through to an unrestricted query. Course selection is not database authorization: baseline content read policies allow authenticated users to read content regardless of enrollment.
+Course scope represents selected courses; `null` means unrestricted and `[]` represents no selected courses. Question/theorem list and detail queries now return empty/null for `[]` without making a request. Omitted scope remains unrestricted. Provider loading, failed scope recovery, and account-switch races still need a separate audit. Course selection is not database authorization: baseline content read policies allow authenticated users to read content regardless of enrollment.
 
 ### Study and practice
 
@@ -147,8 +147,8 @@ Address correctness before using faster infrastructure to serve more requests.
 
 | Priority | Evidence / risk | Next change and acceptance evidence |
 |---|---|---|
-| First | Service worker caches successful GET responses broadly, including requests beyond static assets | Restrict caching to deliberately allowed public/static resources; review authenticated requests, sign-out/account switching, cache versioning and eviction. Verify no previous user's private response is reused and releases update correctly |
-| First | Empty course scope bypasses query filtering | Define empty/unrestricted scope explicitly throughout list/detail hooks; verify zero selections, failed scope load, admin, and account switch |
+| Operational | Service worker now caches only the same-origin manifest and app icon; legacy app caches are removed on activation | Verify worker activation on deployed clients. Full offline study is not implemented; HTML, scripts and API requests use the network |
+| First | Empty query scope is fixed, but course-scope provider loading and account-switch handling remain unverified | Audit failed scope load, refresh races, admin and account switch; provide actionable recovery |
 | First | Blog ownership policies do not enforce moderation fields | Restrict writes server-side; verify an author cannot directly approve/publish a submission or alter another author's post |
 | First | Attempt writes can overwrite concurrent updates; failed attempts remain optimistic | Use atomic, retry-safe persistence and visible failure/reconciliation. Verify simultaneous attempts, repeated clicks, retries and refresh |
 | First | `setUserCourses` deletes all selections then inserts in a separate request | Make replacement transactional; a failed save must retain the previous selection |
@@ -250,3 +250,15 @@ Evidence: Repository inspection at `4df00c3`; no live deployment/database verifi
 - Preferred package-manager/lockfile policy and automated release checks.
 
 Resolve these when a feature depends on them; do not turn unknowns into implementation facts.
+
+### 2026-09-11 — Exam-review usability and rendering fixes
+
+Status: implemented locally; not deployed.
+
+Decision: Preserve Supabase and content IDs while repairing study interactions. Question card action controls sit above the stretched navigation link. Next-question navigation stays strictly within the specified course/topic and disables when no other matching question is loaded; detail mastery uses the loaded detail record before the question list. Students can hide a hint or answer whenever a reset callback is available. Reveal shortcuts ignore dialogs, menus, composition and repeated key events.
+
+Rendering: Inline Markdown titles unwrap links and block elements while preserving KaTeX/MathML. Long inline equations scroll within their available width; Markdown tables have a focusable horizontal scroll region. Theorem card actions wrap. The app uses bottom navigation below the large breakpoint, highlights nested mobile routes, provides a skip-to-content link, and respects reduced motion for scrolling.
+
+Caching: `matematisko-static-v2` only caches the same-origin manifest and icon without query strings or Authorization headers. Navigation HTML and data requests are network-only. Activation removes older MatematIsko caches, including potentially cached private responses, without deleting other applications' caches. This deliberately does not promise offline study.
+
+Evidence: Source review and regression tests cover Markdown/MathML, hide controls, keyboard suppression, empty question/theorem scope and worker cache boundaries. Public landing/sample inspected at 375px in light/dark themes. Signed-in production journeys, actual database limits, and deployed worker activation were not verified. See `APP_REVIEW.md` for remaining priorities and validation details.

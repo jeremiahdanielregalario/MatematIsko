@@ -50,3 +50,28 @@ describe('useRevealKeyboard', () => {
     expect(reveal).not.toHaveBeenCalled();
   });
 });
+
+it('does not reveal answers while a dialog control has keyboard focus', async () => {
+  const reveal = vi.fn();
+  render(
+    <div role="dialog" aria-label="Report">
+      <button>Category</button>
+    </div>,
+  );
+  renderHook(() => useRevealKeyboard(reveal));
+  screen.getByRole('button').focus();
+  await userEvent.setup().keyboard('has');
+  expect(reveal).not.toHaveBeenCalled();
+});
+
+it('ignores composing and repeated key events', () => {
+  const reveal = vi.fn();
+  renderHook(() => useRevealKeyboard(reveal));
+  document.body.dispatchEvent(
+    new KeyboardEvent('keydown', { key: 'a', bubbles: true, isComposing: true }),
+  );
+  document.body.dispatchEvent(
+    new KeyboardEvent('keydown', { key: 's', bubbles: true, repeat: true }),
+  );
+  expect(reveal).not.toHaveBeenCalled();
+});

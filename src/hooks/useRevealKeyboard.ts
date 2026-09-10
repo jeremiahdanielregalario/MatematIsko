@@ -12,15 +12,20 @@ function isEditableTarget(target: EventTarget | null): boolean {
  * H → hint, A → answer, S → solution.
  * Never fires while the user is typing in an input/textarea.
  */
-export function useRevealKeyboard(
-  reveal: (level: RevealLevel) => void,
-  enabled = true,
-): void {
+export function useRevealKeyboard(reveal: (level: RevealLevel) => void, enabled = true): void {
   useEffect(() => {
     if (!enabled) return;
 
     const onKeyDown = (event: KeyboardEvent) => {
+      if (event.defaultPrevented || event.isComposing || event.repeat) return;
       if (isEditableTarget(event.target)) return;
+      if (
+        event.target instanceof HTMLElement &&
+        event.target.closest(
+          '[role="dialog"], [role="alertdialog"], [role="menu"], [contenteditable]',
+        )
+      )
+        return;
       if (event.metaKey || event.ctrlKey || event.altKey) return;
 
       let level: RevealLevel | null = null;

@@ -46,6 +46,7 @@ export function QuestionCard({
           <DifficultyBadge difficulty={question.difficulty} />
         </div>
         <BookmarkButton
+          className="relative z-10"
           bookmarked={question.bookmarked}
           onToggleBookmark={(bookmarked) => onToggleBookmark(question.id, bookmarked)}
         />
@@ -84,7 +85,10 @@ export function QuestionCard({
             </Badge>
           ) : null}
         </div>
-        <div className="flex items-center gap-1" onClick={(event) => event.stopPropagation()}>
+        <div
+          className="relative z-10 flex items-center gap-1"
+          onClick={(event) => event.stopPropagation()}
+        >
           <ReportButton
             kind="question"
             onSubmit={(category, description) =>

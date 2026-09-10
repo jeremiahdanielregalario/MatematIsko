@@ -47,7 +47,52 @@ export function MathRenderer({
       <ReactMarkdown
         remarkPlugins={[remarkMath, remarkGfm]}
         rehypePlugins={[[rehypeKatex, { throwOnError: false }]]}
-        components={inline ? { p: 'span' } : undefined}
+        disallowedElements={
+          inline
+            ? [
+                'p',
+                'a',
+                'h1',
+                'h2',
+                'h3',
+                'h4',
+                'h5',
+                'h6',
+                'div',
+                'pre',
+                'blockquote',
+                'ul',
+                'ol',
+                'li',
+                'table',
+                'thead',
+                'tbody',
+                'tr',
+                'th',
+                'td',
+                'hr',
+                'img',
+                'input',
+              ]
+            : undefined
+        }
+        unwrapDisallowed={inline}
+        components={
+          inline
+            ? { p: 'span' }
+            : {
+                table: ({ children }) => (
+                  <div
+                    className="overflow-x-auto"
+                    role="region"
+                    aria-label="Scrollable table"
+                    tabIndex={0}
+                  >
+                    <table>{children}</table>
+                  </div>
+                ),
+              }
+        }
       >
         {source}
       </ReactMarkdown>

@@ -92,3 +92,12 @@ describe('RevealSection', () => {
     expect(onReset).toHaveBeenCalled();
   });
 });
+
+it.each(['hint', 'answer'] as const)(
+  'lets students hide %s without revealing more',
+  async (level) => {
+    const { onReset } = renderAt(level);
+    await userEvent.setup().click(screen.getByRole('button', { name: /hide all/i }));
+    expect(onReset).toHaveBeenCalledOnce();
+  },
+);

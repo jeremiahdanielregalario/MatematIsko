@@ -205,7 +205,7 @@ The `vercel.json` in the project root rewrites all paths to `index.html` so Reac
 | `A` | Reveal answer |
 | `S` | Reveal solution |
 
-Shortcuts are suppressed while typing in any input or textarea, and only apply on question detail and practice pages.
+Shortcuts are suppressed while typing, composing text, or using dialog/menu controls. On supported study views, use Hide all to close a revealed hint or answer without revealing the full solution.
 
 ---
 
@@ -225,3 +225,5 @@ Shortcuts are suppressed while typing in any input or textarea, and only apply o
 ## License
 
 This project is built for educational use by University of the Philippines students and instructors.
+
+See [APP_REVIEW.md](APP_REVIEW.md) for the exam-review usability fixes, verification scope and remaining priorities.

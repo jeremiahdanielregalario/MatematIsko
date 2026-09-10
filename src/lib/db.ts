@@ -38,6 +38,7 @@ export async function getTopics(courseId?: string): Promise<Topic[]> {
 }
 
 export async function getQuestionsWithRelations(courseIds?: string[]): Promise<QuestionWithRelations[]> {
+  if (courseIds?.length === 0) return [];
   if (!isSupabaseConfigured) return [];
   if (!supabase) notConfigured();
   let query = supabase
@@ -54,6 +55,7 @@ export async function getQuestionById(
   id: string,
   courseIds?: string[],
 ): Promise<QuestionWithRelations | null> {
+  if (courseIds?.length === 0) return null;
   if (!isSupabaseConfigured) return null;
   if (!supabase) notConfigured();
   let query = supabase
@@ -71,6 +73,7 @@ export async function getQuestionById(
 // ---------------------------------------------------------------------------
 
 export async function getTheorems(courseIds?: string[]): Promise<TheoremWithRelations[]> {
+  if (courseIds?.length === 0) return [];
   if (!isSupabaseConfigured) return [];
   if (!supabase) notConfigured();
   let query = supabase
@@ -87,6 +90,7 @@ export async function getTheoremById(
   id: string,
   courseIds?: string[],
 ): Promise<TheoremWithRelations | null> {
+  if (courseIds?.length === 0) return null;
   if (!isSupabaseConfigured) return null;
   if (!supabase) notConfigured();
   let query = supabase

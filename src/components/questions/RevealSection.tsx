@@ -63,7 +63,7 @@ export function RevealSection({
             <Shortcut label="S" />
           </Button>
         ) : null}
-        {showSolution ? (
+        {level !== 'hidden' && onReset ? (
           <Button
             variant="ghost"
             size="sm"

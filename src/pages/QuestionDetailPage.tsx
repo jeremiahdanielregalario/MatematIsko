@@ -27,7 +27,8 @@ export function QuestionDetailPage() {
 
   const { data: loadedQuestions = null } = useQuestions();
   const allQuestions = loadedQuestions ?? [];
-  const getQuestion = (qid: string) => allQuestions.find((q) => q.id === qid);
+  const getQuestion = (qid: string) =>
+    question?.id === qid ? question : allQuestions.find((q) => q.id === qid);
   const mutations = useQuestionMutations(getQuestion);
 
   const reveal = useReveal();
@@ -62,22 +63,19 @@ export function QuestionDetailPage() {
     return `/questions/${nextId}?${params.toString()}`;
   };
 
+  const nextPool = allQuestions.filter(
+    (q) =>
+      q.id !== question.id &&
+      q.course_id === contextCourse &&
+      (!contextTopic || q.topic_id === contextTopic),
+  );
   const nextInContext = () => {
-    let pool = allQuestions.filter((q) => q.id !== question.id);
-    if (contextTopic) {
-      const topicPool = pool.filter((q) => q.topic_id === contextTopic);
-      if (topicPool.length > 0) pool = topicPool;
-    } else if (contextCourse) {
-      const coursePool = pool.filter((q) => q.course_id === contextCourse);
-      if (coursePool.length > 0) pool = coursePool;
-    }
-    const random = pickRandom(pool);
+    const random = pickRandom(nextPool);
     if (random) {
       reveal.reset();
       navigate(contextPath(random.id));
     }
   };
-
   // "Back" returns to the course page, which is the study home for the topic.
   const backPath = `/courses/${contextCourse}`;
 
@@ -164,7 +162,12 @@ export function QuestionDetailPage() {
                 onChange={(next) => mutations.setStatus(merged.id, next)}
               />
             </div>
-            <Button variant="outline" size="sm" onClick={nextInContext}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={nextInContext}
+              disabled={nextPool.length === 0}
+            >
               <Shuffle className="size-4" />
               {inTopic
                 ? `Next in ${merged.topic?.name ?? 'topic'}`
