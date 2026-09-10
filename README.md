@@ -1,5 +1,7 @@
 # MatematIsko
 
+> **Project memory:** Read [PROJECT_MEMORY.md](PROJECT_MEMORY.md) for the maintained architecture, behavior, known gaps, and scaling guide. Some overview sections below predate newer features; use the memory guide and source code for current behavior.
+
 Interactive mathematics exam-review platform for University of the Philippines students.
 
 Browse questions, attempt them yourself, then reveal hints, answers, and full solutions — all rendered with real math notation via KaTeX.
