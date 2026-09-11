@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { GraphBlock } from './FunctionGraph';
 import ReactMarkdown from 'react-markdown';
 import rehypeKatex from 'rehype-katex';
@@ -31,11 +31,52 @@ export function MathRenderer({
   inline = false,
 }: MathRendererProps) {
   const source = useMemo(() => decodeUnicodeEscapes(children), [children]);
+  const rootRef = useRef<HTMLDivElement & HTMLSpanElement>(null);
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+
+    const equations = Array.from(root.querySelectorAll<HTMLElement>('.katex'));
+    const updateOverflow = () => {
+      for (const equation of equations) {
+        const content = equation.querySelector<HTMLElement>('.katex-html');
+        const container = equation.parentElement?.classList.contains('katex-display')
+          ? equation.parentElement
+          : equation;
+        if (content && container) {
+          container.classList.toggle(
+            'math-overflow',
+            content.getBoundingClientRect().width > container.getBoundingClientRect().width + 1,
+          );
+        }
+      }
+    };
+
+    updateOverflow();
+    if (typeof ResizeObserver === 'undefined') return;
+    let frame = 0;
+    const observer = new ResizeObserver(() => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(updateOverflow);
+    });
+    observer.observe(root);
+    for (const equation of equations) {
+      observer.observe(equation);
+      const content = equation.querySelector('.katex-html');
+      if (content) observer.observe(content);
+    }
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(frame);
+    };
+  }, [source, inline]);
 
   const Wrapper = inline ? 'span' : 'div';
 
   return (
     <Wrapper
+      ref={rootRef}
       className={cn(
         'math-prose',
         !inline &&

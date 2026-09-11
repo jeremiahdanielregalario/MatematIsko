@@ -131,6 +131,8 @@ Question mutations apply optimistic overlays. Bookmark and status operations att
 
 Use `MathRenderer` for Markdown/LaTeX: `$...$` inline, `$$...$$` display. It decodes Unicode escapes and uses remark-math, remark-gfm, and rehype-katex with non-throwing math errors. Raw HTML is not enabled. Preserve readable long equations, inline rendering inside titles, preview rendering, and light/dark readability.
 
+Math overflow (verified 2026-09-11): `MathRenderer` measures visible formula width and uses ResizeObserver to recheck after layout/font changes. Only formulas exceeding their container width by more than one pixel receive horizontal scrolling; short formulas retain visible overflow so glyph overhang does not create distracting scrollbars. Inline and display formulas stay unbroken, with oversized display formulas aligned left so their beginning remains reachable. Hidden accessible MathML is preserved.
+
 Canvas visualization components and `remark-math-viz.ts` exist, but the current `MathRenderer` does not wire that plugin or `MathViz` into its rendering pipeline. Their presence alone does not mean embedded visualizations are enabled.
 
 The visual identity uses a maroon brand palette (brand-900 `#7b1113`), stone neutrals, Inter UI text, and Source Serif 4 for reading/headings. Reuse existing theme tokens, primitives, layout, loading/error/empty states, focus treatment, and responsive patterns.
