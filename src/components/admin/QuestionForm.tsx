@@ -1,4 +1,5 @@
 import { Eye, Save, X } from 'lucide-react';
+import { GraphBuilder } from './GraphBuilder';
 import { useEffect, useMemo, useState } from 'react';
 import { MathRenderer } from '@/components/math/MathRenderer';
 import { Button } from '@/components/ui/button';
@@ -60,7 +61,9 @@ function toDraft(question: Question): QuestionDraft {
 }
 
 export function QuestionForm({ initial, courses, topics, onSaved, onCancel }: QuestionFormProps) {
-  const [draft, setDraft] = useState<QuestionDraft>(() => (initial ? toDraft(initial) : emptyDraft()));
+  const [draft, setDraft] = useState<QuestionDraft>(() =>
+    initial ? toDraft(initial) : emptyDraft(),
+  );
   const [newTopicName, setNewTopicName] = useState('');
   const [showPreview, setShowPreview] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -160,7 +163,10 @@ export function QuestionForm({ initial, courses, topics, onSaved, onCancel }: Qu
 
         <div className="space-y-1.5">
           <Label htmlFor="admin-difficulty">Difficulty</Label>
-          <Select value={draft.difficulty} onValueChange={(value) => set('difficulty', value as Difficulty)}>
+          <Select
+            value={draft.difficulty}
+            onValueChange={(value) => set('difficulty', value as Difficulty)}
+          >
             <SelectTrigger id="admin-difficulty">
               <SelectValue />
             </SelectTrigger>
@@ -250,6 +256,12 @@ export function QuestionForm({ initial, courses, topics, onSaved, onCancel }: Qu
 
       <div className="space-y-1.5">
         <Label htmlFor="admin-question-text">Question text</Label>
+        <GraphBuilder
+          key={initial?.id ?? 'new'}
+          onInsert={(markdown) =>
+            setDraft((current) => ({ ...current, question_text: current.question_text + markdown }))
+          }
+        />
         <Textarea
           id="admin-question-text"
           className="min-h-32 font-mono text-xs"
@@ -267,7 +279,9 @@ export function QuestionForm({ initial, courses, topics, onSaved, onCancel }: Qu
             id="admin-hint"
             className="min-h-24 font-mono text-xs"
             value={draft.hint ?? ''}
-            onChange={(event) => set('hint', event.target.value.trim() === '' ? null : event.target.value)}
+            onChange={(event) =>
+              set('hint', event.target.value.trim() === '' ? null : event.target.value)
+            }
             placeholder="A small nudge before revealing the answer."
           />
         </div>
@@ -315,7 +329,11 @@ export function QuestionForm({ initial, courses, topics, onSaved, onCancel }: Qu
         <Button type="button" variant="ghost" onClick={onCancel}>
           Cancel
         </Button>
-        <Button type="button" onClick={() => void handleSave()} disabled={!requiredFilled || saving}>
+        <Button
+          type="button"
+          onClick={() => void handleSave()}
+          disabled={!requiredFilled || saving}
+        >
           <Save className="size-4" />
           {saving ? 'Saving…' : initial ? 'Save changes' : 'Create question'}
         </Button>

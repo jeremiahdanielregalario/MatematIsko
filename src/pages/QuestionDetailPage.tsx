@@ -50,15 +50,18 @@ export function QuestionDetailPage() {
 
   // Carry the study context (course/topic/filters) through detail navigation so
   // the "next question" button stays within what the student is focusing on.
-  const contextCourse = searchParams.get('course') ?? question.course_id;
-  const contextTopic = searchParams.get('topic') ?? undefined;
+  const randomMode = searchParams.get('mode') === 'random';
+  const contextCourse = randomMode ? undefined : (searchParams.get('course') ?? question.course_id);
+  const contextTopic = randomMode ? undefined : (searchParams.get('topic') ?? undefined);
 
   // "Next" carries the context so the study session stays within the same
-  // course/topic. The fallback to the question's own course keeps focus even
+  // course/topic, or preserves cross-course random mode. The fallback keeps focus even
   // when the student arrived via a deep link.
   const contextPath = (nextId: string) => {
     const params = new URLSearchParams(searchParams);
-    params.set('course', contextCourse);
+    if (contextCourse) params.set('course', contextCourse);
+    else params.delete('course');
+    if (randomMode) params.delete('topic');
     if (contextTopic) params.set('topic', contextTopic);
     return `/questions/${nextId}?${params.toString()}`;
   };
@@ -66,7 +69,7 @@ export function QuestionDetailPage() {
   const nextPool = allQuestions.filter(
     (q) =>
       q.id !== question.id &&
-      q.course_id === contextCourse &&
+      (!contextCourse || q.course_id === contextCourse) &&
       (!contextTopic || q.topic_id === contextTopic),
   );
   const nextInContext = () => {
@@ -77,7 +80,7 @@ export function QuestionDetailPage() {
     }
   };
   // "Back" returns to the course page, which is the study home for the topic.
-  const backPath = `/courses/${contextCourse}`;
+  const backPath = randomMode ? '/dashboard' : `/courses/${contextCourse}`;
 
   const inTopic = Boolean(contextTopic);
   const inCourse = Boolean(contextCourse) && !inTopic;
@@ -89,7 +92,7 @@ export function QuestionDetailPage() {
         className="inline-flex items-center gap-1.5 text-sm font-medium text-stone-500 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-100"
       >
         <ArrowLeft className="size-4" />
-        Back to course
+        {randomMode ? 'Back to dashboard' : 'Back to course'}
       </Link>
 
       <Card className="overflow-hidden">

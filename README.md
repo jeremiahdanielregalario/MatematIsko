@@ -227,3 +227,5 @@ Shortcuts are suppressed while typing, composing text, or using dialog/menu cont
 This project is built for educational use by University of the Philippines students and instructors.
 
 See [APP_REVIEW.md](APP_REVIEW.md) for the exam-review usability fixes, verification scope and remaining priorities.
+
+Course notes provide a responsive article reader with an on-page contents menu, larger-text mode, reading-position indicator, and previous/next notes. The reader preserves original Markdown headings and mathematical notation. Reading position is not saved as mastery.

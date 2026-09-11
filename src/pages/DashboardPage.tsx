@@ -71,11 +71,7 @@ export function DashboardPage() {
   if (loading) return <LoadingState label="Loading your dashboard" />;
   if (error) {
     return (
-      <ErrorState
-        title="Could not load your dashboard"
-        message={error.message}
-        onRetry={reload}
-      />
+      <ErrorState title="Could not load your dashboard" message={error.message} onRetry={reload} />
     );
   }
 
@@ -139,7 +135,7 @@ function OverviewTab({
 
   const startRandom = () => {
     const random = pickRandom(questions);
-    if (random) navigate(`/questions/${random.id}`);
+    if (random) navigate(`/questions/${random.id}?mode=random`);
   };
 
   return (
@@ -265,16 +261,36 @@ function ProgressTab({
     <div className="space-y-8">
       <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <Reveal delay={0} className="h-full">
-          <ProgressCard label="Total questions" value={stats.total} icon={<BookOpenText className="size-4" />} className="h-full" />
+          <ProgressCard
+            label="Total questions"
+            value={stats.total}
+            icon={<BookOpenText className="size-4" />}
+            className="h-full"
+          />
         </Reveal>
         <Reveal delay={75} className="h-full">
-          <ProgressCard label="Completed" value={stats.completed} icon={<CheckCircle2 className="size-4 text-emerald-600 dark:text-emerald-400" />} className="h-full" />
+          <ProgressCard
+            label="Completed"
+            value={stats.completed}
+            icon={<CheckCircle2 className="size-4 text-emerald-600 dark:text-emerald-400" />}
+            className="h-full"
+          />
         </Reveal>
         <Reveal delay={150} className="h-full">
-          <ProgressCard label="Mastered" value={stats.mastered} icon={<Sparkles className="size-4 text-brand-700 dark:text-brand-400" />} className="h-full" />
+          <ProgressCard
+            label="Mastered"
+            value={stats.mastered}
+            icon={<Sparkles className="size-4 text-brand-700 dark:text-brand-400" />}
+            className="h-full"
+          />
         </Reveal>
         <Reveal delay={225} className="h-full">
-          <ProgressCard label="Bookmarked" value={stats.bookmarked} icon={<Bookmark className="size-4 text-amber-600 dark:text-amber-400" />} className="h-full" />
+          <ProgressCard
+            label="Bookmarked"
+            value={stats.bookmarked}
+            icon={<Bookmark className="size-4 text-amber-600 dark:text-amber-400" />}
+            className="h-full"
+          />
         </Reveal>
       </section>
 

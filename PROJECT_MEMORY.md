@@ -262,3 +262,13 @@ Rendering: Inline Markdown titles unwrap links and block elements while preservi
 Caching: `matematisko-static-v2` only caches the same-origin manifest and icon without query strings or Authorization headers. Navigation HTML and data requests are network-only. Activation removes older MatematIsko caches, including potentially cached private responses, without deleting other applications' caches. This deliberately does not promise offline study.
 
 Evidence: Source review and regression tests cover Markdown/MathML, hide controls, keyboard suppression, empty question/theorem scope and worker cache boundaries. Public landing/sample inspected at 375px in light/dark themes. Signed-in production journeys, actual database limits, and deployed worker activation were not verified. See `APP_REVIEW.md` for remaining priorities and validation details.
+
+### 2026-09-11 — Preserve dashboard random-problem mode
+
+Dashboard "Give me a random problem" opens `/questions/:id?mode=random`. The detail page preserves this mode on subsequent picks, labels the action "Next random problem", and samples all loaded questions in the student's selected-course scope except the current question. Back returns to the dashboard. Explicit course/topic study and ordinary detail links retain their existing course-focused behavior. No schema or permission changes.
+
+### 2026-09-11 — Article-style course-note reader
+
+Course notes now use a single responsive article surface with blog-like typography and spacing, replacing nested collapsible cards and regex-based Markdown splitting. The full Markdown source goes through MathRenderer once, preserving heading levels, theorem numbers, code fences, math and tables. Contents links come from rendered headings with unique per-note/index IDs, including duplicate headings; navigation moves keyboard focus and clears the mobile contents panel. Mobile has a sticky collapsible contents menu; desktop has a sticky sidebar. Reading position is local viewport progress (not mastery), updated on scroll/resize/content resize; text size is per-mounted-note UI state. Previous/next links follow the already-loaded course-note order. No schema, ownership or permission changes.
+
+Validated with synthetic notes at 375px and 1440px, in light/dark themes, including larger text and heading jumps. The preview used the real reader component without authentication or production data. Production note content and signed-in persistence were not modified.

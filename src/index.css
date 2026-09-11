@@ -251,3 +251,47 @@ html {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* A single reading column keeps notes spacious even on small phones. */
+.note-reading .math-prose {
+  font-size: 1.0625rem;
+  line-height: 1.85;
+}
+.note-reading-large .math-prose {
+  font-size: 1.25rem;
+}
+.note-reading :is(h1, h2, h3) {
+  font-family: var(--font-serif);
+  scroll-margin-top: 13rem;
+  overflow-wrap: anywhere;
+}
+.note-reading h1 {
+  font-size: 1.8em;
+}
+.note-reading h2 {
+  font-size: 1.5em;
+}
+.note-reading h3 {
+  font-size: 1.25em;
+}
+.note-reading .katex-display {
+  margin-block: 1.5rem;
+  padding: 1rem 0.25rem;
+  border-block: 1px solid var(--color-stone-200);
+}
+.dark .note-reading .katex-display {
+  border-color: var(--color-stone-800);
+}
+.note-reading blockquote {
+  font-style: normal;
+  border-color: var(--color-brand-400);
+}
+.note-reading img {
+  height: auto;
+  border-radius: 0.75rem;
+}
+@media (min-width: 1280px) {
+  .note-reading :is(h1, h2, h3) {
+    scroll-margin-top: 10rem;
+  }
+}

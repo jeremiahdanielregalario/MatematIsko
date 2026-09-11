@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { GraphBlock } from './FunctionGraph';
 import ReactMarkdown from 'react-markdown';
 import rehypeKatex from 'rehype-katex';
 import remarkGfm from 'remark-gfm';
@@ -81,6 +82,22 @@ export function MathRenderer({
           inline
             ? { p: 'span' }
             : {
+                pre: ({ node, children, ...props }) => {
+                  const code = node?.children[0];
+                  if (
+                    code?.type === 'element' &&
+                    code.tagName === 'code' &&
+                    Array.isArray(code.properties.className) &&
+                    code.properties.className.includes('language-graph')
+                  ) {
+                    const source = code.children
+                      .filter((child) => child.type === 'text')
+                      .map((child) => child.value)
+                      .join('');
+                    return <GraphBlock source={source} preview={preview} />;
+                  }
+                  return <pre {...props}>{children}</pre>;
+                },
                 table: ({ children }) => (
                   <div
                     className="overflow-x-auto"
