@@ -1,7 +1,6 @@
 import { Eye, Save, X } from 'lucide-react';
 import { GraphBuilder } from './GraphBuilder';
 import { useEffect, useMemo, useState } from 'react';
-import { MathRenderer } from '@/components/math/MathRenderer';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -13,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
+import { MathEditor } from './MathEditor';
 import { adminUpsertQuestion, adminUpsertTopic, type QuestionDraft } from '@/lib/admin';
 import type { Course, Difficulty, Question, Topic } from '@/types';
 
@@ -99,7 +98,7 @@ export function QuestionForm({ initial, courses, topics, onSaved, onCancel }: Qu
   };
 
   const handleSave = async () => {
-    if (!requiredFilled) return;
+    if (!requiredFilled || saving) return;
     setError(null);
     setSaving(true);
     try {
@@ -118,8 +117,8 @@ export function QuestionForm({ initial, courses, topics, onSaved, onCancel }: Qu
   };
 
   return (
-    <Card className="space-y-5 p-5">
-      <div className="flex items-center justify-between">
+    <Card className="min-w-0 space-y-5 p-3 sm:p-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="font-serif text-lg font-semibold text-stone-900 dark:text-stone-100">
             {initial ? 'Edit question' : 'New question'}
@@ -138,7 +137,14 @@ export function QuestionForm({ initial, courses, topics, onSaved, onCancel }: Qu
             <Eye className="size-4" />
             {showPreview ? 'Hide previews' : 'Show previews'}
           </Button>
-          <Button type="button" variant="ghost" size="sm" onClick={onCancel}>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            aria-label="Close editor"
+            disabled={saving}
+            onClick={onCancel}
+          >
             <X className="size-4" />
           </Button>
         </div>
@@ -243,81 +249,42 @@ export function QuestionForm({ initial, courses, topics, onSaved, onCancel }: Qu
         </div>
       </div>
 
-      <div className="space-y-1.5">
-        <Label htmlFor="admin-title">Title</Label>
-        <Input
-          id="admin-title"
-          value={draft.title}
-          onChange={(event) => set('title', event.target.value)}
-          placeholder="e.g. Limits of rational functions"
-        />
-        <PreviewBox value={draft.title} emptyLabel="Nothing to preview" />
-      </div>
-
-      <div className="space-y-1.5">
-        <Label htmlFor="admin-question-text">Question text</Label>
-        <GraphBuilder
-          key={initial?.id ?? 'new'}
-          onInsert={(markdown) =>
-            setDraft((current) => ({ ...current, question_text: current.question_text + markdown }))
-          }
-        />
-        <Textarea
-          id="admin-question-text"
-          className="min-h-32 font-mono text-xs"
-          value={draft.question_text}
-          onChange={(event) => set('question_text', event.target.value)}
-          placeholder={'Find $\\lim_{x \\to 2} \\frac{x^2 - 4}{x - 2}$.'}
-        />
-        <PreviewBox value={draft.question_text} emptyLabel="Nothing to preview" />
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-2">
-        <div className="space-y-1.5">
-          <Label htmlFor="admin-hint">Hint (optional)</Label>
-          <Textarea
-            id="admin-hint"
-            className="min-h-24 font-mono text-xs"
-            value={draft.hint ?? ''}
-            onChange={(event) =>
-              set('hint', event.target.value.trim() === '' ? null : event.target.value)
-            }
-            placeholder="A small nudge before revealing the answer."
-          />
-        </div>
-        <div className="space-y-1.5">
-          <Label className="text-stone-400 dark:text-stone-500">Hint — preview</Label>
-          <PreviewBox value={draft.hint ?? ''} emptyLabel="No hint yet" />
-        </div>
-
-        <div className="space-y-1.5">
-          <Label htmlFor="admin-answer">Answer</Label>
-          <Textarea
-            id="admin-answer"
-            className="min-h-24 font-mono text-xs"
-            value={draft.answer}
-            onChange={(event) => set('answer', event.target.value)}
-          />
-        </div>
-        <div className="space-y-1.5">
-          <Label className="text-stone-400 dark:text-stone-500">Answer — preview</Label>
-          <PreviewBox value={draft.answer} emptyLabel="No answer yet" />
-        </div>
-
-        <div className="space-y-1.5">
-          <Label htmlFor="admin-solution">Solution</Label>
-          <Textarea
-            id="admin-solution"
-            className="min-h-24 font-mono text-xs"
-            value={draft.solution}
-            onChange={(event) => set('solution', event.target.value)}
-          />
-        </div>
-        <div className="space-y-1.5">
-          <Label className="text-stone-400 dark:text-stone-500">Solution — preview</Label>
-          <PreviewBox value={draft.solution} emptyLabel="No solution yet" />
-        </div>
-      </div>
+      <MathEditor
+        label="Title"
+        value={draft.title}
+        onChange={(value) => set('title', value)}
+        showPreview={showPreview}
+      />
+      <GraphBuilder
+        key={initial?.id ?? 'new'}
+        onInsert={(markdown) =>
+          setDraft((current) => ({ ...current, question_text: current.question_text + markdown }))
+        }
+      />
+      <MathEditor
+        label="Question text"
+        value={draft.question_text}
+        onChange={(value) => set('question_text', value)}
+        showPreview={showPreview}
+      />
+      <MathEditor
+        label="Hint (optional)"
+        value={draft.hint ?? ''}
+        onChange={(value) => set('hint', value || null)}
+        showPreview={showPreview}
+      />
+      <MathEditor
+        label="Answer"
+        value={draft.answer}
+        onChange={(value) => set('answer', value)}
+        showPreview={showPreview}
+      />
+      <MathEditor
+        label="Solution"
+        value={draft.solution}
+        onChange={(value) => set('solution', value)}
+        showPreview={showPreview}
+      />
 
       {error ? (
         <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/50 dark:text-red-400">
@@ -326,7 +293,7 @@ export function QuestionForm({ initial, courses, topics, onSaved, onCancel }: Qu
       ) : null}
 
       <div className="flex items-center justify-end gap-2">
-        <Button type="button" variant="ghost" onClick={onCancel}>
+        <Button type="button" variant="ghost" disabled={saving} onClick={onCancel}>
           Cancel
         </Button>
         <Button
@@ -339,22 +306,5 @@ export function QuestionForm({ initial, courses, topics, onSaved, onCancel }: Qu
         </Button>
       </div>
     </Card>
-  );
-}
-
-interface PreviewBoxProps {
-  value: string;
-  emptyLabel?: string;
-}
-
-function PreviewBox({ value, emptyLabel = 'Nothing to preview' }: PreviewBoxProps) {
-  return (
-    <div className="mt-2 rounded-md border border-dashed border-stone-200 bg-white px-3 py-2 dark:border-stone-700 dark:bg-stone-950">
-      {value.trim() !== '' ? (
-        <MathRenderer>{value}</MathRenderer>
-      ) : (
-        <p className="text-xs italic text-stone-400 dark:text-stone-600">{emptyLabel}</p>
-      )}
-    </div>
   );
 }

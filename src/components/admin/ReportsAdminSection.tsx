@@ -1,12 +1,19 @@
 import { Clock, Eye, EyeOff, ExternalLink, SearchX, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { ReportEditor } from './ReportEditor';
+import { MathRenderer } from '@/components/math/MathRenderer';
 import { EmptyState } from '@/components/common/EmptyState';
 import { ErrorState } from '@/components/common/ErrorState';
 import { LoadingState } from '@/components/common/LoadingState';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { cn } from '@/lib/cn';
 import { formatRelativeTime } from '@/lib/format';
 import {
@@ -27,7 +34,7 @@ interface QuestionReportItemProps {
 }
 
 function QuestionReportItem({ report, onToggle, onDelete }: QuestionReportItemProps) {
-  const navigate = useNavigate();
+  const [editing, setEditing] = useState(false);
   return (
     <div className="rounded-lg border border-stone-200 bg-white p-4 dark:border-stone-800 dark:bg-stone-900">
       <div className="flex flex-wrap items-start justify-between gap-2">
@@ -43,10 +50,10 @@ function QuestionReportItem({ report, onToggle, onDelete }: QuestionReportItemPr
           </div>
           <button
             type="button"
-            onClick={() => navigate(`/admin?tab=questions&edit=${report.question_id}`)}
+            onClick={() => setEditing((current) => !current)}
             className="mt-1 text-left text-sm font-medium text-stone-900 hover:text-brand-700 hover:underline dark:text-stone-100 dark:hover:text-brand-400"
           >
-            {report.question_title ?? 'Unknown question'}
+            <MathRenderer inline>{report.question_title ?? 'Unknown question'}</MathRenderer>
           </button>
           <p className="mt-0.5 text-xs text-stone-400 dark:text-stone-500">
             Reported by {report.user_email ?? 'unknown'}
@@ -62,31 +69,23 @@ function QuestionReportItem({ report, onToggle, onDelete }: QuestionReportItemPr
           </p>
         </div>
       </div>
-      <div className="mt-3 flex items-center justify-end gap-2">
+      <div className="mt-3 flex flex-wrap items-center justify-end gap-2">
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => navigate(`/admin?tab=questions&edit=${report.question_id}`)}
+          onClick={() => setEditing((current) => !current)}
           className="text-stone-500 dark:text-stone-400"
         >
           <ExternalLink className="size-4" />
-          Edit question
+          {editing ? 'Close editor' : 'Edit question'}
         </Button>
         {report.status === 'open' ? (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onToggle(report.id)}
-          >
+          <Button variant="outline" size="sm" onClick={() => onToggle(report.id)}>
             <Eye className="size-4" />
             Mark resolved
           </Button>
         ) : (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onToggle(report.id)}
-          >
+          <Button variant="ghost" size="sm" onClick={() => onToggle(report.id)}>
             <EyeOff className="size-4" />
             Reopen
           </Button>
@@ -94,12 +93,20 @@ function QuestionReportItem({ report, onToggle, onDelete }: QuestionReportItemPr
         <Button
           variant="ghost"
           size="sm"
+          aria-label="Delete report"
           onClick={() => onDelete(report.id)}
           className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950"
         >
           <Trash2 className="size-4" />
         </Button>
       </div>
+      {editing && (
+        <ReportEditor
+          kind="question"
+          contentId={report.question_id}
+          onClose={() => setEditing(false)}
+        />
+      )}
     </div>
   );
 }
@@ -111,7 +118,7 @@ interface TheoremReportItemProps {
 }
 
 function TheoremReportItem({ report, onToggle, onDelete }: TheoremReportItemProps) {
-  const navigate = useNavigate();
+  const [editing, setEditing] = useState(false);
   return (
     <div className="rounded-lg border border-stone-200 bg-white p-4 dark:border-stone-800 dark:bg-stone-900">
       <div className="flex flex-wrap items-start justify-between gap-2">
@@ -127,10 +134,10 @@ function TheoremReportItem({ report, onToggle, onDelete }: TheoremReportItemProp
           </div>
           <button
             type="button"
-            onClick={() => navigate(`/admin?tab=theorems&edit=${report.theorem_id}`)}
+            onClick={() => setEditing((current) => !current)}
             className="mt-1 text-left text-sm font-medium text-stone-900 hover:text-brand-700 hover:underline dark:text-stone-100 dark:hover:text-brand-400"
           >
-            {report.theorem_name ?? 'Unknown theorem'}
+            <MathRenderer inline>{report.theorem_name ?? 'Unknown theorem'}</MathRenderer>
           </button>
           <p className="mt-0.5 text-xs text-stone-400 dark:text-stone-500">
             Reported by {report.user_email ?? 'unknown'}
@@ -146,31 +153,23 @@ function TheoremReportItem({ report, onToggle, onDelete }: TheoremReportItemProp
           </p>
         </div>
       </div>
-      <div className="mt-3 flex items-center justify-end gap-2">
+      <div className="mt-3 flex flex-wrap items-center justify-end gap-2">
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => navigate(`/admin?tab=theorems&edit=${report.theorem_id}`)}
+          onClick={() => setEditing((current) => !current)}
           className="text-stone-500 dark:text-stone-400"
         >
           <ExternalLink className="size-4" />
-          Edit theorem
+          {editing ? 'Close editor' : 'Edit theorem'}
         </Button>
         {report.status === 'open' ? (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onToggle(report.id)}
-          >
+          <Button variant="outline" size="sm" onClick={() => onToggle(report.id)}>
             <Eye className="size-4" />
             Mark resolved
           </Button>
         ) : (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onToggle(report.id)}
-          >
+          <Button variant="ghost" size="sm" onClick={() => onToggle(report.id)}>
             <EyeOff className="size-4" />
             Reopen
           </Button>
@@ -178,12 +177,20 @@ function TheoremReportItem({ report, onToggle, onDelete }: TheoremReportItemProp
         <Button
           variant="ghost"
           size="sm"
+          aria-label="Delete report"
           onClick={() => onDelete(report.id)}
           className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950"
         >
           <Trash2 className="size-4" />
         </Button>
       </div>
+      {editing && (
+        <ReportEditor
+          kind="theorem"
+          contentId={report.theorem_id}
+          onClose={() => setEditing(false)}
+        />
+      )}
     </div>
   );
 }
@@ -203,10 +210,7 @@ export function ReportsAdminSection() {
     const statusArg = status === ALL_STATUS ? undefined : status;
     setLoading(true);
     setError(null);
-    Promise.all([
-      adminListQuestionReports(statusArg),
-      adminListTheoremReports(statusArg),
-    ])
+    Promise.all([adminListQuestionReports(statusArg), adminListTheoremReports(statusArg)])
       .then(([qReports, tReports]) => {
         setQuestionReports(qReports);
         setTheoremReports(tReports);
@@ -258,7 +262,11 @@ export function ReportsAdminSection() {
   }
   if (error && questionReports.length === 0 && theoremReports.length === 0) {
     return (
-      <ErrorState title="Could not load reports" message={error} onRetry={() => fetchReports(statusFilter)} />
+      <ErrorState
+        title="Could not load reports"
+        message={error}
+        onRetry={() => fetchReports(statusFilter)}
+      />
     );
   }
 
@@ -295,10 +303,10 @@ export function ReportsAdminSection() {
 
       {/* Report type tabs */}
       <div className="flex items-center gap-1 rounded-lg border border-stone-200 bg-stone-50 p-1 dark:border-stone-800 dark:bg-stone-900">
-        {([
+        {[
           { key: 'questions' as const, label: 'Questions', count: questionReports.length },
           { key: 'theorems' as const, label: 'Theorems', count: theoremReports.length },
-        ]).map(({ key, label, count }) => (
+        ].map(({ key, label, count }) => (
           <button
             key={key}
             type="button"
@@ -358,5 +366,3 @@ export function ReportsAdminSection() {
     </div>
   );
 }
-
-
