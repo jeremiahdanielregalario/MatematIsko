@@ -1,3 +1,4 @@
+// Refresh the installed contour-integral icon on this worker update.
 const CACHE_NAME = 'matematisko-static-v2';
 const PRECACHE = ['/manifest.json', '/icons/icon.svg'];
 
