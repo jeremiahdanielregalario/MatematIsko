@@ -176,39 +176,43 @@ export function ExamPaper({ session, questions, onChange, onNew, onRetry }: Prop
       )}
       <Dialog open={confirmFinish && !ended} onOpenChange={setConfirmFinish}>
         <DialogContent>
-          <DialogTitle className="font-serif text-xl font-semibold">Finish this paper?</DialogTitle>
-          <DialogDescription className="mt-2 text-sm text-stone-500">
-            You marked {session.attempted.length} of {questions.length} questions attempted, with{' '}
-            {session.flagged.length} flagged. Finishing locks your responses and stops the timer.
-            Answers will remain hidden until you choose to reveal them.
-          </DialogDescription>
-          <div className="mt-5 flex flex-wrap justify-end gap-2">
-            <Button variant="outline" onClick={() => setConfirmFinish(false)}>
-              Keep working
-            </Button>
-            <Button
-              onClick={() => {
-                onChange({ ...session, finishedAt: Math.min(Date.now(), session.deadline) });
-                setConfirmFinish(false);
-              }}
-            >
-              Finish & lock responses
-            </Button>
+          <div className="p-6">
+            <DialogTitle className="font-serif text-xl font-semibold">Finish this paper?</DialogTitle>
+            <DialogDescription className="mt-2 text-sm text-stone-500">
+              You marked {session.attempted.length} of {questions.length} questions attempted, with{' '}
+              {session.flagged.length} flagged. Finishing locks your responses and stops the timer.
+              Answers will remain hidden until you choose to reveal them.
+            </DialogDescription>
+            <div className="mt-5 flex flex-wrap justify-end gap-2">
+              <Button variant="outline" onClick={() => setConfirmFinish(false)}>
+                Keep working
+              </Button>
+              <Button
+                onClick={() => {
+                  onChange({ ...session, finishedAt: Math.min(Date.now(), session.deadline) });
+                  setConfirmFinish(false);
+                }}
+              >
+                Finish & lock responses
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
       <Dialog open={confirmNew} onOpenChange={setConfirmNew}>
         <DialogContent>
-          <DialogTitle className="font-serif text-xl font-semibold">Start a new paper?</DialogTitle>
-          <DialogDescription className="mt-2 text-sm text-stone-500">
-            This replaces the paper and its notes saved in this tab. Copy any notes you want to keep
-            first.
-          </DialogDescription>
-          <div className="mt-5 flex gap-2">
-            <Button variant="outline" onClick={() => setConfirmNew(false)}>
-              Keep this paper
-            </Button>
-            <Button onClick={onNew}>New paper</Button>
+          <div className="p-6">
+            <DialogTitle className="font-serif text-xl font-semibold">Start a new paper?</DialogTitle>
+            <DialogDescription className="mt-2 text-sm text-stone-500">
+              This replaces the paper and its notes saved in this tab. Copy any notes you want to keep
+              first.
+            </DialogDescription>
+            <div className="mt-5 flex gap-2">
+              <Button variant="outline" onClick={() => setConfirmNew(false)}>
+                Keep this paper
+              </Button>
+              <Button onClick={onNew}>New paper</Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
