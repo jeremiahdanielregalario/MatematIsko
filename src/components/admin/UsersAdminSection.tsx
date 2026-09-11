@@ -5,6 +5,7 @@ import { useAsync } from '@/hooks/useAsync';
 import { useAuth } from '@/hooks/useAuth';
 import {
   adminGrantAccess,
+  adminRevokeAccess,
   adminListProfiles,
   adminUpdateProfile,
   ADMIN_USERS_PAGE_SIZE,
@@ -24,6 +25,7 @@ export function UsersAdminSection() {
   const [query, setQuery] = useState({ search: '', page: 0 });
   const [selected, setSelected] = useState<Profile | null>(null);
   const [message, setMessage] = useState('');
+  const [revokeTarget, setRevokeTarget] = useState<Profile | null>(null);
   const [grantTarget, setGrantTarget] = useState<Profile | null>(null);
   const fetchUsers = useCallback(() => adminListProfiles(query.search, query.page), [query]);
   const { data, loading, error, reload } = useAsync(fetchUsers);
@@ -124,8 +126,24 @@ export function UsersAdminSection() {
                     </div>
                     <div className="flex flex-wrap items-center justify-between gap-2 border-t border-stone-200 pt-3 dark:border-stone-800">
                       <span className="text-sm font-medium">
-                        {profile.is_admin ? 'Administrator' : 'Student'}
+                        {profile.is_super_admin
+                          ? 'Super admin · protected'
+                          : profile.is_admin
+                            ? 'Administrator'
+                            : 'Student'}
                       </span>
+                      {data?.can_revoke_admin &&
+                        profile.is_admin &&
+                        !profile.is_super_admin &&
+                        profile.id !== user?.id && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setRevokeTarget(profile)}
+                          >
+                            Remove admin access
+                          </Button>
+                        )}
                       {!profile.is_admin && profile.id !== user?.id && (
                         <Button variant="outline" size="sm" onClick={() => setGrantTarget(profile)}>
                           Grant admin access
@@ -184,6 +202,18 @@ export function UsersAdminSection() {
             </Button>
           </nav>
         </>
+      )}
+      {revokeTarget && (
+        <GrantAdminDialog
+          revoke
+          profile={revokeTarget}
+          onClose={() => setRevokeTarget(null)}
+          onGranted={() => {
+            setRevokeTarget(null);
+            setMessage('Admin access removed. This user retains their student account.');
+            reload();
+          }}
+        />
       )}
       {grantTarget && (
         <GrantAdminDialog
@@ -336,6 +366,7 @@ export function ProfileEditor({
 }
 
 export function GrantAdminDialog({
+  revoke = false,
   profile,
   onClose,
   onGranted,
@@ -343,6 +374,7 @@ export function GrantAdminDialog({
   profile: Profile;
   onClose: () => void;
   onGranted: () => void;
+  revoke?: boolean;
 }) {
   const [saving, setSaving] = useState(false);
   const busy = useRef(false);
@@ -353,11 +385,12 @@ export function GrantAdminDialog({
     setSaving(true);
     setError('');
     try {
-      await adminGrantAccess(profile.id);
+      if (revoke) await adminRevokeAccess(profile.id);
+      else await adminGrantAccess(profile.id);
       onGranted();
     } catch (failure) {
       setError(
-        failure instanceof Error ? failure.message : 'Could not grant admin access. Try again.',
+        failure instanceof Error ? failure.message : 'Could not change admin access. Try again.',
       );
     } finally {
       busy.current = false;
@@ -373,11 +406,13 @@ export function GrantAdminDialog({
     >
       <DialogContent className="p-6">
         <DialogTitle className="pr-8 font-serif text-xl font-semibold">
-          Grant admin access?
+          {revoke ? 'Remove admin access?' : 'Grant admin access?'}
         </DialogTitle>
         <DialogDescription className="mt-2 break-words text-sm text-stone-500">
-          {profile.full_name || profile.email} ({profile.email}) will be able to manage content,
-          reports and user profiles, and grant admin access to others.
+          {profile.full_name || profile.email} ({profile.email}){' '}
+          {revoke
+            ? 'will lose access to administration. Their student account, bookmarks and study progress will remain.'
+            : 'will be able to manage content, reports and user profiles, and grant admin access to others. Only the super admin can remove admin access.'}
         </DialogDescription>
         {error && (
           <p role="alert" className="mt-3 text-sm text-red-600 dark:text-red-400">
@@ -389,7 +424,7 @@ export function GrantAdminDialog({
             Cancel
           </Button>
           <Button disabled={saving} onClick={() => void grant()}>
-            {saving ? 'Granting…' : 'Confirm admin access'}
+            {saving ? 'Saving…' : revoke ? 'Confirm removal' : 'Confirm admin access'}
           </Button>
         </div>
       </DialogContent>

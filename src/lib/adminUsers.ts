@@ -5,10 +5,11 @@ export type AdminProfileDraft = Pick<
   Profile,
   'full_name' | 'degree_program' | 'year_level' | 'upmmc_member'
 >;
-export type AdminUser = Profile & { is_admin?: boolean };
+export type AdminUser = Profile & { is_admin?: boolean; is_super_admin?: boolean };
 export interface AdminUsersPage {
   users: AdminUser[];
   total: number;
+  can_revoke_admin?: boolean;
 }
 export const ADMIN_USERS_PAGE_SIZE = 25;
 export const PROFILE_YEAR_LEVELS = [
@@ -62,5 +63,11 @@ export async function adminUpdateProfile(
 export async function adminGrantAccess(userId: string): Promise<void> {
   if (!isSupabaseConfigured || !supabase) throw new Error('Supabase is not configured.');
   const { error } = await supabase.rpc('admin_grant_access', { p_user_id: userId });
+  if (error) throw new Error(error.message);
+}
+
+export async function adminRevokeAccess(userId: string): Promise<void> {
+  if (!isSupabaseConfigured || !supabase) throw new Error('Supabase is not configured.');
+  const { error } = await supabase.rpc('admin_revoke_access', { p_user_id: userId });
   if (error) throw new Error(error.message);
 }

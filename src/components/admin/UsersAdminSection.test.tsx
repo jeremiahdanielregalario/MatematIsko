@@ -1,9 +1,10 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Profile } from '@/types';
-const { list, update, grant, refreshProfile } = vi.hoisted(() => ({
+const { list, update, grant, revoke, refreshProfile } = vi.hoisted(() => ({
   list: vi.fn(),
   grant: vi.fn(),
+  revoke: vi.fn(),
   update: vi.fn(),
   refreshProfile: vi.fn(),
 }));
@@ -11,6 +12,7 @@ vi.mock('@/lib/adminUsers', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@/lib/adminUsers')>()),
   adminListProfiles: list,
   adminGrantAccess: grant,
+  adminRevokeAccess: revoke,
   adminUpdateProfile: update,
 }));
 vi.mock('@/hooks/useAuth', () => ({ useAuth: () => ({ user: { id: 'admin' }, refreshProfile }) }));
@@ -32,6 +34,54 @@ beforeEach(() => {
   refreshProfile.mockResolvedValue(undefined);
 });
 describe('admin users', () => {
+  it('lets only the super admin confirm removal of a delegated admin', async () => {
+    revoke.mockResolvedValue(undefined);
+    list.mockResolvedValue({
+      users: [{ ...profile, is_admin: true }],
+      total: 1,
+      can_revoke_admin: true,
+    });
+    render(<UsersAdminSection />);
+    fireEvent.click(await screen.findByRole('button', { name: 'Remove admin access' }));
+    expect(revoke).not.toHaveBeenCalled();
+    expect(screen.getByRole('dialog')).toHaveTextContent(profile.email);
+    fireEvent.click(screen.getByRole('button', { name: 'Confirm removal' }));
+    await screen.findByText(/Admin access removed/);
+    expect(revoke).toHaveBeenCalledWith(profile.id);
+  });
+  it('never offers removal for the protected super admin', async () => {
+    list.mockResolvedValue({
+      users: [{ ...profile, is_admin: true, is_super_admin: true }],
+      total: 1,
+      can_revoke_admin: true,
+    });
+    render(<UsersAdminSection />);
+    await screen.findByText('Super admin · protected');
+    expect(screen.queryByRole('button', { name: 'Remove admin access' })).not.toBeInTheDocument();
+  });
+  it('hides removal from ordinary admins', async () => {
+    list.mockResolvedValue({
+      users: [{ ...profile, is_admin: true }],
+      total: 1,
+      can_revoke_admin: false,
+    });
+    render(<UsersAdminSection />);
+    await screen.findByText('Administrator');
+    expect(screen.queryByRole('button', { name: 'Remove admin access' })).not.toBeInTheDocument();
+  });
+  it('shows failed removals without claiming success', async () => {
+    revoke.mockRejectedValue(new Error('Only the super admin can remove admin access'));
+    list.mockResolvedValue({
+      users: [{ ...profile, is_admin: true }],
+      total: 1,
+      can_revoke_admin: true,
+    });
+    render(<UsersAdminSection />);
+    fireEvent.click(await screen.findByRole('button', { name: 'Remove admin access' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Confirm removal' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('Only the super admin');
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+  });
   it('requires explicit confirmation and grants the selected user access', async () => {
     grant.mockResolvedValue(undefined);
     render(<UsersAdminSection />);
