@@ -223,8 +223,8 @@ export function ProfileEditor({
         if (!open && !savingRef.current) onClose();
       }}
     >
-      <DialogContent>
-        <DialogTitle className="font-serif text-xl font-semibold">Edit user profile</DialogTitle>
+      <DialogContent className="p-6">
+        <DialogTitle className="font-serif pr-8 text-xl font-semibold">Edit user profile</DialogTitle>
         <DialogDescription className="mt-1 break-all text-sm text-stone-500">
           {profile.email}
         </DialogDescription>
