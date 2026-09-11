@@ -189,6 +189,10 @@ npm run preview
 
 Only public browser configuration belongs in `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`. Despite their prefix this is Rsbuild, which maps these names explicitly to `process.env` in its config. Never place service-role credentials in the client or documentation. Missing configuration returns empty/null or no-op behavior in several DB helpers, so an empty screen alone does not establish an empty database.
 
+Public-source documentation (2026-09-11): README now describes current study/exam features, contributor setup against a separate development Supabase project, deployment, and the distinction between repository content and hosted records. `.gitignore` excludes `.env` and `.env.*` while retaining `.env.example`; this does not remove previously committed files or history. The ordered SQL history contains schema and seeded educational content, which would be visible in a public repository. Keeping that material private requires a separate private repository and a reviewed public snapshot; no visibility change, history rewrite, migration removal, or database permission change was performed. There is no license file in the reviewed checkout, and no license was added implicitly.
+
+Verification for that documentation change: README local links and package-script names resolved, environment ignore patterns behaved as intended, and `git diff --check` passed. A targeted pattern scan of 249 tracked files found no matching Supabase secret/service-role tokens, GitHub tokens, private-key blocks, or password-bearing Postgres URLs. Historical filename checks found only the environment template and TypeScript environment declarations among the searched environment/export/key names. This is not a full history scan, secret audit, live RLS test, or clearance to publish. No application tests were run for the documentation/ignore-only change.
+
 Database workflow:
 
 ```bash
