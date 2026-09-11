@@ -1,20 +1,18 @@
 import { Navigate } from 'react-router-dom';
 import { LoadingState } from '@/components/common/LoadingState';
 import { useAuth } from '@/hooks/useAuth';
-import { isAdminEmail } from '@/lib/auth';
 
 /**
- * Route guard for the admin area. Client-side email check; the database RPCs
- * enforce the same rule server-side, so this is just UI gating.
+ * Route guard for the admin area. Uses the database admin check; privileged operations also enforce access server-side.
  */
 export function RequireAdmin({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
+  const { user, loading, isAdmin, adminLoading } = useAuth();
 
-  if (loading) {
+  if (loading || adminLoading) {
     return <LoadingState label="Checking access" />;
   }
 
-  if (!user || !isAdminEmail(user.email)) {
+  if (!user || !isAdmin) {
     return <Navigate to="/dashboard" replace />;
   }
 

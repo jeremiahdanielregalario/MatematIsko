@@ -1,7 +1,6 @@
 import { LogOut, Shield, UserRound } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import { isAdminEmail } from '@/lib/auth';
 import { cn } from '@/lib/cn';
 import {
   DropdownMenu,
@@ -24,12 +23,13 @@ function initials(name: string | null | undefined): string {
 }
 
 export function UserMenu() {
-  const { user, profile, signOut } = useAuth();
+  const { user, profile, signOut, isAdmin, adminLoading } = useAuth();
   const navigate = useNavigate();
 
   if (!user) return null;
 
-  const displayName = profile?.full_name ?? user.user_metadata?.full_name ?? user.email ?? 'Student';
+  const displayName =
+    profile?.full_name ?? user.user_metadata?.full_name ?? user.email ?? 'Student';
   const avatarUrl = profile?.avatar_url ?? user.user_metadata?.avatar_url;
 
   const handleSignOut = async () => {
@@ -67,7 +67,7 @@ export function UserMenu() {
             Profile
           </Link>
         </DropdownMenuItem>
-        {isAdminEmail(user.email) ? (
+        {!adminLoading && isAdmin ? (
           <DropdownMenuItem asChild>
             <Link to="/admin">
               <Shield className="size-4" />

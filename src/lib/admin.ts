@@ -78,7 +78,7 @@ export async function adminDeleteTopic(id: string): Promise<void> {
   if (error) throw new Error(error.message);
 }
 
-/** Database-side admin check (kept in sync with the client-side email check). */
+/** Database-side admin check used by the auth provider and privileged operations. */
 export async function adminIsAdmin(): Promise<boolean> {
   if (!isSupabaseConfigured) return false;
   if (!supabase) return false;

@@ -8,7 +8,7 @@ import { pathToFileURL } from 'node:url';
 const { PGlite } = await import(process.argv[2] ? pathToFileURL(resolve(process.argv[2])).href : '@electric-sql/pglite');
 const root = new URL('../supabase/migrations/', import.meta.url);
 const files = (await readdir(root)).filter(name => name.endsWith('.sql')).sort();
-const target = '20260911000003_admin_user_management.sql';
+const target = '20260912000001_delegated_admin_access.sql';
 const source = await readFile(new URL('20260808000004_admin_question_management.sql', root), 'utf8');
 // Derive the existing admin identity without copying it into fixtures or output.
 const adminEmail = source.match(/any\(array\['([^']+)'\]/)?.[1];
@@ -80,6 +80,21 @@ try {
   await assert.rejects(asRole('authenticated',adminClaims,()=>update(expected,'1st Year','00000000-0000-0000-0000-000000000099')),{code:'P0002'});
   const stored=await db.query('select email from auth.users where id=$1',[student]);
   assert.equal(stored.rows[0].email,'fixture-one@up.edu.ph');
+  const grant = id => db.query('select public.admin_grant_access($1)', [id]);
+  await assert.rejects(asRole('anon',{},()=>grant(student)),{code:'42501'});
+  await assert.rejects(asRole('authenticated',studentClaims,()=>grant(student)),{code:'42501'});
+  await assert.rejects(asRole('authenticated',adminClaims,()=>db.query('insert into public.admin_roles(user_id) values($1)',[student])),{code:'42501'});
+  await assert.rejects(asRole('authenticated',studentClaims,()=>db.query('select * from public.admin_roles')),{code:'42501'});
+  await asRole('authenticated',adminClaims,()=>grant(student));
+  await asRole('authenticated',adminClaims,()=>grant(student));
+  const role = await db.query('select granted_by from public.admin_roles where user_id=$1',[student]);
+  assert.equal(role.rows.length,1); assert.equal(role.rows[0].granted_by,admin);
+  assert.equal((await asRole('authenticated',studentClaims,()=>db.query('select public.is_admin() as allowed'))).rows[0].allowed,true);
+  const delegated = await asRole('authenticated',studentClaims,list);
+  assert.equal(delegated.rows[0].result.users.find(p=>p.id===student).is_admin,true);
+  await asRole('authenticated',studentClaims,()=>grant(other));
+  await assert.rejects(asRole('authenticated',adminClaims,()=>grant('00000000-0000-0000-0000-000000000099')),{code:'P0002'});
+  console.log('PASS: delegated role grant, duplicate grant, grant attribution, delegated directory access and onward delegation; anonymous/student/direct-table escalation denied.');
   console.log('PASS: upgrade replay, anonymous/student denial, own-row RLS, metadata spoof denial, admin search/pagination, literal search, update, validation, conflict, missing user, and unchanged Auth identity.');
 } finally { await db.close(); }
 const clean=await database();

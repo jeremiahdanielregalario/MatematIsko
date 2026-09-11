@@ -2,23 +2,17 @@ import { ArrowRight, GraduationCap, Loader2 } from 'lucide-react';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { useAuth } from '@/hooks/useAuth';
 import { useAsync } from '@/hooks/useAsync';
 import { getUserCourses } from '@/lib/db';
-import { isAdminEmail } from '@/lib/auth';
 
 /**
  * Shown right after a returning student signs in. Asks what they want to
  * study today and jumps straight to the chosen course.
  */
 export function CourseStudyModal() {
-  const { user, profile, justSignedIn, acknowledgeSignIn } = useAuth();
+  const { user, profile, justSignedIn, acknowledgeSignIn, isAdmin, adminLoading } = useAuth();
   const navigate = useNavigate();
 
   const userId = user?.id ?? null;
@@ -28,7 +22,7 @@ export function CourseStudyModal() {
   );
   const { data: courses, loading } = useAsync(fetchCourses);
 
-  if (!justSignedIn || !user || !profile?.degree_program || isAdminEmail(user.email)) {
+  if (adminLoading || !justSignedIn || !user || !profile?.degree_program || isAdmin) {
     return null;
   }
 
@@ -66,7 +60,9 @@ export function CourseStudyModal() {
                 className="group flex w-full items-center justify-between gap-3 rounded-lg border border-stone-200 px-3 py-2.5 text-left transition-colors hover:border-brand-700 hover:bg-brand-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 dark:border-stone-800 dark:hover:border-brand-500 dark:hover:bg-brand-950/40"
               >
                 <span className="flex min-w-0 flex-col">
-                  <span className="font-medium text-stone-900 dark:text-stone-100">{course.code}</span>
+                  <span className="font-medium text-stone-900 dark:text-stone-100">
+                    {course.code}
+                  </span>
                   <span className="truncate text-sm text-stone-500 dark:text-stone-400">
                     {course.name}
                   </span>

@@ -81,7 +81,7 @@ Most reads use `db.ts`; course notes, blog pages, and blog administration also c
 | Signed in + onboarding | `/practice`, `/bookmarks` | Practice sessions and saved questions |
 | Signed in + onboarding | `/practice/exam` | Topic-based timed quiz/exam papers, locked responses, and post-exam self-review |
 | Signed in + onboarding | `/blogs/new`, `/profile` | Community submission and profile |
-| Above + admin | `/admin` | Courses, questions/topics, theorems, notes, blogs, reports |
+| Above + admin | `/admin` | Courses, questions/topics, theorems, notes, blogs, reports, app users and admin grants |
 | Fallback | `*` | Not-found page |
 
 Do not resurrect README-only page names as if routes exist. The current router has no standalone `/question-bank` or `/progress` page.
@@ -90,6 +90,7 @@ Do not resurrect README-only page names as if routes exist. The current router h
 
 | Entity | Relationship and meaning |
 |---|---|
+| `admin_roles` | Protected delegated admin membership, original grantor and grant time; writable only through the admin grant RPC |
 | `profiles` | Linked to `auth.users`; email/name/avatar plus degree program, year level, UPMMC membership |
 | `courses`, `topics` | Topics belong to a course |
 | `user_courses` | Student's selected courses; pair of user and course |
@@ -116,7 +117,7 @@ Migrations reproduce schema and seeded content. Admin-created/edited production 
 
 ### Authentication and course scope
 
-Google OAuth and email/password sign-in exist. Approved access means an exact `up.edu.ph` domain or the explicit admin exception in `src/lib/auth.ts`. The initial SQL user trigger also contains an admin exception. Admin authorization has a database `is_admin()` function; keep backend and frontend identity rules aligned.
+Google OAuth and email/password sign-in exist. Approved access means an exact `up.edu.ph` domain or the explicit admin exception in `src/lib/auth.ts`. The initial SQL user trigger also contains an admin exception. Admin authorization uses database `is_admin()`: the existing bootstrap identity or a protected `admin_roles` row keyed to Auth user ID. The auth provider checks this RPC on session changes and window focus; admin routes, menu and course scope consume that result. The fixed email exception in `src/lib/auth.ts` now controls sign-in eligibility only. Granting a role does not change the UP-domain onboarding/sign-in policy.
 
 The client imposes an eight-hour session window through localStorage and a sign-out timer (`src/lib/constants.ts`). This is client behavior, not proof of a server-enforced eight-hour expiry. Onboarding is considered complete when degree program and year level are present.
 
@@ -305,3 +306,14 @@ Validation: targeted editor interaction tests, TypeScript, affected-file lint an
 ### 2026-09-12 — Deploy missing App users RPCs
 
 The App users schema-cache error was caused by unapplied migration `20260911000003_admin_user_management.sql`. The linked remote history and a push dry run showed this was the only pending migration; it was applied successfully. Verified the app environment points to the linked project and both `admin_list_profiles` and `admin_update_profile` are now discoverable through the REST API and deny anonymous execution (42501). No user records were read or modified during verification; signed-in UI behavior was not exercised. The migration adds admin-checked, paginated profile search and bounded profile edits with stale-snapshot protection; student RLS and Auth identities remain unchanged. No frontend redeployment is needed for this database repair. The CLI emitted a local Docker catalog-cache warning after applying the migration; remote API verification succeeded.
+
+
+### 2026-09-12 — Delegated administrator access
+
+App users displays administrator/student status and offers Grant admin access for other registered users. A confirmation names the recipient and explains full content/report/profile administration and onward delegation. Success reloads the directory; failures preserve the confirmation for retry. Profile editing remains separate. Revocation is not part of this grant-only workflow.
+
+Migration 20260912000001 adds admin_roles with RLS and no direct anon/authenticated grants, an admin-checked idempotent admin_grant_access RPC, role status in admin_list_profiles and delegated-role support in is_admin. Roles use Auth IDs rather than editable profile fields or user metadata; original grant attribution is preserved on duplicate requests. Existing bootstrap access remains intact. The shared auth provider scopes role results to the signed-in user and refreshes on focus; UI authorization fails closed. Course selection requests are invalidated when identity/role changes so old student results cannot overwrite unrestricted admin scope.
+
+Validation: 215 full-suite tests passed with configured coverage thresholds; two added course-scope regression tests passed afterward. Typecheck, affected-file lint and production build were run with installed executables (npm unavailable). Isolated PGlite tests passed clean replay of 74 migrations and upgrade, anonymous/student/direct-table escalation denial, original grant attribution, duplicate grants, delegated directory access and onward delegation. Synthetic Auth helpers model claims; production user records were not inspected or granted roles for testing. Frontend deployment is separate from the database migration.
+
+Deployment: the delegated-admin migration was applied successfully to the linked app database after verifying it was the only pending migration. The deployed grant RPC is discoverable and rejects anonymous calls (42501); no roles were granted during verification. The CLI's local Docker catalog-cache warning did not prevent migration application. The frontend changes remain local and require deployment before the new control appears on the hosted site. Final course-scope typecheck and lint passed.

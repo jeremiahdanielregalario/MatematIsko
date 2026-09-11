@@ -1,3 +1,4 @@
+import { adminIsAdmin } from '@/lib/admin';
 import type { User } from '@supabase/supabase-js';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { UP_ACCESS_MESSAGE, isApprovedUpEmail } from '@/lib/auth';
@@ -12,6 +13,8 @@ interface AuthContextValue {
   loading: boolean;
   /** True while the profile row for the current user is being fetched/created. */
   profileLoading: boolean;
+  isAdmin: boolean;
+  adminLoading: boolean;
   /** Non-null when the signed-in email is not allowed to use the app. */
   authError: string | null;
   configured: boolean;
@@ -55,6 +58,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profileLoading, setProfileLoading] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [justSignedIn, setJustSignedIn] = useState(false);
+
+  const [adminAccess, setAdminAccess] = useState<{ userId: string; allowed: boolean } | null>(null);
+  const isAdmin = !!rawUser && adminAccess?.userId === rawUser.id && adminAccess.allowed;
+  const adminLoading = !!rawUser && adminAccess?.userId !== rawUser.id;
+  useEffect(() => {
+    if (!rawUser) {
+      setAdminAccess(null);
+      return;
+    }
+    let active = true;
+    const check = () => {
+      void adminIsAdmin().then((allowed) => {
+        if (active) setAdminAccess({ userId: rawUser.id, allowed });
+      });
+    };
+    check();
+    window.addEventListener('focus', check);
+    return () => {
+      active = false;
+      window.removeEventListener('focus', check);
+    };
+  }, [rawUser]);
 
   // Session + domain gate. A `user` is only ever exposed to the rest of the
   // app after their email is confirmed to end in @up.edu.ph. Sessions are also
@@ -171,11 +196,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         rawUser.user_metadata?.avatar_url ?? null,
       );
       if (!cancelled) setProfile(created);
-    })().catch(() => {
-      if (!cancelled) setProfile(null);
-    }).finally(() => {
-      if (!cancelled) setProfileLoading(false);
-    });
+    })()
+      .catch(() => {
+        if (!cancelled) setProfile(null);
+      })
+      .finally(() => {
+        if (!cancelled) setProfileLoading(false);
+      });
     return () => {
       cancelled = true;
     };
@@ -225,6 +252,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const value = useMemo<AuthContextValue>(
     () => ({
       user: rawUser,
+      isAdmin,
+      adminLoading,
       profile,
       loading,
       profileLoading,
@@ -239,6 +268,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }),
     [
       rawUser,
+      isAdmin,
+      adminLoading,
       profile,
       loading,
       profileLoading,

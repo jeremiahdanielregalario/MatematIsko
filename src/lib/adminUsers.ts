@@ -5,8 +5,9 @@ export type AdminProfileDraft = Pick<
   Profile,
   'full_name' | 'degree_program' | 'year_level' | 'upmmc_member'
 >;
+export type AdminUser = Profile & { is_admin?: boolean };
 export interface AdminUsersPage {
-  users: Profile[];
+  users: AdminUser[];
   total: number;
 }
 export const ADMIN_USERS_PAGE_SIZE = 25;
@@ -56,4 +57,10 @@ export async function adminUpdateProfile(
   if (error) throw new Error(error.message);
   if (!data) throw new Error('No updated profile was returned. Please refresh the directory.');
   return data as Profile;
+}
+
+export async function adminGrantAccess(userId: string): Promise<void> {
+  if (!isSupabaseConfigured || !supabase) throw new Error('Supabase is not configured.');
+  const { error } = await supabase.rpc('admin_grant_access', { p_user_id: userId });
+  if (error) throw new Error(error.message);
 }

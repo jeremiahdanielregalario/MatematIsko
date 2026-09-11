@@ -3,7 +3,7 @@ export const UP_EMAIL_DOMAIN = 'up.edu.ph';
 export const UP_ACCESS_MESSAGE =
   'MatematIsko is currently available only to UP email accounts ending in @up.edu.ph.';
 
-/** Hardcoded admin emails that bypass the @up.edu.ph domain check. */
+/** Legacy bootstrap email exception for sign-in eligibility only. Admin UI uses the database role check. */
 const ADMIN_EMAILS: readonly string[] = ['jeremiah.regalario@gmail.com'];
 
 export function isAdminEmail(email: string | null | undefined): boolean {

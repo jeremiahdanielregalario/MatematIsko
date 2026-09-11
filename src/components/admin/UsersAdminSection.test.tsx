@@ -1,14 +1,16 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Profile } from '@/types';
-const { list, update, refreshProfile } = vi.hoisted(() => ({
+const { list, update, grant, refreshProfile } = vi.hoisted(() => ({
   list: vi.fn(),
+  grant: vi.fn(),
   update: vi.fn(),
   refreshProfile: vi.fn(),
 }));
 vi.mock('@/lib/adminUsers', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@/lib/adminUsers')>()),
   adminListProfiles: list,
+  adminGrantAccess: grant,
   adminUpdateProfile: update,
 }));
 vi.mock('@/hooks/useAuth', () => ({ useAuth: () => ({ user: { id: 'admin' }, refreshProfile }) }));
@@ -30,6 +32,30 @@ beforeEach(() => {
   refreshProfile.mockResolvedValue(undefined);
 });
 describe('admin users', () => {
+  it('requires explicit confirmation and grants the selected user access', async () => {
+    grant.mockResolvedValue(undefined);
+    render(<UsersAdminSection />);
+    fireEvent.click(await screen.findByRole('button', { name: 'Grant admin access' }));
+    expect(grant).not.toHaveBeenCalled();
+    expect(screen.getByRole('dialog')).toHaveTextContent(profile.email);
+    fireEvent.click(screen.getByRole('button', { name: 'Confirm admin access' }));
+    await screen.findByText(/Admin access granted/);
+    expect(grant).toHaveBeenCalledWith(profile.id);
+  });
+  it('retains a failed grant for retry without claiming success', async () => {
+    grant.mockRejectedValue(new Error('Only administrators can grant admin access'));
+    render(<UsersAdminSection />);
+    fireEvent.click(await screen.findByRole('button', { name: 'Grant admin access' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Confirm admin access' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('Only administrators');
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+  });
+  it('labels existing admins without offering another grant', async () => {
+    list.mockResolvedValue({ users: [{ ...profile, is_admin: true }], total: 1 });
+    render(<UsersAdminSection />);
+    await screen.findByText('Administrator');
+    expect(screen.queryByRole('button', { name: 'Grant admin access' })).not.toBeInTheDocument();
+  });
   it('searches and paginates on the server, resetting page for a new search', async () => {
     render(<UsersAdminSection />);
     await screen.findByText('Sample Student');

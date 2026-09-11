@@ -4,6 +4,7 @@ import type { Profile } from '@/types';
 import { useAsync } from '@/hooks/useAsync';
 import { useAuth } from '@/hooks/useAuth';
 import {
+  adminGrantAccess,
   adminListProfiles,
   adminUpdateProfile,
   ADMIN_USERS_PAGE_SIZE,
@@ -23,6 +24,7 @@ export function UsersAdminSection() {
   const [query, setQuery] = useState({ search: '', page: 0 });
   const [selected, setSelected] = useState<Profile | null>(null);
   const [message, setMessage] = useState('');
+  const [grantTarget, setGrantTarget] = useState<Profile | null>(null);
   const fetchUsers = useCallback(() => adminListProfiles(query.search, query.page), [query]);
   const { data, loading, error, reload } = useAsync(fetchUsers);
   const saved = (profile: Profile) => {
@@ -120,6 +122,16 @@ export function UsersAdminSection() {
                         Edit
                       </Button>
                     </div>
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-t border-stone-200 pt-3 dark:border-stone-800">
+                      <span className="text-sm font-medium">
+                        {profile.is_admin ? 'Administrator' : 'Student'}
+                      </span>
+                      {!profile.is_admin && profile.id !== user?.id && (
+                        <Button variant="outline" size="sm" onClick={() => setGrantTarget(profile)}>
+                          Grant admin access
+                        </Button>
+                      )}
+                    </div>
                     <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
                       <div>
                         <dt className="text-stone-500">Degree program</dt>
@@ -173,6 +185,19 @@ export function UsersAdminSection() {
           </nav>
         </>
       )}
+      {grantTarget && (
+        <GrantAdminDialog
+          profile={grantTarget}
+          onClose={() => setGrantTarget(null)}
+          onGranted={() => {
+            setGrantTarget(null);
+            setMessage(
+              'Admin access granted. The user can refresh the app to access administration.',
+            );
+            reload();
+          }}
+        />
+      )}
       {selected && (
         <ProfileEditor
           key={selected.id}
@@ -224,7 +249,9 @@ export function ProfileEditor({
       }}
     >
       <DialogContent className="p-6">
-        <DialogTitle className="font-serif pr-8 text-xl font-semibold">Edit user profile</DialogTitle>
+        <DialogTitle className="font-serif pr-8 text-xl font-semibold">
+          Edit user profile
+        </DialogTitle>
         <DialogDescription className="mt-1 break-all text-sm text-stone-500">
           {profile.email}
         </DialogDescription>
@@ -303,6 +330,68 @@ export function ProfileEditor({
             </Button>
           </div>
         </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+export function GrantAdminDialog({
+  profile,
+  onClose,
+  onGranted,
+}: {
+  profile: Profile;
+  onClose: () => void;
+  onGranted: () => void;
+}) {
+  const [saving, setSaving] = useState(false);
+  const busy = useRef(false);
+  const [error, setError] = useState('');
+  const grant = async () => {
+    if (busy.current) return;
+    busy.current = true;
+    setSaving(true);
+    setError('');
+    try {
+      await adminGrantAccess(profile.id);
+      onGranted();
+    } catch (failure) {
+      setError(
+        failure instanceof Error ? failure.message : 'Could not grant admin access. Try again.',
+      );
+    } finally {
+      busy.current = false;
+      setSaving(false);
+    }
+  };
+  return (
+    <Dialog
+      open
+      onOpenChange={(open) => {
+        if (!open && !busy.current) onClose();
+      }}
+    >
+      <DialogContent className="p-6">
+        <DialogTitle className="pr-8 font-serif text-xl font-semibold">
+          Grant admin access?
+        </DialogTitle>
+        <DialogDescription className="mt-2 break-words text-sm text-stone-500">
+          {profile.full_name || profile.email} ({profile.email}) will be able to manage content,
+          reports and user profiles, and grant admin access to others.
+        </DialogDescription>
+        {error && (
+          <p role="alert" className="mt-3 text-sm text-red-600 dark:text-red-400">
+            {error}
+          </p>
+        )}
+        <div className="mt-5 flex flex-wrap justify-end gap-2">
+          <Button variant="outline" disabled={saving} onClick={onClose}>
+            Cancel
+          </Button>
+          <Button disabled={saving} onClick={() => void grant()}>
+            {saving ? 'Granting…' : 'Confirm admin access'}
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );

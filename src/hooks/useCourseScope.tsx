@@ -1,8 +1,7 @@
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { LoadingState } from '@/components/common/LoadingState';
 import { useAuth } from '@/hooks/useAuth';
 import { getUserCourses } from '@/lib/db';
-import { isAdminEmail } from '@/lib/auth';
 
 interface CourseScopeValue {
   /** Course IDs the signed-in user can access, or null when unrestricted (admin). */
@@ -21,45 +20,61 @@ const CourseScopeContext = createContext<CourseScopeValue | null>(null);
  * data is ever fetched or flashed to the client.
  */
 export function CourseScopeProvider({ children }: { children: React.ReactNode }) {
-  const { user } = useAuth();
+  const { user, isAdmin, adminLoading } = useAuth();
   const [courseIds, setCourseIds] = useState<string[] | null>(null);
   const [loading, setLoading] = useState(false);
+  const request = useRef(0);
 
   const fetchCourses = useCallback(async () => {
-    if (!user || isAdminEmail(user.email)) return;
+    if (!user || isAdmin) return null;
     const courses = await getUserCourses(user.id);
-    setCourseIds(courses.map((c) => c.id));
-  }, [user]);
+    return courses.map((c) => c.id);
+  }, [user, isAdmin]);
 
   useEffect(() => {
-    if (!user || isAdminEmail(user.email)) {
+    const version = ++request.current;
+    if (adminLoading) return;
+    if (!user || isAdmin) {
       setCourseIds(null);
       setLoading(false);
       return;
     }
-    let cancelled = false;
+
     setLoading(true);
     void fetchCourses()
+      .then((ids) => {
+        if (version === request.current) setCourseIds(ids);
+      })
       .catch(() => {
-        if (!cancelled) setCourseIds([]);
+        if (version === request.current) setCourseIds([]);
       })
       .finally(() => {
-        if (!cancelled) setLoading(false);
+        if (version === request.current) setLoading(false);
       });
     return () => {
-      cancelled = true;
+      // Invalidate every in-flight request, including manual refreshes, on identity/role changes.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      request.current++;
     };
-  }, [user, fetchCourses]);
+  }, [user, isAdmin, adminLoading, fetchCourses]);
 
   const refresh = useCallback(() => {
-    if (!user) return;
+    if (!user || adminLoading) return;
+    const version = ++request.current;
     setLoading(true);
     void fetchCourses()
-      .catch(() => setCourseIds([]))
-      .finally(() => setLoading(false));
-  }, [user, fetchCourses]);
+      .then((ids) => {
+        if (version === request.current) setCourseIds(ids);
+      })
+      .catch(() => {
+        if (version === request.current) setCourseIds([]);
+      })
+      .finally(() => {
+        if (version === request.current) setLoading(false);
+      });
+  }, [user, adminLoading, fetchCourses]);
 
-  if (user && loading && courseIds === null) {
+  if (adminLoading || (user && loading && courseIds === null)) {
     return <LoadingState label="Loading your courses" />;
   }
 
