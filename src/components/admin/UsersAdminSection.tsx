@@ -1,0 +1,309 @@
+import { useCallback, useRef, useState } from 'react';
+import { Pencil, Search, Users } from 'lucide-react';
+import type { Profile } from '@/types';
+import { useAsync } from '@/hooks/useAsync';
+import { useAuth } from '@/hooks/useAuth';
+import {
+  adminListProfiles,
+  adminUpdateProfile,
+  ADMIN_USERS_PAGE_SIZE,
+  PROFILE_YEAR_LEVELS,
+  profileDraft,
+} from '@/lib/adminUsers';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { LoadingState } from '@/components/common/LoadingState';
+import { ErrorState } from '@/components/common/ErrorState';
+
+export function UsersAdminSection() {
+  const { user, refreshProfile } = useAuth();
+  const [search, setSearch] = useState('');
+  const [query, setQuery] = useState({ search: '', page: 0 });
+  const [selected, setSelected] = useState<Profile | null>(null);
+  const [message, setMessage] = useState('');
+  const fetchUsers = useCallback(() => adminListProfiles(query.search, query.page), [query]);
+  const { data, loading, error, reload } = useAsync(fetchUsers);
+  const saved = (profile: Profile) => {
+    setSelected(null);
+    setMessage('Profile updated.');
+    reload();
+    if (profile.id === user?.id)
+      void refreshProfile().catch(() =>
+        setMessage('Profile updated. Refresh the page to reload your own profile.'),
+      );
+  };
+  return (
+    <section className="space-y-5">
+      <header>
+        <h2 className="flex items-center gap-2 font-serif text-2xl font-semibold text-stone-900 dark:text-stone-50">
+          <Users className="size-6" />
+          App users
+        </h2>
+        <p className="mt-1 text-sm text-stone-500 dark:text-stone-400">
+          Find a registered profile and update the information used in the app.
+        </p>
+      </header>
+      <form
+        className="flex flex-wrap gap-2"
+        onSubmit={(event) => {
+          event.preventDefault();
+          setQuery({ search: search.trim(), page: 0 });
+          setMessage('');
+        }}
+      >
+        <Input
+          aria-label="Search users by name or email"
+          placeholder="Search by name or email…"
+          maxLength={200}
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+          className="min-w-0 flex-1"
+        />
+        <Button type="submit">
+          <Search className="size-4" />
+          Search
+        </Button>
+        <Button type="button" variant="outline" onClick={reload} disabled={loading}>
+          Refresh
+        </Button>
+      </form>
+      {message && (
+        <p role="status" className="text-sm text-emerald-700 dark:text-emerald-300">
+          {message}
+        </p>
+      )}
+      {loading ? (
+        <LoadingState label="Loading users" />
+      ) : error ? (
+        <ErrorState title="Could not load users" message={error.message} onRetry={reload} />
+      ) : (
+        <>
+          <p className="text-sm text-stone-500 dark:text-stone-400">
+            {data?.total ?? 0} matching users
+            {data?.users.length
+              ? ` · Showing ${query.page * ADMIN_USERS_PAGE_SIZE + 1}–${query.page * ADMIN_USERS_PAGE_SIZE + data.users.length}`
+              : ''}
+          </p>
+          {!data?.users.length ? (
+            <Card>
+              <CardContent className="p-6 text-sm text-stone-500">
+                No users found. Try a different name or email
+                {query.page > 0 ? ', or return to the previous page' : ''}.
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid gap-3 lg:grid-cols-2">
+              {data.users.map((profile) => (
+                <Card key={profile.id}>
+                  <CardContent className="space-y-3 p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <h3 className="break-words font-semibold text-stone-900 dark:text-stone-100">
+                          {profile.full_name || 'Name not set'}
+                        </h3>
+                        <p className="break-all text-sm text-stone-500 dark:text-stone-400">
+                          {profile.email}
+                        </p>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setSelected(profile);
+                          setMessage('');
+                        }}
+                        aria-label={`Edit ${profile.full_name || profile.email}`}
+                      >
+                        <Pencil className="size-4" />
+                        Edit
+                      </Button>
+                    </div>
+                    <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                      <div>
+                        <dt className="text-stone-500">Degree program</dt>
+                        <dd className="break-words text-stone-900 dark:text-stone-100">
+                          {profile.degree_program || 'Not set'}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt className="text-stone-500">Year level</dt>
+                        <dd className="text-stone-900 dark:text-stone-100">
+                          {profile.year_level || 'Not set'}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt className="text-stone-500">UPMMC member</dt>
+                        <dd className="text-stone-900 dark:text-stone-100">
+                          {profile.upmmc_member ? 'Yes' : 'No'}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt className="text-stone-500">Joined</dt>
+                        <dd className="text-stone-900 dark:text-stone-100">
+                          {new Date(profile.created_at).toLocaleDateString()}
+                        </dd>
+                      </div>
+                    </dl>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+          <nav
+            aria-label="User directory pages"
+            className="flex items-center justify-between gap-3"
+          >
+            <Button
+              variant="outline"
+              disabled={query.page === 0}
+              onClick={() => setQuery({ ...query, page: query.page - 1 })}
+            >
+              Previous
+            </Button>
+            <span className="text-sm text-stone-500">Page {query.page + 1}</span>
+            <Button
+              variant="outline"
+              disabled={(query.page + 1) * ADMIN_USERS_PAGE_SIZE >= (data?.total ?? 0)}
+              onClick={() => setQuery({ ...query, page: query.page + 1 })}
+            >
+              Next
+            </Button>
+          </nav>
+        </>
+      )}
+      {selected && (
+        <ProfileEditor
+          key={selected.id}
+          profile={selected}
+          onClose={() => setSelected(null)}
+          onSaved={saved}
+        />
+      )}
+    </section>
+  );
+}
+
+export function ProfileEditor({
+  profile,
+  onClose,
+  onSaved,
+}: {
+  profile: Profile;
+  onClose: () => void;
+  onSaved: (profile: Profile) => void;
+}) {
+  const [draft, setDraft] = useState(() => profileDraft(profile));
+  const [saving, setSaving] = useState(false);
+  const savingRef = useRef(false);
+  const [error, setError] = useState<string | null>(null);
+  const save = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (savingRef.current) return;
+    savingRef.current = true;
+    setSaving(true);
+    setError(null);
+    try {
+      const updated = await adminUpdateProfile(profile, draft);
+      onSaved(updated);
+    } catch (failure) {
+      setError(
+        failure instanceof Error ? failure.message : 'Could not save the profile. Try again.',
+      );
+    } finally {
+      savingRef.current = false;
+      setSaving(false);
+    }
+  };
+  return (
+    <Dialog
+      open
+      onOpenChange={(open) => {
+        if (!open && !savingRef.current) onClose();
+      }}
+    >
+      <DialogContent>
+        <DialogTitle className="font-serif text-xl font-semibold">Edit user profile</DialogTitle>
+        <DialogDescription className="mt-1 break-all text-sm text-stone-500">
+          {profile.email}
+        </DialogDescription>
+        <form
+          onSubmit={(event) => void save(event)}
+          className="mt-4 min-h-0 space-y-4 overflow-y-auto pr-1"
+        >
+          <fieldset disabled={saving} className="space-y-4">
+            <label className="block text-sm font-medium">
+              Full name
+              <Input
+                className="mt-1"
+                maxLength={200}
+                value={draft.full_name ?? ''}
+                onChange={(event) => setDraft({ ...draft, full_name: event.target.value })}
+              />
+            </label>
+            <label className="block text-sm font-medium">
+              Degree program
+              <Input
+                className="mt-1"
+                maxLength={200}
+                value={draft.degree_program ?? ''}
+                onChange={(event) => setDraft({ ...draft, degree_program: event.target.value })}
+              />
+            </label>
+            <label className="block text-sm font-medium">
+              Year level
+              <select
+                className="mt-1 block w-full rounded-lg border border-stone-300 bg-white p-2 text-stone-900 dark:border-stone-700 dark:bg-stone-950 dark:text-stone-100"
+                value={draft.year_level ?? ''}
+                onChange={(event) => setDraft({ ...draft, year_level: event.target.value || null })}
+              >
+                <option value="">Not set</option>
+                {draft.year_level && !PROFILE_YEAR_LEVELS.includes(draft.year_level) && (
+                  <option value={draft.year_level}>
+                    {draft.year_level} (choose a supported year)
+                  </option>
+                )}
+                {PROFILE_YEAR_LEVELS.map((year) => (
+                  <option key={year}>{year}</option>
+                ))}
+              </select>
+            </label>
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                className="size-4 accent-brand-900"
+                checked={draft.upmmc_member}
+                onChange={(event) => setDraft({ ...draft, upmmc_member: event.target.checked })}
+              />
+              UPMMC member
+            </label>
+          </fieldset>
+          <p className="text-xs text-stone-500 dark:text-stone-400">
+            These changes update the app profile. Sign-in email and administrator access are managed
+            separately.
+          </p>
+          {(!draft.degree_program?.trim() || !draft.year_level) && (
+            <p className="text-sm text-amber-700 dark:text-amber-300">
+              A missing degree program or year level will ask this user to complete onboarding again
+              when their profile reloads.
+            </p>
+          )}
+          {error && (
+            <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+              {error}
+            </p>
+          )}
+          <div className="flex justify-end gap-2">
+            <Button type="button" variant="outline" disabled={saving} onClick={onClose}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={saving}>
+              {saving ? 'Saving…' : 'Save profile'}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}

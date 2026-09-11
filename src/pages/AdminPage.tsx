@@ -1,4 +1,4 @@
-import { BookOpenText, FileText, Flag, GraduationCap, Landmark, PenLine } from 'lucide-react';
+import { BookOpenText, FileText, Flag, GraduationCap, Landmark, PenLine, Users } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { cn } from '@/lib/cn';
@@ -8,8 +8,9 @@ import { CourseAdminSection } from '@/components/admin/CourseAdminSection';
 import { ReportsAdminSection } from '@/components/admin/ReportsAdminSection';
 import { NotesAdminSection } from '@/components/admin/NotesAdminSection';
 import { BlogAdminSection } from '@/components/admin/BlogAdminSection';
+import { UsersAdminSection } from '@/components/admin/UsersAdminSection';
 
-type AdminTab = 'courses' | 'questions' | 'theorems' | 'notes' | 'blogs' | 'reports';
+type AdminTab = 'courses' | 'questions' | 'theorems' | 'notes' | 'blogs' | 'reports' | 'users';
 
 const TABS: { value: AdminTab; label: string; icon: typeof BookOpenText }[] = [
   { value: 'courses', label: 'Courses', icon: GraduationCap },
@@ -18,9 +19,10 @@ const TABS: { value: AdminTab; label: string; icon: typeof BookOpenText }[] = [
   { value: 'notes', label: 'Notes', icon: FileText },
   { value: 'blogs', label: 'Blogs', icon: PenLine },
   { value: 'reports', label: 'Reports', icon: Flag },
+  { value: 'users', label: 'Users', icon: Users },
 ];
 
-const VALID_TABS = new Set<AdminTab>(['courses', 'questions', 'theorems', 'notes', 'blogs', 'reports']);
+const VALID_TABS = new Set<AdminTab>(['courses', 'questions', 'theorems', 'notes', 'blogs', 'reports', 'users']);
 
 function parseTab(value: string | null): AdminTab {
   return value !== null && VALID_TABS.has(value as AdminTab) ? (value as AdminTab) : 'questions';
@@ -95,6 +97,7 @@ export function AdminPage() {
         <BlogAdminSection editId={editId} onEditHandled={clearEdit} />
       )}
       {tab === 'reports' && <ReportsAdminSection />}
+      {tab === 'users' && <UsersAdminSection />}
     </div>
   );
 }
