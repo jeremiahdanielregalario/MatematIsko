@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 import { ErrorState } from '@/components/common/ErrorState';
 import { LoadingState } from '@/components/common/LoadingState';
 import { useCourses } from '@/hooks/useCourses';
@@ -69,6 +70,13 @@ export function PracticePage() {
             Pick your focus, work through randomly selected problems, and track how you do.
           </p>
         </header>
+        <section className="mx-auto flex max-w-2xl flex-wrap items-center justify-between gap-4 rounded-xl border border-brand-200 bg-brand-50 p-5 dark:border-brand-800 dark:bg-brand-950">
+          <div>
+            <h2 className="font-serif text-xl font-semibold text-brand-950 dark:text-brand-100">Try a quiz or exam</h2>
+            <p className="mt-1 text-sm text-stone-600 dark:text-stone-300">A full paper, selected topics, and a timer. Review answers after you finish.</p>
+          </div>
+          <Button asChild><Link to="/practice/exam">Build an exam</Link></Button>
+        </section>
         <PracticeSetup
           courses={courses}
           questions={baseQuestions}

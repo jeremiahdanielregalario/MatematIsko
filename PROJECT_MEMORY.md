@@ -79,6 +79,7 @@ Most reads use `db.ts`; course notes, blog pages, and blog administration also c
 | Signed in + onboarding | `/questions/:id` | Question, reveals, bookmark, mastery, reports |
 | Signed in + onboarding | `/theorems`, `/theorems/:id`, `/theorems/flashcards` | Theorem study and flashcards |
 | Signed in + onboarding | `/practice`, `/bookmarks` | Practice sessions and saved questions |
+| Signed in + onboarding | `/practice/exam` | Topic-based timed quiz/exam papers, locked responses, and post-exam self-review |
 | Signed in + onboarding | `/blogs/new`, `/profile` | Community submission and profile |
 | Above + admin | `/admin` | Courses, questions/topics, theorems, notes, blogs, reports |
 | Fallback | `*` | Not-found page |
@@ -107,6 +108,8 @@ Questions and theorems use distinct progress records. An absent progress row is 
 
 Persisted in Supabase: profiles, course selections, content, bookmarks, progress, reports, blogs. Local browser state includes theme (`matematisko-theme`), the client session-start timestamp (`matematisko_session_started_at`), and Supabase's persisted auth session. Practice phase, answer summary, reveal state, and mutation overlays are React state; a full resumable practice history is not implemented.
 
+Quiz/exam papers additionally use per-user sessionStorage (`matematisko-exam-v1:<user-id>`) for one current paper in the browser tab: question IDs, absolute start/deadline, completion/reveal state, optional working notes, attempted/flagged IDs, and self-ratings. Question content, answers, and solutions are not stored there. Papers can resume after refresh or route navigation, but are not synced to Supabase or other devices. Storage failures show an explicit warning. User/scope changes remount the exam workspace; missing or out-of-scope saved questions block resuming rather than silently changing the paper.
+
 Migrations reproduce schema and seeded content. Admin-created/edited production content is additional live data, so migrations alone are not a complete backup.
 
 ## 6. Behavior to preserve
@@ -124,6 +127,10 @@ Course scope represents selected courses; `null` means unrestricted and `[]` rep
 Reveal levels are `hidden -> hint -> answer -> solution`; revealing can advance directly to a later level and does not move backward until reset. `H`, `A`, and `S` provide shortcuts through `useRevealKeyboard`; preserve typing suppression and reset between questions.
 
 Practice is randomized, self-rated as correct/incorrect/unsure, and summarized locally. Correct marks mastered; incorrect and unsure mark learning through the boolean mutation callback. Accuracy is rounded correct / attempted, with zero when no answers exist. Review includes incorrect and unsure answers. Do not change that denominator or imply automated answer grading without recording a product change.
+
+Quiz/exam mode is a separate workflow linked from Practice. Students select a course, multiple topics (or no topics for a random mix), 1–30 questions, and 5–90 minutes; presets are 5/20, 10/45, and 15/75 questions/minutes. Papers sample existing loaded questions without replacement, balancing across shuffled topic groups. Explicit topic choices require enough questions to cover each topic. The UI shows when the available bank yields fewer questions than requested. This inherits the current question-bank loading/API row-cap limitation; durations are student-selected budgets, not calibrated problem-time estimates.
+
+The entire paper is available for navigation, optional notes, attempted markers, and flags. Hints, answers, solutions, and reveal shortcuts are absent during the attempt. Finishing requires confirmation; deadline expiry locks edits automatically, including edit events arriving before the next timer tick. Students separately choose to reveal answers after completion. This is a client-side self-study lock, not a proctored assessment or server-enforced answer secrecy: existing authenticated question reads still include solutions. Self-checks count correct/incorrect/unsure, explicitly separate unchecked questions, and do not write mastery or attempt records. After all questions are checked, students can retry only incorrect/unsure questions as a fresh locked paper with the same time budget. Starting another paper or retry replaces the tab's previous paper. Timer updates do not rerender the memoized question body each second.
 
 Question mutations apply optimistic overlays. Bookmark and status operations attempt rollback, but `recordAttempt` currently swallows errors without reverting its local status/attempt overlay. Attempt counts are calculated from loaded state and written as absolute values, so concurrent/repeated writes deserve explicit handling.
 
@@ -250,6 +257,14 @@ Evidence: Repository inspection at `4df00c3`; no live deployment/database verifi
 - Whether users need resumable practice, attempt history, or spaced repetition.
 - Production migration state, enabled auth-provider settings, row limits, backups, retention, recovery targets, and monitoring.
 - Preferred package-manager/lockfile policy and automated release checks.
+
+### 2026-09-11 — Full-paper quiz and exam review
+
+Status: implemented locally; not deployed.
+
+Decision: Add `/practice/exam` alongside ordinary guided practice, using the existing content bank and stable question IDs. Present all questions together, permit topic selection or a randomized balanced mix, and lock support until completion followed by explicit reveal. Keep self-ratings separate from mastery so an exam result does not silently rewrite the student's study history. Preserve the current paper in per-user tab storage without adding database tables or changing permissions.
+
+Evidence: 194 tests passed in the full suite with configured coverage thresholds; after the final rendering optimization and added recovery cases, all 11 exam-specific tests passed. TypeScript and lint for affected files passed. Browser checks used synthetic questions at 375px and 1440px, including dark theme, refresh recovery, locked responses, and explicit answer reveal. Production content, authenticated deployment journeys, and cross-device persistence were not tested. The local npm command was unavailable; checks used the package scripts' underlying installed executables.
 
 Resolve these when a feature depends on them; do not turn unknowns into implementation facts.
 

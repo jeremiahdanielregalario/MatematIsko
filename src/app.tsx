@@ -17,6 +17,7 @@ import { LandingPage } from '@/pages/LandingPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { OnboardingPage } from '@/pages/OnboardingPage';
 import { PracticePage } from '@/pages/PracticePage';
+import { ExamPage } from '@/pages/ExamPage';
 import { ProfilePage } from '@/pages/ProfilePage';
 import { QuestionDetailPage } from '@/pages/QuestionDetailPage';
 import { TheoremsPage } from '@/pages/TheoremsPage';
@@ -52,6 +53,7 @@ export function App() {
                   <Route path="/theorems/flashcards" element={<FlashcardSessionPage />} />
                   <Route path="/theorems/:id" element={<TheoremDetailPage />} />
                   <Route path="/practice" element={<PracticePage />} />
+                  <Route path="/practice/exam" element={<ExamPage />} />
                   <Route path="/bookmarks" element={<BookmarksPage />} />
                   <Route path="/blogs/new" element={<WriteBlogPage />} />
                   <Route path="/profile" element={<ProfilePage />} />
