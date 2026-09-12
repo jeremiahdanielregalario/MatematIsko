@@ -217,6 +217,12 @@ body {
   white-space: nowrap;
 }
 
+/* KaTeX makes display HTML a block with a more specific selector. Center that
+   natural-width block itself; text-align on its parent cannot position it. */
+.math-prose .katex-display > .katex > .katex-html {
+  margin-inline: auto;
+}
+
 .math-prose .math-overflow {
   overflow-x: auto;
   overflow-y: hidden;

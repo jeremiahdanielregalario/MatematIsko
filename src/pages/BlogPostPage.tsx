@@ -49,8 +49,8 @@ export function BlogPostPage() {
         return;
       }
       supabase
-        .from('blog_posts')
-        .select('*, author:profiles(full_name, avatar_url)')
+        .from('published_blog_posts')
+        .select('*')
         .eq('slug', slug)
         .eq('published', true)
         .eq('approval_status', 'approved')

@@ -147,6 +147,8 @@ The visual identity uses a maroon brand palette (brand-900 `#7b1113`), stone neu
 
 ### Community and moderation
 
+Public blog listing and detail read `published_blog_posts` (migration `20260912000007_public_blog_authors.sql`). This read-only, security-barrier view deliberately uses owner permissions to join author names and avatars despite private profile RLS, and explicitly limits rows to approved, published posts. It exposes no profile email, onboarding fields or student progress. Missing/deleted authors retain the Anonymous fallback. Apply the migration before deploying the updated frontend; local implementation does not establish remote deployment.
+
 Submission uses `submit_blog_post`; author edits use `update_own_blog_post` and reset approval to pending. Admin approval and publication are separate fields/operations. Public visibility requires both published and approved; the anonymous read policy is added by `20260817000001_anon_blog_read.sql`.
 
 **Enforcement gap:** migration `20260808000056_community_blogs.sql` grants author insert/update policies that constrain ownership but not approval/publication fields. The update policy's name/comment promises more than its SQL enforces. Audit direct table writes and column privileges before relying on moderation as a strict boundary; an RPC's constraints do not automatically constrain a direct table request.
@@ -370,3 +372,9 @@ The existing `?tab=progress` link now opens course/topic progress, showing maste
 
 Course choices and aggregates derive from the loaded, user-scoped question bank, so courses without loaded questions are reached through Courses & notes rather than shown as zero-progress courses. Client pagination bounds rendered cards only; existing API row-cap limitations remain. No schema, permissions, persistence or deployment changes. No fabricated streaks, grades or activity history are introduced.
 Validation: 28 targeted dashboard, recommendation and random-selection tests passed; TypeScript, affected-file lint, production build, and diff whitespace checks passed using installed executables. Tests cover review priority, URL/course filters, pagination, mastery overlays, saved mastered problems, empty/all-mastered states, recovery and destination links. No authenticated browser or visual viewport check was performed; frontend deployment remains pending.
+Display-card centering correction (2026-09-12): KaTeX's more-specific display selector makes the visible math HTML a block; its max-content width was left-positioned despite parent text-align. Explicit auto inline margins now center that block. Browser verification using the production stylesheet and KaTeX output in 280px and 600px cards passed center-position measurements and visual inspection; oversized math still starts within a horizontal scroll region. Production build passed. This correction remains local and requires frontend deployment.
+
+
+### 2026-09-12 — Public blog attribution
+
+Fixed public list/detail author attribution using the bounded published-blog view described above. Isolated PGlite checks in scripts/check-blog-authors.mjs passed upgrade and clean replay of 80 migrations, anonymous/other-account/author visibility, publication and approval filtering, private profile isolation, write denial and deleted-author fallback. TypeScript, affected-page ESLint and production build passed using installed package executables after retrying with dependency access (npm unavailable). No production migration or frontend deployment was performed.
