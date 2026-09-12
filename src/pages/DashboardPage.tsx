@@ -27,7 +27,7 @@ import { useQuestionMutations } from '@/hooks/useQuestionMutations';
 import { useQuestions } from '@/hooks/useQuestions';
 import { cn } from '@/lib/cn';
 import { mergeMutations } from '@/lib/mutations';
-import { pickRandom } from '@/lib/questionFilter';
+import { pickRandomProblem } from '@/lib/questionFilter';
 import { getRecommendedQuestions } from '@/lib/recommendations';
 import { computeStats } from '@/lib/stats';
 import type { QuestionWithMeta } from '@/types';
@@ -100,7 +100,6 @@ export function DashboardPage() {
       {activeTab === 'overview' ? (
         <OverviewTab
           stats={stats}
-          questions={questions}
           merged={merged}
           mutations={mutations}
           firstName={profile?.full_name?.split(/\s+/)[0] ?? 'student'}
@@ -118,13 +117,11 @@ export function DashboardPage() {
 
 function OverviewTab({
   stats,
-  questions,
   merged,
   mutations,
   firstName,
 }: {
   stats: ReturnType<typeof computeStats>;
-  questions: QuestionWithMeta[];
   merged: QuestionWithMeta[];
   mutations: ReturnType<typeof useQuestionMutations>;
   firstName: string;
@@ -134,7 +131,7 @@ function OverviewTab({
   const recommended = useMemo(() => getRecommendedQuestions(merged), [merged]);
 
   const startRandom = () => {
-    const random = pickRandom(questions);
+    const random = pickRandomProblem(merged);
     if (random) navigate(`/questions/${random.id}?mode=random`);
   };
 

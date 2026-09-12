@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
-import { applyFilterAndSort, pickRandom } from './questionFilter';
+import { describe, expect, it, vi } from 'vitest';
+import { applyFilterAndSort, pickRandom, pickRandomProblem } from './questionFilter';
 import type { QuestionWithMeta } from '@/types';
 
 function makeQuestion(overrides: Partial<QuestionWithMeta> & { id: string }): QuestionWithMeta {
@@ -17,7 +17,13 @@ function makeQuestion(overrides: Partial<QuestionWithMeta> & { id: string }): Qu
     hint: 'Try factoring.',
     created_at: '2024-01-01T00:00:00.000Z',
     updated_at: '2024-01-01T00:00:00.000Z',
-    course: { id: 'course-1', code: 'MATH 21', name: 'Elementary Analysis I', description: null, created_at: '2024-01-01' },
+    course: {
+      id: 'course-1',
+      code: 'MATH 21',
+      name: 'Elementary Analysis I',
+      description: null,
+      created_at: '2024-01-01',
+    },
     topic: { id: 'topic-1', course_id: 'course-1', name: 'Limits', description: null },
     progress: null,
     bookmarked: false,
@@ -32,7 +38,14 @@ const QUESTIONS: QuestionWithMeta[] = [
     difficulty: 'easy',
     year: 2023,
     bookmarked: true,
-    progress: { user_id: 'u', question_id: 'a', status: 'mastered', attempts: 3, last_attempted_at: '2025-01-03', mastered_at: '2025-01-03' },
+    progress: {
+      user_id: 'u',
+      question_id: 'a',
+      status: 'mastered',
+      attempts: 3,
+      last_attempted_at: '2025-01-03',
+      mastered_at: '2025-01-03',
+    },
     created_at: '2024-01-01',
   }),
   makeQuestion({
@@ -41,7 +54,14 @@ const QUESTIONS: QuestionWithMeta[] = [
     question_text: 'Integrate by partial fractions with difficult algebra',
     difficulty: 'hard',
     year: 2024,
-    progress: { user_id: 'u', question_id: 'b', status: 'learning', attempts: 1, last_attempted_at: '2025-02-01', mastered_at: null },
+    progress: {
+      user_id: 'u',
+      question_id: 'b',
+      status: 'learning',
+      attempts: 1,
+      last_attempted_at: '2025-02-01',
+      mastered_at: null,
+    },
     created_at: '2024-02-01',
   }),
   makeQuestion({
@@ -111,5 +131,32 @@ describe('pickRandom', () => {
 
   it('returns undefined for an empty list', () => {
     expect(pickRandom([])).toBeUndefined();
+  });
+});
+
+describe('pickRandomProblem', () => {
+  it('samples learning and unseen problems before mastered problems', () => {
+    const random = vi.spyOn(Math, 'random');
+    try {
+      random.mockReturnValue(0);
+      expect(pickRandomProblem(QUESTIONS)?.id).toBe('b');
+      random.mockReturnValue(0.999);
+      expect(pickRandomProblem(QUESTIONS)?.id).toBe('c');
+    } finally {
+      random.mockRestore();
+    }
+  });
+
+  it('includes explicit unseen progress in the priority pool', () => {
+    const unseen = makeQuestion({
+      id: 'unseen',
+      progress: { ...QUESTIONS[0].progress!, status: 'unseen' },
+    });
+    expect(pickRandomProblem([QUESTIONS[0], unseen])).toBe(unseen);
+  });
+
+  it('falls back to mastered problems when none remain in the eligible pool', () => {
+    expect(pickRandomProblem([QUESTIONS[0]])).toBe(QUESTIONS[0]);
+    expect(pickRandomProblem([])).toBeUndefined();
   });
 });

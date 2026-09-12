@@ -16,7 +16,7 @@ import { useQuestions } from '@/hooks/useQuestions';
 import { useReveal } from '@/hooks/useReveal';
 import { useRevealKeyboard } from '@/hooks/useRevealKeyboard';
 import { mergeMutations } from '@/lib/mutations';
-import { pickRandom } from '@/lib/questionFilter';
+import { pickRandom, pickRandomProblem } from '@/lib/questionFilter';
 import { submitQuestionReport } from '@/lib/reports';
 
 export function QuestionDetailPage() {
@@ -73,7 +73,9 @@ export function QuestionDetailPage() {
       (!contextTopic || q.topic_id === contextTopic),
   );
   const nextInContext = () => {
-    const random = pickRandom(nextPool);
+    const random = randomMode
+      ? pickRandomProblem(nextPool.map((q) => mergeMutations(q, mutations)))
+      : pickRandom(nextPool);
     if (random) {
       reveal.reset();
       navigate(contextPath(random.id));

@@ -64,9 +64,7 @@ export function applyFilterAndSort(
       sorted.sort((a, b) => a.created_at.localeCompare(b.created_at));
       break;
     case 'difficulty':
-      sorted.sort(
-        (a, b) => DIFFICULTY_ORDER[a.difficulty] - DIFFICULTY_ORDER[b.difficulty],
-      );
+      sorted.sort((a, b) => DIFFICULTY_ORDER[a.difficulty] - DIFFICULTY_ORDER[b.difficulty]);
       break;
     case 'recent':
       sorted.sort((a, b) => {
@@ -87,4 +85,10 @@ export function applyFilterAndSort(
 export function pickRandom<T>(list: T[]): T | undefined {
   if (list.length === 0) return undefined;
   return list[Math.floor(Math.random() * list.length)];
+}
+
+/** Prefer unseen/learning questions, falling back only when this pool is mastered. */
+export function pickRandomProblem(list: QuestionWithMeta[]): QuestionWithMeta | undefined {
+  const nonMastered = list.filter((q) => q.progress?.status !== 'mastered');
+  return pickRandom(nonMastered.length > 0 ? nonMastered : list);
 }

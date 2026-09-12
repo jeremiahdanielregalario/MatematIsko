@@ -297,7 +297,7 @@ Evidence: Source review and regression tests cover Markdown/MathML, hide control
 
 ### 2026-09-11 — Preserve dashboard random-problem mode
 
-Dashboard "Give me a random problem" opens `/questions/:id?mode=random`. The detail page preserves this mode on subsequent picks, labels the action "Next random problem", and samples all loaded questions in the student's selected-course scope except the current question. Back returns to the dashboard. Explicit course/topic study and ordinary detail links retain their existing course-focused behavior. No schema or permission changes.
+Dashboard "Give me a random problem" opens `/questions/:id?mode=random`. The detail page preserves this mode on subsequent picks, labels the action "Next random problem", and samples loaded questions in the student's selected-course scope except the current question. As of 2026-09-12, both actions randomly prioritize non-mastered questions (learning, unseen, or absent progress), falling back to mastered questions only when the eligible pool has no non-mastered questions. Both use current local mastery overlays; next-question selection still excludes the current question before choosing the priority pool. This inherits the existing loaded-bank/API row-cap limitation. Back returns to the dashboard. Explicit course/topic study and ordinary detail links retain their existing course-focused behavior. No schema or permission changes.
 
 ### 2026-09-11 — Article-style course-note reader
 
