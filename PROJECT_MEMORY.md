@@ -332,3 +332,9 @@ Deployment and final verification: migration 20260912000002 was the only pending
 ### 2026-09-12 — Consistent contour-integral logo
 
 The shared Logo uses a centered vector contour integral instead of font-dependent SVG text. All tile sizes use the same 40-unit geometry, eliminating the previous double-scaling of the glyph between navbar and landing/sign-in sizes. Each instance has a unique gradient ID; decorative marks avoid repeating the adjacent accessible wordmark. Favicon and installed-app icon match. A worker source revision triggers installation and refreshes the existing icon precache without changing cache scope. Local landing-page navbar and hero were visually checked in light/dark themes; logo lint, TypeScript and production build passed. No frontend deployment was performed.
+
+### 2026-09-12 — Seed MATH 126 Unit I course notes
+
+Migration `20260912000003` inserts the Math 126 Real Analysis Unit I note into `course_notes` for course `c0000000-0000-4000-8000-000000000004`, following the same Markdown + KaTeX format as the MATH 110.3 notes and the stored README/source content in `notes/math126-unit1-real-analysis.md`. It covers Lebesgue outer measure, measurable sets (including Vitali's construction, continuity of measure, and the Cantor set), measurable functions, and Littlewood's principles with Lusin's and Egoroff's theorems named as Theorem blocks. No schema, permission, or workflow changes; the note uses the existing `course_notes` table and its admin-only write policies.
+
+Validation: PGlite clean replay of all 76 ordered migrations passed using the repo's check script with an installed PGlite module; without an applied `pgcrypto` extension declaration. The migration is local-only so far; it must be applied to the linked database (`npm run db:push`) before the note appears in the hosted app. Frontend notes rendering already handles the Markdown/KaTeX used here.
