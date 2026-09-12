@@ -81,7 +81,7 @@ Most reads use `db.ts`; course notes, blog pages, and blog administration also c
 | Signed in + onboarding | `/practice`, `/bookmarks` | Practice sessions and saved questions |
 | Signed in + onboarding | `/practice/exam` | Topic-based timed quiz/exam papers, locked responses, and post-exam self-review |
 | Signed in + onboarding | `/blogs/new`, `/profile` | Community submission and profile |
-| Above + admin | `/admin` | Courses, questions/topics, theorems, notes, blogs, reports, app users and admin grants |
+| Above + admin | `/admin` | Courses, questions/topics, theorems, notes, blogs, reports, app users, course/progress monitoring and resets, and admin grants |
 | Fallback | `*` | Not-found page |
 
 Do not resurrect README-only page names as if routes exist. The current router has no standalone `/question-bank` or `/progress` page.
@@ -152,6 +152,16 @@ Submission uses `submit_blog_post`; author edits use `update_own_blog_post` and 
 **Enforcement gap:** migration `20260808000056_community_blogs.sql` grants author insert/update policies that constrain ownership but not approval/publication fields. The update policy's name/comment promises more than its SQL enforces. Audit direct table writes and column privileges before relying on moderation as a strict boundary; an RPC's constraints do not automatically constrain a direct table request.
 
 ## 7. Scaling priorities — proposed work, not completed features
+
+### Admin progress monitoring (2026-09-12)
+
+App users opens a per-user Courses and progress dialog. `admin_user_progress` computes complete database aggregates for selected courses plus courses with saved question/theorem progress, including deselected courses. It returns separate mastered/learning/total counts, question attempts, and the latest recorded attempt/review/mastery timestamp. Missing records count as unseen. These are self-assessed study indicators, not verified grades, current online presence, or a full activity history. Exam papers and self-checks in browser sessionStorage remain outside this view.
+
+`admin_reset_user_progress` transactionally deletes question and theorem progress for one user, scoped to a course or all courses. The UI names the target and scope, requires explicit confirmation, prevents duplicate pending submissions, retains failures for retry, and reloads aggregates after success. Bookmarks, course selections, profiles, content and Auth identities remain intact. Open student pages are not pushed an invalidation; they should refresh, and subsequent study writes can create progress again. Resets are permanent and do not introduce an audit/history store.
+
+Both RPCs in append-only migration `20260912000004_admin_user_progress.sql` enforce database admin authorization, including delegated admins; anonymous execution is revoked and student table RLS remains unchanged. Aggregating server-side avoids browser row-cap truncation without exposing private progress through broader table policies.
+
+Validation: isolated PGlite upgrade and clean replay of 77 ordered migrations passed with synthetic Auth helpers, including admin/delegated access, anonymous/student denial, course/all/repeated resets, other-user isolation and retained bookmarks/enrollment/profile. TypeScript, affected-file lint and production build passed through installed package executables (npm unavailable; TypeScript/lint needed access outside sandbox dependency restrictions). All 16 targeted admin UI tests passed, covering scope confirmation/cancellation, reset success and reload, failed resets and load retries, empty-progress controls, and existing user administration. This feature is local; apply its migration and deploy the frontend before hosted use. No live user progress was read or reset.
 
 Address correctness before using faster infrastructure to serve more requests.
 
@@ -338,3 +348,4 @@ The shared Logo uses a centered vector contour integral instead of font-dependen
 Migration `20260912000003` inserts the Math 126 Real Analysis Unit I note into `course_notes` for course `c0000000-0000-4000-8000-000000000004`, following the same Markdown + KaTeX format as the MATH 110.3 notes and the stored README/source content in `notes/math126-unit1-real-analysis.md`. It covers Lebesgue outer measure, measurable sets (including Vitali's construction, continuity of measure, and the Cantor set), measurable functions, and Littlewood's principles with Lusin's and Egoroff's theorems named as Theorem blocks. No schema, permission, or workflow changes; the note uses the existing `course_notes` table and its admin-only write policies.
 
 Validation: PGlite clean replay of all 76 ordered migrations passed using the repo's check script with an installed PGlite module; without an applied `pgcrypto` extension declaration. The migration is local-only so far; it must be applied to the linked database (`npm run db:push`) before the note appears in the hosted app. Frontend notes rendering already handles the Markdown/KaTeX used here.
+

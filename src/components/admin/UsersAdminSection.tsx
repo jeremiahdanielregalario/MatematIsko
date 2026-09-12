@@ -18,12 +18,14 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { LoadingState } from '@/components/common/LoadingState';
 import { ErrorState } from '@/components/common/ErrorState';
+import { UserProgressDialog } from './UserProgressDialog';
 
 export function UsersAdminSection() {
   const { user, refreshProfile } = useAuth();
   const [search, setSearch] = useState('');
   const [query, setQuery] = useState({ search: '', page: 0 });
   const [selected, setSelected] = useState<Profile | null>(null);
+  const [progressTarget, setProgressTarget] = useState<Profile | null>(null);
   const [message, setMessage] = useState('');
   const [revokeTarget, setRevokeTarget] = useState<Profile | null>(null);
   const [grantTarget, setGrantTarget] = useState<Profile | null>(null);
@@ -46,7 +48,7 @@ export function UsersAdminSection() {
           App users
         </h2>
         <p className="mt-1 text-sm text-stone-500 dark:text-stone-400">
-          Find a registered profile and update the information used in the app.
+          Manage profiles, monitor selected courses and study progress, or reset progress.
         </p>
       </header>
       <form
@@ -150,6 +152,9 @@ export function UsersAdminSection() {
                         </Button>
                       )}
                     </div>
+                    <Button variant="outline" size="sm" onClick={() => setProgressTarget(profile)}>
+                      View courses and progress
+                    </Button>
                     <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
                       <div>
                         <dt className="text-stone-500">Degree program</dt>
@@ -202,6 +207,13 @@ export function UsersAdminSection() {
             </Button>
           </nav>
         </>
+      )}
+      {progressTarget && (
+        <UserProgressDialog
+          key={progressTarget.id}
+          profile={progressTarget}
+          onClose={() => setProgressTarget(null)}
+        />
       )}
       {revokeTarget && (
         <GrantAdminDialog
@@ -412,7 +424,7 @@ export function GrantAdminDialog({
           {profile.full_name || profile.email} ({profile.email}){' '}
           {revoke
             ? 'will lose access to administration. Their student account, bookmarks and study progress will remain.'
-            : 'will be able to manage content, reports and user profiles, and grant admin access to others. Only the super admin can remove admin access.'}
+            : 'will be able to manage content, reports and user profiles, monitor and reset study progress, and grant admin access to others. Only the super admin can remove admin access.'}
         </DialogDescription>
         {error && (
           <p role="alert" className="mt-3 text-sm text-red-600 dark:text-red-400">
