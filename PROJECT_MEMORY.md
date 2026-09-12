@@ -349,3 +349,9 @@ Migration `20260912000003` inserts the Math 126 Real Analysis Unit I note into `
 
 Validation: PGlite clean replay of all 76 ordered migrations passed using the repo's check script with an installed PGlite module; without an applied `pgcrypto` extension declaration. The migration is local-only so far; it must be applied to the linked database (`npm run db:push`) before the note appears in the hosted app. Frontend notes rendering already handles the Markdown/KaTeX used here.
 
+### 2026-09-12 — Seed MATH 126 Unit II course notes (L^p spaces)
+
+Migration `20260912000005` inserts the Math 126 Real Analysis Unit II note into `course_notes` for course `c0000000-0000-4000-8000-000000000004` as `sort_order` 2, behind the Unit I seed. Source content lives in `notes/math126-unit2-lp-spaces.md`. It defines $L^p(\Omega)$ for $1 \le p \le \infty$, essential boundedness/essential supremum, norms (proving $L^1$ and $L^\infty$ are normed linear spaces), conjugates, and the name-carrying inequalities written as Theorem blocks: Young's inequality, Hölder's inequality (with the Cauchy–Schwarz special case), and Minkowski's inequality, plus the finite-measure nesting corollary $L^q(\Omega) \subseteq L^p(\Omega)$. No schema, permission, or workflow changes.
+
+Validation: PGlite clean replay of all 78 ordered migrations passed using the repo's check script with an installed PGlite module. Both migration `20260912000003` and this one were applied to the linked database with `npm run db:push` on 2026-09-12; the notes seed is now visible in the hosted Math 126 course. The transient CLI-to-pooler connection timeouts observed that day were network-side and cleared on retry.
+
