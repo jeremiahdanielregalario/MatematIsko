@@ -39,7 +39,32 @@ describe('MathRenderer', () => {
 
   it('renders KaTeX math in display mode', () => {
     render(<MathRenderer>$$x^2$$</MathRenderer>);
-    expect(document.querySelector('.katex')).toBeInTheDocument();
+    expect(document.querySelector('.katex-display')).toBeInTheDocument();
+  });
+
+  it('renders standalone delimiters as display math', () => {
+    const { container } = render(
+      <MathRenderer>{'Before.\n\n$$\nf(x) = x^2\n$$\n\nAfter.'}</MathRenderer>,
+    );
+    expect(container.querySelector('.katex-display')).toBeInTheDocument();
+    expect(container.querySelector('.katex-error')).toBeNull();
+  });
+
+  it('keeps single-dollar math inline and double-dollar math displayed in prose', () => {
+    const { container } = render(
+      <MathRenderer>{'Inline $x$ and display $$x^2$$ then $$y^2$$.'}</MathRenderer>,
+    );
+    expect(container.querySelectorAll('.katex-display')).toHaveLength(2);
+    expect(container.querySelectorAll('.katex')).toHaveLength(3);
+  });
+
+  it('preserves literal delimiters in code and escaped dollars', () => {
+    const { container } = render(
+      <MathRenderer>{'`$$x^2$$`\n\n```text\n$$y^2$$\n```\n\n\\$\\$z\\$\\$'}</MathRenderer>,
+    );
+    expect(container.querySelector('.katex')).toBeNull();
+    expect(container.textContent).toContain('$$x^2$$');
+    expect(container.textContent).toContain('$$y^2$$');
   });
 
   it('renders a multi-line aligned display math block', () => {

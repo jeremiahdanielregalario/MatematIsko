@@ -203,6 +203,10 @@ body {
 
 .math-prose .katex-display > .katex {
   white-space: nowrap;
+  text-align: center;
+  width: max-content;
+  min-width: 100%;
+  max-width: none;
 }
 
 /* Measure the visible formula, not glyph overhang or hidden MathML. Only
@@ -216,10 +220,6 @@ body {
 .math-prose .math-overflow {
   overflow-x: auto;
   overflow-y: hidden;
-}
-
-.math-prose .katex-display.math-overflow > .katex {
-  text-align: left;
 }
 
 /* Prevent KaTeX inline content from causing page-level overflow */

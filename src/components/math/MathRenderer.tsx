@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import rehypeKatex from 'rehype-katex';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
+import { remarkDisplayMath } from './remarkDisplayMath';
 import { cn } from '@/lib/cn';
 import { decodeUnicodeEscapes } from '@/lib/unicode';
 
@@ -87,7 +88,7 @@ export function MathRenderer({
       )}
     >
       <ReactMarkdown
-        remarkPlugins={[remarkMath, remarkGfm]}
+        remarkPlugins={[remarkMath, remarkGfm, remarkDisplayMath]}
         rehypePlugins={[[rehypeKatex, { throwOnError: false }]]}
         disallowedElements={
           inline
