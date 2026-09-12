@@ -73,7 +73,7 @@ Most reads use `db.ts`; course notes, blog pages, and blog administration also c
 | Public | `/`, `/auth/callback` | Landing and authentication callback |
 | Public within shell | `/blogs`, `/blogs/:slug` | Approved, published community content |
 | Signed in | `/onboarding` | Profile completion and course selection |
-| Signed in + onboarding | `/dashboard` | Study overview and recommendations |
+| Signed in + onboarding | `/dashboard` | Review starting point, course-filtered review lists, and actionable course/topic progress |
 | Signed in + onboarding | `/courses`, `/courses/:courseId` | Course catalog and course study content |
 | Signed in + onboarding | `/courses/:courseId/notes/:noteId` | Course-note reading |
 | Signed in + onboarding | `/questions/:id` | Question, reveals, bookmark, mastery, reports |
@@ -355,3 +355,18 @@ Migration `20260912000005` inserts the Math 126 Real Analysis Unit II note into 
 
 Validation: PGlite clean replay of all 78 ordered migrations passed using the repo's check script with an installed PGlite module. Both migration `20260912000003` and this one were applied to the linked database with `npm run db:push` on 2026-09-12; the notes seed is now visible in the hosted Math 126 course. The transient CLI-to-pooler connection timeouts observed that day were network-side and cleared on retry.
 
+### 2026-09-12 — Seed MATH 126 named theorems
+
+Migration `20260912000006` seeds the `theorems` table for course `c0000000-0000-4000-8000-000000000004`, reusing the existing MATH 126 topics: the Unit I measure theorems (Vitali's theorem, continuity of measure, Lusin's theorem, Egoroff's theorem, and the pointwise sup/inf/limsup/liminf measurability theorem) under topic `22b18b44-b14a-4480-8614-c090fefcc296`, and the Unit II inequalities (Young, Hölder, Cauchy–Schwarz, Minkowski) under topic `422cd013-4ce8-4c18-8d22-3ba737e3b730`. Statement and `formal_notation` use the same Markdown + KaTeX convention as the notes. The Theorems tab, theorem cards, detail page, flashcards, and per-student `theorem_progress` read these rows, so the new theorems become visible there once pushed. No schema or permission changes.
+
+Validation: PGlite clean replay of all 79 ordered migrations passed via the repo's check script with an installed PGlite module; applied to the linked database with `npx supabase db push` on 2026-09-12.
+
+
+### 2026-09-12 — Review-oriented dashboard
+
+The dashboard now leads with the oldest recorded learning problem (missing timestamps first), falling back to an unseen recommendation, plus guided practice and timed-paper links. Random selection retains non-mastered-first behavior across the user's selected-course scope; its label explains that it is independent of the workspace course filter. The workspace has Suggested, Needs review, Unseen and Saved lists, six cards per page, with course/filter/page state in URL parameters. Invalid parameters fall back safely; filter changes reset pagination. Saved includes mastered bookmarks. All lists and statistics use the same local mutation overlays.
+
+The existing `?tab=progress` link now opens course/topic progress, showing mastered/total rather than the former ambiguous completed count. Topics sort by lowest mastery share and link to topic-prefilled practice; courses link to notes and course practice. Theorem flashcards, course selection and bookmarks remain directly reachable. Zero-content, zero-learning and all-mastered states have distinct guidance. Cards retain math rendering, hidden answers, bookmarks, mastery and stable question IDs. Buttons wrap for narrow layouts and expose selected states to assistive technology.
+
+Course choices and aggregates derive from the loaded, user-scoped question bank, so courses without loaded questions are reached through Courses & notes rather than shown as zero-progress courses. Client pagination bounds rendered cards only; existing API row-cap limitations remain. No schema, permissions, persistence or deployment changes. No fabricated streaks, grades or activity history are introduced.
+Validation: 28 targeted dashboard, recommendation and random-selection tests passed; TypeScript, affected-file lint, production build, and diff whitespace checks passed using installed executables. Tests cover review priority, URL/course filters, pagination, mastery overlays, saved mastered problems, empty/all-mastered states, recovery and destination links. No authenticated browser or visual viewport check was performed; frontend deployment remains pending.
