@@ -42,8 +42,8 @@ export async function getQuestionsWithRelations(courseIds?: string[]): Promise<Q
   if (!isSupabaseConfigured) return [];
   if (!supabase) notConfigured();
   let query = supabase
-    .from('questions')
-    .select('*, course:courses(*), topic:topics(*)')
+    .from('study_questions')
+    .select('*')
     .order('created_at', { ascending: false });
   if (courseIds && courseIds.length > 0) query = query.in('course_id', courseIds);
   const { data, error } = await query;
@@ -59,8 +59,8 @@ export async function getQuestionById(
   if (!isSupabaseConfigured) return null;
   if (!supabase) notConfigured();
   let query = supabase
-    .from('questions')
-    .select('*, course:courses(*), topic:topics(*)')
+    .from('study_questions')
+    .select('*')
     .eq('id', id);
   if (courseIds && courseIds.length > 0) query = query.in('course_id', courseIds);
   const { data, error } = await query.maybeSingle();

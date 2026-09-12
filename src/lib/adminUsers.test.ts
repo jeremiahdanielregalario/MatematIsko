@@ -29,12 +29,13 @@ describe('admin profile requests', () => {
       full_name: ' Updated ',
       degree_program: ' ',
     });
-    expect(rpc).toHaveBeenCalledWith('admin_update_profile', {
+    expect(rpc).toHaveBeenCalledWith('admin_update_profile_verified', {
       p_id: 'u',
       p_full_name: 'Updated',
       p_degree_program: null,
       p_year_level: '1st Year',
       p_upmmc_member: false,
+      p_upmmc_verified: false,
       p_expected: profileDraft(original),
     });
   });

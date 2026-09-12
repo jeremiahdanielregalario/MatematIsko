@@ -243,6 +243,10 @@ export function OnboardingPage() {
                 </div>
               </div>
 
+              <p className="text-xs text-stone-500 dark:text-stone-400">
+                An administrator must verify UPMMC membership to unlock complete solutions outside
+                Math 20, 21, 22, 23 and STAT 101.
+              </p>
               {error ? (
                 <p role="alert" className="text-sm font-medium text-red-600 dark:text-red-400">
                   {error}

@@ -172,6 +172,7 @@ export function UsersAdminSection() {
                         <dt className="text-stone-500">UPMMC member</dt>
                         <dd className="text-stone-900 dark:text-stone-100">
                           {profile.upmmc_member ? 'Yes' : 'No'}
+                          {profile.upmmc_verified ? ' · Verified' : ' · Not verified'}
                         </dd>
                       </div>
                       <div>
@@ -347,6 +348,19 @@ export function ProfileEditor({
               />
               UPMMC member
             </label>
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                className="size-4 accent-brand-900"
+                checked={draft.upmmc_verified ?? false}
+                onChange={(event) => setDraft({ ...draft, upmmc_verified: event.target.checked })}
+              />
+              Verified UPMMC member — allow complete solutions
+            </label>
+            <p className="text-xs text-stone-500 dark:text-stone-400">
+              Verify only after confirming membership. Clearing verification removes access to
+              restricted solutions. Math 20, 21, 22, 23 and STAT 101 remain available to all students.
+            </p>
           </fieldset>
           <p className="text-xs text-stone-500 dark:text-stone-400">
             These changes update the app profile. Sign-in email and administrator access are managed

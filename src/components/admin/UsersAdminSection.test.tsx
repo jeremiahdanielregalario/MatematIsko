@@ -34,6 +34,15 @@ beforeEach(() => {
   refreshProfile.mockResolvedValue(undefined);
 });
 describe('admin users', () => {
+  it('saves administrator verification separately from self-declared membership', async () => {
+    render(<ProfileEditor profile={profile} onClose={vi.fn()} onSaved={vi.fn()} />);
+    const verification = screen.getByRole('checkbox', { name: /Verified UPMMC member/ });
+    expect(verification).not.toBeChecked();
+    fireEvent.click(verification);
+    fireEvent.click(screen.getByRole('button', { name: 'Save profile' }));
+    await waitFor(() => expect(update).toHaveBeenCalledWith(profile,
+      expect.objectContaining({ upmmc_member: false, upmmc_verified: true })));
+  });
   it('lets only the super admin confirm removal of a delegated admin', async () => {
     revoke.mockResolvedValue(undefined);
     list.mockResolvedValue({

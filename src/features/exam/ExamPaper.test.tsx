@@ -48,6 +48,14 @@ afterEach(() => {
   sessionStorage.clear();
 });
 describe('exam review workflow', () => {
+  it('preserves server-redacted solutions during completed-paper review', () => {
+    const session = { ...createExam(['a'], 45), finishedAt: Date.now(), revealed: true };
+    render(<ExamPaper session={session} questions={[{ ...questions[0], solution: 'Not available' }]}
+      onChange={vi.fn()} onNew={vi.fn()} onRetry={vi.fn()} />);
+    expect(screen.getByText('Not available')).toBeInTheDocument();
+    expect(screen.getByText('Secret answer')).toBeInTheDocument();
+    expect(screen.queryByText('Secret worked solution')).not.toBeInTheDocument();
+  });
   it('renders the full paper and locks all support until finish plus explicit reveal', () => {
     render(<Paper />);
     expect(screen.getByText('First problem')).toBeInTheDocument();

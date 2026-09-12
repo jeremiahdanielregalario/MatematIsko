@@ -26,6 +26,12 @@ function renderAt(level: 'hidden' | 'hint' | 'answer' | 'solution') {
 }
 
 describe('RevealSection', () => {
+  it('shows the restricted solution message without removing the answer', () => {
+    render(<RevealSection level="solution" onReveal={vi.fn()} hint="Hint" answer="Answer"
+      solution="Not available" />);
+    expect(screen.getByText('Not available')).toBeInTheDocument();
+    expect(screen.getByText('Answer', { selector: 'p' })).toBeInTheDocument();
+  });
   it('shows action buttons but no panels when hidden', () => {
     renderAt('hidden');
     expect(screen.getByRole('button', { name: /show hint/i })).toBeInTheDocument();

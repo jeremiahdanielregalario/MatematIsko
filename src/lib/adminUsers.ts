@@ -3,7 +3,7 @@ import type { Profile } from '@/types';
 
 export type AdminProfileDraft = Pick<
   Profile,
-  'full_name' | 'degree_program' | 'year_level' | 'upmmc_member'
+  'full_name' | 'degree_program' | 'year_level' | 'upmmc_member' | 'upmmc_verified'
 >;
 export type AdminUser = Profile & { is_admin?: boolean; is_super_admin?: boolean };
 export interface AdminUsersPage {
@@ -26,6 +26,7 @@ export function profileDraft(profile: AdminProfileDraft): AdminProfileDraft {
     degree_program: profile.degree_program,
     year_level: profile.year_level,
     upmmc_member: profile.upmmc_member,
+    upmmc_verified: profile.upmmc_verified ?? false,
   };
 }
 
@@ -47,12 +48,13 @@ export async function adminUpdateProfile(
   draft: AdminProfileDraft,
 ): Promise<Profile> {
   if (!isSupabaseConfigured || !supabase) throw new Error('Supabase is not configured.');
-  const { data, error } = await supabase.rpc('admin_update_profile', {
+  const { data, error } = await supabase.rpc('admin_update_profile_verified', {
     p_id: original.id,
     p_full_name: draft.full_name?.trim() || null,
     p_degree_program: draft.degree_program?.trim() || null,
     p_year_level: draft.year_level || null,
     p_upmmc_member: draft.upmmc_member,
+    p_upmmc_verified: draft.upmmc_verified ?? false,
     p_expected: profileDraft(original),
   });
   if (error) throw new Error(error.message);

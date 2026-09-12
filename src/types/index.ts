@@ -10,6 +10,7 @@ export interface Profile {
   degree_program: string | null;
   year_level: string | null;
   upmmc_member: boolean;
+  upmmc_verified?: boolean;
   created_at: string;
 }
 

@@ -7,7 +7,7 @@ import { useAuth } from '@/hooks/useAuth';
  * email is not allowed (authError is set by the AuthProvider in that case).
  */
 export function RequireAuth() {
-  const { user, loading, authError } = useAuth();
+  const { user, profile, isAdmin, loading, authError } = useAuth();
   const location = useLocation();
 
   if (loading) {
@@ -18,5 +18,5 @@ export function RequireAuth() {
     return <Navigate to="/" replace state={{ from: location.pathname }} />;
   }
 
-  return <Outlet />;
+  return <Outlet key={`${user.id}:${Boolean(profile?.upmmc_verified)}:${isAdmin}`} />;
 }

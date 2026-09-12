@@ -102,6 +102,11 @@ export function ProfilePage() {
       value: profile?.upmmc_member ? 'Yes' : 'No',
       icon: <ShieldCheck className="size-4" />,
     },
+    {
+      label: 'UPMMC verification',
+      value: profile?.upmmc_verified ? 'Verified by an administrator' : 'Not verified',
+      icon: <ShieldCheck className="size-4" />,
+    },
   ];
 
   return (
