@@ -73,7 +73,7 @@ export function QuestionCard({
           <span>
             {question.exam_name} · No. {question.question_number} · {question.year}
           </span>
-          {status !== 'unseen' ? (
+          {!onSetStatus && status !== 'unseen' ? (
             <Badge variant={status === 'mastered' ? 'success' : 'warning'}>
               {status === 'mastered' ? (
                 <>
