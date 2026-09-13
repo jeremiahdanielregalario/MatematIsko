@@ -9,7 +9,13 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/cn';
 
@@ -50,12 +56,7 @@ const THEOREM_CATEGORIES = [
 // ReportDialog
 // ---------------------------------------------------------------------------
 
-export function ReportDialog({
-  open,
-  onOpenChange,
-  kind,
-  onSubmit,
-}: ReportDialogProps) {
+export function ReportDialog({ open, onOpenChange, kind, onSubmit }: ReportDialogProps) {
   const categories = kind === 'question' ? QUESTION_CATEGORIES : THEOREM_CATEGORIES;
   const [category, setCategory] = useState(categories[0].value);
   const [description, setDescription] = useState('');
@@ -107,6 +108,12 @@ export function ReportDialog({
           </div>
         ) : (
           <div className="space-y-4 pt-2">
+            {kind === 'question' && (
+              <p className="text-xs text-stone-500 dark:text-stone-400">
+                Only one open report per question and issue category is allowed. If that reason has
+                already been reported, please wait for it to be addressed.
+              </p>
+            )}
             <div className="space-y-1.5">
               <Label>What is the issue?</Label>
               <Select value={category} onValueChange={setCategory}>
@@ -135,7 +142,10 @@ export function ReportDialog({
             </div>
 
             {error ? (
-              <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/50 dark:text-red-400">
+              <p
+                role="alert"
+                className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/50 dark:text-red-400"
+              >
                 {error}
               </p>
             ) : null}
@@ -173,7 +183,10 @@ export function ReportButton({ kind, onSubmit, className }: ReportButtonProps) {
       <Button
         variant="ghost"
         size="sm"
-        className={cn('text-stone-400 hover:text-stone-600 dark:text-stone-500 dark:hover:text-stone-300', className)}
+        className={cn(
+          'text-stone-400 hover:text-stone-600 dark:text-stone-500 dark:hover:text-stone-300',
+          className,
+        )}
         onClick={() => setOpen(true)}
       >
         <Flag className="size-3.5" />
