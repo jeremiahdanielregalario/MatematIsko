@@ -7,17 +7,31 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { MathRenderer } from '@/components/math/MathRenderer';
 import { cn } from '@/lib/cn';
-import { examEnded, formatExamTime, type ExamSession } from './exam';
+import {
+  replacementCandidates,
+  replaceExamQuestion,
+  examEnded,
+  formatExamTime,
+  type ExamSession,
+} from './exam';
 
 interface Props {
   session: ExamSession;
   questions: QuestionWithMeta[];
+  bank?: QuestionWithMeta[];
   onChange: (session: ExamSession) => void;
   onNew: () => void;
   onRetry: (ids: string[]) => void;
 }
 
-export function ExamPaper({ session, questions, onChange, onNew, onRetry }: Props) {
+export function ExamPaper({
+  session,
+  questions,
+  bank = questions,
+  onChange,
+  onNew,
+  onRetry,
+}: Props) {
   const [now, setNow] = useState(Date.now);
   const [confirmFinish, setConfirmFinish] = useState(false);
   const [confirmNew, setConfirmNew] = useState(false);
@@ -165,6 +179,7 @@ export function ExamPaper({ session, questions, onChange, onNew, onRetry }: Prop
       <ExamQuestions
         session={session}
         questions={questions}
+        bank={bank}
         onChange={onChange}
         ended={ended}
         revealed={revealed}
@@ -177,7 +192,9 @@ export function ExamPaper({ session, questions, onChange, onNew, onRetry }: Prop
       <Dialog open={confirmFinish && !ended} onOpenChange={setConfirmFinish}>
         <DialogContent>
           <div className="p-6">
-            <DialogTitle className="font-serif text-xl font-semibold">Finish this paper?</DialogTitle>
+            <DialogTitle className="font-serif text-xl font-semibold">
+              Finish this paper?
+            </DialogTitle>
             <DialogDescription className="mt-2 text-sm text-stone-500">
               You marked {session.attempted.length} of {questions.length} questions attempted, with{' '}
               {session.flagged.length} flagged. Finishing locks your responses and stops the timer.
@@ -202,10 +219,12 @@ export function ExamPaper({ session, questions, onChange, onNew, onRetry }: Prop
       <Dialog open={confirmNew} onOpenChange={setConfirmNew}>
         <DialogContent>
           <div className="p-6">
-            <DialogTitle className="font-serif text-xl font-semibold">Start a new paper?</DialogTitle>
+            <DialogTitle className="font-serif text-xl font-semibold">
+              Start a new paper?
+            </DialogTitle>
             <DialogDescription className="mt-2 text-sm text-stone-500">
-              This replaces the paper and its notes saved in this tab. Copy any notes you want to keep
-              first.
+              This replaces the paper and its notes saved in this tab. Copy any notes you want to
+              keep first.
             </DialogDescription>
             <div className="mt-5 flex gap-2">
               <Button variant="outline" onClick={() => setConfirmNew(false)}>
@@ -227,7 +246,13 @@ const ExamQuestions = memo(function ExamQuestions({
   onChange,
   ended,
   revealed,
-}: Pick<Props, 'session' | 'questions' | 'onChange'> & { ended: boolean; revealed: boolean }) {
+  bank = questions,
+}: Pick<Props, 'session' | 'questions' | 'onChange' | 'bank'> & {
+  ended: boolean;
+  revealed: boolean;
+}) {
+  const [replacing, setReplacing] = useState<string | null>(null);
+  const [notice, setNotice] = useState('');
   const edit = (patch: Partial<ExamSession>) => {
     if (!examEnded(session, Date.now())) onChange({ ...session, ...patch });
   };
@@ -236,6 +261,9 @@ const ExamQuestions = memo(function ExamQuestions({
 
   return (
     <>
+      <p role="status" className="text-sm text-stone-600 dark:text-stone-400">
+        {notice}
+      </p>
       {questions.map((question, index) => (
         <Card key={question.id}>
           <CardContent className="space-y-5 p-5 sm:p-7">
@@ -296,6 +324,24 @@ const ExamQuestions = memo(function ExamQuestions({
                 Return to this question
               </label>
             </div>
+            {!ended && (
+              <div className="space-y-1">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  aria-label={`Replace question ${index + 1}`}
+                  disabled={!replacementCandidates(session, bank, question.id).length}
+                  onClick={() => setReplacing(question.id)}
+                >
+                  Replace question
+                </Button>
+                <p className="text-xs text-stone-500 dark:text-stone-400">
+                  {replacementCandidates(session, bank, question.id).length
+                    ? 'Swap for another question from this topic. The timer keeps running.'
+                    : 'No other questions from this topic are available outside your paper.'}
+                </p>
+              </div>
+            )}
             {revealed && (
               <section
                 className="space-y-4 border-t border-stone-200 pt-5 dark:border-stone-700"
@@ -349,6 +395,49 @@ const ExamQuestions = memo(function ExamQuestions({
           </CardContent>
         </Card>
       ))}
+      <Dialog
+        open={replacing !== null && !ended}
+        onOpenChange={(open) => {
+          if (!open) setReplacing(null);
+        }}
+      >
+        <DialogContent>
+          <div className="p-6">
+            <DialogTitle className="font-serif text-xl font-semibold">
+              Replace this question?
+            </DialogTitle>
+            <DialogDescription className="mt-2 text-sm text-stone-500">
+              Question {session.ids.indexOf(replacing ?? '') + 1} will be swapped for a random
+              question from the same course and topic that is not already on this paper. Its working
+              notes, attempted mark and flag will be cleared. Your other questions and time
+              remaining stay the same.
+            </DialogDescription>
+            <div className="mt-5 flex flex-wrap justify-end gap-2">
+              <Button variant="outline" onClick={() => setReplacing(null)}>
+                Keep question
+              </Button>
+              <Button
+                onClick={() => {
+                  if (!replacing) return;
+                  const next = replaceExamQuestion(session, bank, replacing);
+                  if (next !== session) {
+                    onChange(next);
+                    setNotice(
+                      `Question ${session.ids.indexOf(replacing) + 1} replaced. Your timer is unchanged.`,
+                    );
+                  } else
+                    setNotice(
+                      'Question could not be replaced. The paper has ended or no replacement is available.',
+                    );
+                  setReplacing(null);
+                }}
+              >
+                Replace & clear working
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 });

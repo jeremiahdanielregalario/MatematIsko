@@ -57,6 +57,7 @@ export function ExamWorkspace({
           key={session.startedAt}
           session={session}
           questions={paper}
+          bank={questions}
           onChange={save}
           onNew={() => save(null)}
           onRetry={(ids) => save(createExam(ids, (session.deadline - session.startedAt) / 60_000))}

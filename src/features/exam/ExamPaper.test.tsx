@@ -47,11 +47,71 @@ afterEach(() => {
   vi.useRealTimers();
   sessionStorage.clear();
 });
+
+it('confirms replacement, clears only replaced work and persists the new paper', () => {
+  const key = 'exam-replace';
+  const spare = { ...questions[0], id: 'spare', title: 'Replacement problem' };
+  const initial = {
+    ...createExam(['a', 'b'], 20),
+    notes: { a: 'Old work', b: 'Keep work' },
+    flagged: ['a'],
+    attempted: ['a'],
+  };
+  sessionStorage.setItem(key, JSON.stringify(initial));
+  const view = render(
+    <ExamWorkspace storageKey={key} questions={[...questions, spare]} courses={[]} />,
+  );
+  expect(screen.getByRole('button', { name: 'Replace question 2' })).toBeDisabled();
+  fireEvent.click(screen.getByRole('button', { name: 'Replace question 1' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Keep question' }));
+  expect(screen.getByDisplayValue('Old work')).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Replace question 1' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Replace & clear working' }));
+  expect(screen.getByText('Replacement problem')).toBeInTheDocument();
+  expect(screen.queryByText('First problem')).not.toBeInTheDocument();
+  expect(screen.getByDisplayValue('Keep work')).toBeInTheDocument();
+  expect(screen.queryByText('Secret answer')).not.toBeInTheDocument();
+  const saved = JSON.parse(sessionStorage.getItem(key)!);
+  expect(saved.ids).toEqual(['spare', 'b']);
+  expect(saved.deadline).toBe(initial.deadline);
+  expect(saved.attempted).toEqual([]);
+  expect(saved.flagged).toEqual([]);
+  view.unmount();
+  render(<ExamWorkspace storageKey={key} questions={[...questions, spare]} courses={[]} />);
+  expect(screen.getByText('Replacement problem')).toBeInTheDocument();
+});
+
+it('rejects a replacement confirmed after the deadline before a timer tick', () => {
+  vi.useFakeTimers();
+  const initial = createExam(['a', 'b'], 5);
+  const onChange = vi.fn();
+  render(
+    <ExamPaper
+      session={initial}
+      questions={questions}
+      bank={[...questions, { ...questions[0], id: 'spare' }]}
+      onChange={onChange}
+      onNew={vi.fn()}
+      onRetry={vi.fn()}
+    />,
+  );
+  fireEvent.click(screen.getByRole('button', { name: 'Replace question 1' }));
+  vi.setSystemTime(initial.deadline);
+  fireEvent.click(screen.getByRole('button', { name: 'Replace & clear working' }));
+  expect(onChange).not.toHaveBeenCalled();
+});
 describe('exam review workflow', () => {
   it('preserves server-redacted solutions during completed-paper review', () => {
     const session = { ...createExam(['a'], 45), finishedAt: Date.now(), revealed: true };
-    render(<ExamPaper session={session} questions={[{ ...questions[0], solution: 'Not available' }]}
-      onChange={vi.fn()} onNew={vi.fn()} onRetry={vi.fn()} />);
+    render(
+      <ExamPaper
+        session={session}
+        questions={[{ ...questions[0], solution: 'Not available' }]}
+        onChange={vi.fn()}
+        onNew={vi.fn()}
+        onRetry={vi.fn()}
+      />,
+    );
     expect(screen.getByText('Not available')).toBeInTheDocument();
     expect(screen.getByText('Secret answer')).toBeInTheDocument();
     expect(screen.queryByText('Secret worked solution')).not.toBeInTheDocument();

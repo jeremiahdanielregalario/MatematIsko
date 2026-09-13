@@ -58,6 +58,44 @@ export function examEnded(session: ExamSession, now: number) {
   return session.finishedAt !== null || now >= session.deadline;
 }
 
+export function replacementCandidates(session: ExamSession, bank: QuestionWithMeta[], id: string) {
+  const current = bank.find((question) => question.id === id);
+  if (!current || !session.ids.includes(id)) return [];
+  return [
+    ...new Map(
+      bank
+        .filter(
+          (question) =>
+            question.course_id === current.course_id &&
+            question.topic_id === current.topic_id &&
+            !session.ids.includes(question.id),
+        )
+        .map((question) => [question.id, question]),
+    ).values(),
+  ];
+}
+
+/** Replace one slot without changing the clock or carrying work onto a different problem. */
+export function replaceExamQuestion(
+  session: ExamSession,
+  bank: QuestionWithMeta[],
+  id: string,
+  now = Date.now(),
+): ExamSession {
+  if (examEnded(session, now)) return session;
+  const candidates = replacementCandidates(session, bank, id);
+  const replacement = candidates[Math.floor(Math.random() * candidates.length)];
+  if (!replacement) return session;
+  return {
+    ...session,
+    ids: session.ids.map((value) => (value === id ? replacement.id : value)),
+    notes: Object.fromEntries(Object.entries(session.notes).filter(([key]) => key !== id)),
+    ratings: Object.fromEntries(Object.entries(session.ratings).filter(([key]) => key !== id)),
+    attempted: session.attempted.filter((value) => value !== id),
+    flagged: session.flagged.filter((value) => value !== id),
+  };
+}
+
 export function formatExamTime(milliseconds: number) {
   const seconds = Math.max(0, Math.ceil(milliseconds / 1000));
   return `${Math.floor(seconds / 60)

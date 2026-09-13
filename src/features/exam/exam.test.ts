@@ -1,6 +1,14 @@
 import { describe, expect, it, vi, afterEach } from 'vitest';
 import type { QuestionWithMeta } from '@/types';
-import { createExam, examEnded, formatExamTime, parseExam, selectExamQuestions } from './exam';
+import {
+  replacementCandidates,
+  replaceExamQuestion,
+  createExam,
+  examEnded,
+  formatExamTime,
+  parseExam,
+  selectExamQuestions,
+} from './exam';
 const bank = Array.from(
   { length: 12 },
   (_, i) => ({ id: String(i), topic_id: i < 10 ? 'a' : 'b' }) as QuestionWithMeta,
@@ -41,4 +49,36 @@ describe('exam clock and restore', () => {
       parseExam(JSON.stringify({ ...exam, deadline: exam.startedAt + 91 * 60_000 })),
     ).toBeNull();
   });
+});
+
+it('replaces one slot within its course/topic and preserves the clock and other work', () => {
+  const bank = [
+    { id: 'a', course_id: 'c', topic_id: 't' },
+    { id: 'b', course_id: 'c', topic_id: 't' },
+    { id: 'c', course_id: 'c', topic_id: 't' },
+    { id: 'wrong-course', course_id: 'other', topic_id: 't' },
+    { id: 'wrong-topic', course_id: 'c', topic_id: 'other' },
+  ] as QuestionWithMeta[];
+  const session = {
+    ...createExam(['a', 'b'], 20, 1000),
+    notes: { a: 'Discard', b: 'Keep' },
+    attempted: ['a', 'b'],
+    flagged: ['a'],
+  };
+  expect(replacementCandidates(session, bank, 'a').map((q) => q.id)).toEqual(['c']);
+  const next = replaceExamQuestion(session, bank, 'a', 2000);
+  expect(next.ids).toEqual(['c', 'b']);
+  expect(next.notes).toEqual({ b: 'Keep' });
+  expect(next.attempted).toEqual(['b']);
+  expect(next.flagged).toEqual([]);
+  expect(next.deadline).toBe(session.deadline);
+  expect(next.startedAt).toBe(session.startedAt);
+  expect(parseExam(JSON.stringify(next))).toEqual(next);
+  expect(session.ids).toEqual(['a', 'b']);
+  expect(replaceExamQuestion(session, bank, 'a', session.deadline)).toBe(session);
+  expect(replaceExamQuestion({ ...session, finishedAt: 1500 }, bank, 'a', 2000).ids).toEqual([
+    'a',
+    'b',
+  ]);
+  expect(replaceExamQuestion(session, bank.slice(0, 2), 'a', 2000)).toBe(session);
 });
