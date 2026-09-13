@@ -21,7 +21,6 @@ export function ReportEditor({
     theorem: Theorem | null;
   } | null>(null);
   const [error, setError] = useState('');
-  const [saved, setSaved] = useState(false);
   const [attempt, setAttempt] = useState(0);
   useEffect(() => {
     let active = true;
@@ -50,17 +49,9 @@ export function ReportEditor({
   return (
     <div className="mt-4 space-y-3 border-t border-stone-200 pt-4 dark:border-stone-700">
       <p className="text-sm text-stone-500">
-        Correct the content below, save, then mark the report resolved after reviewing the preview.
+        Review the preview and save your changes. The editor will close after saving; mark the
+        report resolved separately.
       </p>
-      {saved && (
-        <p
-          role="status"
-          className="rounded-lg bg-emerald-50 p-3 text-sm text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200"
-        >
-          Changes saved to the live site. Report status has not changed. Mark it resolved when your
-          review is complete.
-        </p>
-      )}
       {error ? (
         <div role="alert">
           {error}
@@ -81,10 +72,7 @@ export function ReportEditor({
           initial={data.question}
           courses={data.courses}
           topics={data.topics}
-          onSaved={(question) => {
-            setData({ ...data, question });
-            setSaved(true);
-          }}
+          onSaved={onClose}
           onCancel={onClose}
         />
       ) : data.theorem ? (
@@ -92,10 +80,7 @@ export function ReportEditor({
           initial={data.theorem}
           courses={data.courses}
           topics={data.topics}
-          onSaved={(theorem) => {
-            setData({ ...data, theorem });
-            setSaved(true);
-          }}
+          onSaved={onClose}
           onCancel={onClose}
         />
       ) : null}

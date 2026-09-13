@@ -323,7 +323,7 @@ Validated with synthetic notes at 375px and 1440px, in light/dark themes, includ
 
 ### 2026-09-12 — Report correction workspace
 
-Reports now expand an editor inside the report card, preserving the description while fetching the affected question/theorem directly by its stable ID. Saving retains the editor and displays confirmation; resolving remains an explicit separate operation through the existing report RPCs. Missing content and fetch failures have a retry state. No schema or permission changes.
+Reports now expand an editor inside the report card, preserving the description while fetching the affected question/theorem directly by its stable ID. Updated 2026-09-13: a successful question/theorem save closes the report editor automatically; failed saves retain the form and its error for retry; resolving remains an explicit separate operation through the existing report RPCs. Missing content and fetch failures have a retry state. No schema or permission changes.
 
 Question and theorem forms share MathEditor: labeled, resizable source fields; responsive source/student preview panels; selection-aware inline/display/fraction/root/aligned-equation insertion; and KaTeX error messages derived from rendered math. Preview toggles now control all fields (the old question toggle did not). Diagnostics identify parsed invalid equations, not mathematical correctness or every missing delimiter. Content continues through the existing MathRenderer and updates preserve IDs.
 
