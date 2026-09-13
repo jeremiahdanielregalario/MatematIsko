@@ -75,6 +75,12 @@ export function UserMenu() {
             </Link>
           </DropdownMenuItem>
         ) : null}
+        <DropdownMenuItem asChild>
+          <Link to="/dashboard?guide=1">
+            <UserRound className="size-4" />
+            Welcome guide
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuItem
           className="text-red-700 focus:text-red-800 dark:text-red-400 dark:focus:text-red-300"
           onSelect={() => void handleSignOut()}

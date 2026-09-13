@@ -10,6 +10,7 @@ import {
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/cn';
+import { WelcomeGuide } from '@/components/common/WelcomeGuide';
 import { Logo } from '@/components/Logo';
 import { CourseStudyModal } from '@/components/courses/CourseStudyModal';
 import { ThemeToggle } from './ThemeToggle';
@@ -35,7 +36,7 @@ function navLinkClass({ isActive }: { isActive: boolean }) {
 }
 
 export function AppShell() {
-  const { user, loading } = useAuth();
+  const { user, profile, loading, profileLoading, acknowledgeSignIn } = useAuth();
   const location = useLocation();
 
   return (
@@ -130,6 +131,14 @@ export function AppShell() {
       ) : null}
 
       <CourseStudyModal />
+      {user &&
+        !loading &&
+        !profileLoading &&
+        profile?.degree_program &&
+        profile?.year_level &&
+        location.pathname === '/dashboard' && (
+          <WelcomeGuide key={user.id} userId={user.id} onDismiss={acknowledgeSignIn} />
+        )}
     </div>
   );
 }

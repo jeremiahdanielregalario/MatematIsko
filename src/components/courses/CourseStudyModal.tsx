@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
+import { welcomePending } from '@/lib/welcomeGuide';
 import { useAuth } from '@/hooks/useAuth';
 import { useAsync } from '@/hooks/useAsync';
 import { getUserCourses } from '@/lib/db';
@@ -22,7 +23,14 @@ export function CourseStudyModal() {
   );
   const { data: courses, loading } = useAsync(fetchCourses);
 
-  if (adminLoading || !justSignedIn || !user || !profile?.degree_program || isAdmin) {
+  if (
+    adminLoading ||
+    !justSignedIn ||
+    !user ||
+    !profile?.degree_program ||
+    welcomePending(user.id) ||
+    isAdmin
+  ) {
     return null;
   }
 

@@ -8,7 +8,14 @@ import { Logo } from '@/components/Logo';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { setWelcomePending } from '@/lib/welcomeGuide';
 import { useAuth } from '@/hooks/useAuth';
 import { useCourses } from '@/hooks/useCourses';
 import { ensureProfile, setUserCourses, updateProfileOnboarding } from '@/lib/db';
@@ -91,7 +98,7 @@ const DEGREE_PROGRAMS = [
 ];
 
 export function OnboardingPage() {
-  const { user, profile, loading, profileLoading, refreshProfile } = useAuth();
+  const { user, profile, loading, profileLoading, refreshProfile, acknowledgeSignIn } = useAuth();
   const navigate = useNavigate();
   const { data: courses, loading: coursesLoading, error: coursesError, reload } = useCourses();
 
@@ -139,6 +146,8 @@ export function OnboardingPage() {
         upmmc_member: upmmcMember,
       });
       await setUserCourses(user.id, selectedCourseIds);
+      setWelcomePending(user.id, true);
+      acknowledgeSignIn();
       await refreshProfile();
       navigate('/dashboard', { replace: true });
     } catch (err) {
@@ -259,7 +268,11 @@ export function OnboardingPage() {
                 onClick={() => void handleSubmit()}
                 disabled={submitting || coursesLoading || Boolean(coursesError)}
               >
-                {submitting ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
+                {submitting ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <Save className="size-4" />
+                )}
                 {submitting ? 'Saving…' : 'Start reviewing'}
               </Button>
               <p className="flex items-center justify-center gap-1.5 text-center text-xs text-stone-400 dark:text-stone-500">
