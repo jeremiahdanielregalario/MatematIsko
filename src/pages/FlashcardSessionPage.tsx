@@ -28,9 +28,9 @@ function FlashcardDeck({ theorems, onRate, onFinish }: FlashcardSessionProps) {
   const [deck, setDeck] = useState(() => [...theorems]);
   const [index, setIndex] = useState(0);
   const [side, setSide] = useState<CardState>('front');
-  const [results, setResults] = useState<
-    { theorem: TheoremWithMeta; status: ProgressStatus }[]
-  >([]);
+  const [results, setResults] = useState<{ theorem: TheoremWithMeta; status: ProgressStatus }[]>(
+    [],
+  );
 
   const current = deck[index] ?? null;
   const remaining = deck.length - index;
@@ -141,10 +141,7 @@ function FlashcardDeck({ theorems, onRate, onFinish }: FlashcardSessionProps) {
             <X className="size-4" />
             Still learning
           </Button>
-          <Button
-            className="bg-emerald-600 hover:bg-emerald-700"
-            onClick={() => rate('mastered')}
-          >
+          <Button className="bg-emerald-600 hover:bg-emerald-700" onClick={() => rate('mastered')}>
             <Check className="size-4" />
             Got it
           </Button>
@@ -218,14 +215,17 @@ export function FlashcardSessionPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const courseId = searchParams.get('course') ?? undefined;
+  const theoremId = searchParams.get('theorem') ?? undefined;
   const { user } = useAuth();
 
   const { data: loaded, loading, error, reload } = useTheorems();
   const theorems = useMemo(() => {
     const all = loaded ?? [];
     const filtered = courseId ? all.filter((t) => t.course_id === courseId) : all;
-    return [...filtered].sort(() => Math.random() - 0.5);
-  }, [loaded, courseId]);
+    return theoremId
+      ? filtered.filter((theorem) => theorem.id === theoremId)
+      : [...filtered].sort(() => Math.random() - 0.5);
+  }, [loaded, courseId, theoremId]);
 
   const [finished, setFinished] = useState(false);
   const [lastResults, setLastResults] = useState<
@@ -235,7 +235,7 @@ export function FlashcardSessionPage() {
   useEffect(() => {
     setFinished(false);
     setLastResults([]);
-  }, [courseId]);
+  }, [courseId, theoremId]);
 
   const handleRate = useCallback(
     (theorem: TheoremWithMeta, status: ProgressStatus) => {
@@ -300,6 +300,7 @@ export function FlashcardSessionPage() {
       </div>
 
       <FlashcardDeck
+        key={`${courseId ?? 'all'}:${theoremId ?? 'all'}`}
         theorems={theorems}
         onRate={(theorem, status) => {
           setLastResults((r) => [...r, { theorem, status }]);

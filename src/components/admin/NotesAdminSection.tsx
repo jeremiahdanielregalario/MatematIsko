@@ -177,13 +177,20 @@ export function NotesAdminSection({ editId, onEditHandled }: NotesAdminSectionPr
             id="note-content"
             value={content}
             onChange={(e) => setContent(e.target.value)}
+            aria-describedby="note-environment-help"
             placeholder="# Section Title&#10;&#10;Your content here with $math$ and **bold**."
             className="mt-1 min-h-[200px] font-mono text-sm"
           />
+          <p
+            id="note-environment-help"
+            className="mt-2 text-xs leading-relaxed text-stone-500 dark:text-stone-400"
+          >
+            Use ### Theorem: Name, ### Definition: Name, or **Proof.** for highlighted blocks.
+            Matching theorem names link to flashcards in the same course. For a different title, use
+            ### Theorem: [Name](/theorems/THEOREM-ID), copying the ID from its theorem page URL.
+          </p>
         </div>
-        {saveError && (
-          <p className="text-sm text-red-600 dark:text-red-400">{saveError}</p>
-        )}
+        {saveError && <p className="text-sm text-red-600 dark:text-red-400">{saveError}</p>}
         <div className="flex items-center gap-2">
           <Button onClick={handleSave} disabled={saving}>
             {saving ? 'Saving...' : selected ? 'Update' : 'Create'}
@@ -199,7 +206,7 @@ export function NotesAdminSection({ editId, onEditHandled }: NotesAdminSectionPr
           <div className="rounded-lg border border-stone-200 bg-stone-50 p-4 dark:border-stone-700 dark:bg-stone-800">
             <p className="mb-2 text-xs font-medium text-stone-500 dark:text-stone-400">Preview</p>
             <div className="max-h-64 overflow-y-auto">
-              <MathRenderer>{content}</MathRenderer>
+              <MathRenderer noteEnvironments={{}}>{content}</MathRenderer>
             </div>
           </div>
         )}

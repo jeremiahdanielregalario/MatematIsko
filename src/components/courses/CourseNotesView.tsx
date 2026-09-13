@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { ArrowUp, BookOpen, Clock } from 'lucide-react';
 import { MathRenderer } from '@/components/math/MathRenderer';
 import { cn } from '@/lib/cn';
-import type { CourseNote } from '@/types';
+import type { CourseNote, TheoremWithMeta } from '@/types';
 
 interface Heading {
   id: string;
@@ -10,7 +10,7 @@ interface Heading {
   level: number;
 }
 
-function NoteArticle({ note }: { note: CourseNote }) {
+function NoteArticle({ note, theorems }: { note: CourseNote; theorems: TheoremWithMeta[] }) {
   const contentRef = useRef<HTMLDivElement>(null);
   const contentsRef = useRef<HTMLDetailsElement>(null);
   const [headings, setHeadings] = useState<Heading[]>([]);
@@ -178,7 +178,13 @@ function NoteArticle({ note }: { note: CourseNote }) {
             largeText && 'note-reading-large',
           )}
         >
-          <MathRenderer>{note.content}</MathRenderer>
+          <MathRenderer
+            noteEnvironments={{
+              theorems: theorems.filter((theorem) => theorem.course_id === note.course_id),
+            }}
+          >
+            {note.content}
+          </MathRenderer>
         </div>
         <footer className="border-t border-stone-200 px-4 py-5 dark:border-stone-800 sm:px-8">
           <button
@@ -206,11 +212,17 @@ function NoteArticle({ note }: { note: CourseNote }) {
   );
 }
 
-export function CourseNotesView({ notes }: { notes: CourseNote[] }) {
+export function CourseNotesView({
+  notes,
+  theorems = [],
+}: {
+  notes: CourseNote[];
+  theorems?: TheoremWithMeta[];
+}) {
   return (
     <div className="space-y-10">
       {notes.map((note) => (
-        <NoteArticle key={note.id} note={note} />
+        <NoteArticle key={note.id} note={note} theorems={theorems} />
       ))}
     </div>
   );

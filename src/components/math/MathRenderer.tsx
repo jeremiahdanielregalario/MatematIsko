@@ -5,6 +5,7 @@ import rehypeKatex from 'rehype-katex';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import { remarkDisplayMath } from './remarkDisplayMath';
+import { remarkNoteEnvironments, type NoteEnvironmentOptions } from './remarkNoteEnvironments';
 import { cn } from '@/lib/cn';
 import { decodeUnicodeEscapes } from '@/lib/unicode';
 
@@ -18,6 +19,7 @@ interface MathRendererProps {
   className?: string;
   /** Compact size used for card previews. */
   preview?: boolean;
+  noteEnvironments?: NoteEnvironmentOptions;
   /**
    * Render as inline content inside a heading/link.
    * Uses a `<span>` wrapper without block prose classes.
@@ -30,6 +32,7 @@ export function MathRenderer({
   className,
   preview = false,
   inline = false,
+  noteEnvironments,
 }: MathRendererProps) {
   const source = useMemo(() => decodeUnicodeEscapes(children), [children]);
   const rootRef = useRef<HTMLDivElement & HTMLSpanElement>(null);
@@ -88,7 +91,19 @@ export function MathRenderer({
       )}
     >
       <ReactMarkdown
-        remarkPlugins={[remarkMath, remarkGfm, remarkDisplayMath]}
+        remarkPlugins={[
+          remarkMath,
+          remarkGfm,
+          remarkDisplayMath,
+          ...(noteEnvironments
+            ? [
+                [remarkNoteEnvironments, noteEnvironments] as [
+                  typeof remarkNoteEnvironments,
+                  NoteEnvironmentOptions,
+                ],
+              ]
+            : []),
+        ]}
         rehypePlugins={[[rehypeKatex, { throwOnError: false }]]}
         disallowedElements={
           inline

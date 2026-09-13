@@ -314,3 +314,58 @@ html {
     scroll-margin-top: 10rem;
   }
 }
+.math-prose .note-environment {
+  --environment-accent: #9f3437;
+  --environment-bg: #fff7f7;
+  margin-block: 1.75rem;
+  padding: 1.25rem clamp(1rem, 3vw, 1.5rem);
+  border: 1px solid color-mix(in srgb, var(--environment-accent) 22%, transparent);
+  border-inline-start: 3px solid var(--environment-accent);
+  border-radius: 0.75rem;
+  background: var(--environment-bg);
+  min-width: 0;
+}
+.math-prose .note-environment-definition {
+  --environment-accent: #0f766e;
+  --environment-bg: #f0fdfa;
+}
+.math-prose .note-environment-proof {
+  --environment-accent: #78716c;
+  --environment-bg: #fafaf9;
+}
+.dark .math-prose .note-environment {
+  --environment-accent: #e8a1a3;
+  --environment-bg: #2b1d20;
+}
+.dark .math-prose .note-environment-definition {
+  --environment-accent: #5eead4;
+  --environment-bg: #152b28;
+}
+.dark .math-prose .note-environment-proof {
+  --environment-accent: #a8a29e;
+  --environment-bg: #242220;
+}
+.math-prose .note-environment > :first-child {
+  margin-top: 0;
+}
+.math-prose .note-environment > :last-child {
+  margin-bottom: 0;
+}
+.math-prose .note-environment > :is(h1, h2, h3, h4, h5, h6) {
+  color: var(--environment-accent);
+  font-family: var(--font-serif);
+}
+.math-prose .note-flashcard-link {
+  margin-top: 1.25rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid color-mix(in srgb, var(--environment-accent) 22%, transparent);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+}
+.math-prose .note-flashcard-link a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  color: var(--environment-accent);
+  text-underline-offset: 4px;
+}

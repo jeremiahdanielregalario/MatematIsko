@@ -5,10 +5,12 @@ import { ErrorState } from '@/components/common/ErrorState';
 import { LoadingState } from '@/components/common/LoadingState';
 import { CourseNotesView } from '@/components/courses/CourseNotesView';
 import { Button } from '@/components/ui/button';
+import { useTheorems } from '@/hooks/useTheorems';
 import { useCourseNotes } from '@/hooks/useCourseNotes';
 
 export function CourseNoteDetailPage() {
   const { courseId, noteId } = useParams<{ courseId: string; noteId: string }>();
+  const { data: theorems } = useTheorems();
   const { data: notes, loading, error, reload } = useCourseNotes(courseId);
 
   if (loading) return <LoadingState label="Loading note" />;
@@ -47,7 +49,7 @@ export function CourseNoteDetailPage() {
         Back to notes
       </Link>
 
-      <CourseNotesView notes={[note]} />
+      <CourseNotesView notes={[note]} theorems={theorems ?? []} />
       <nav aria-label="More course notes" className="grid gap-3 sm:grid-cols-2">
         {previous && (
           <Link
