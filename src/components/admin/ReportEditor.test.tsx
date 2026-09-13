@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { ReportEditor } from './ReportEditor';
 import { getQuestionById, getTheoremById } from '@/lib/db';
@@ -22,18 +22,48 @@ vi.mock('./TheoremForm', () => ({
     <button onClick={onSaved}>Save theorem</button>
   ),
 }));
+
+it('resolves only after saving and retries a failed resolution without saving again', async () => {
+  vi.mocked(getQuestionById).mockResolvedValue({ id: 'reported-id' } as never);
+  const close = vi.fn();
+  const resolve = vi
+    .fn()
+    .mockRejectedValueOnce(new Error('Network error'))
+    .mockResolvedValue(undefined);
+  render(
+    <ReportEditor kind="question" contentId="reported-id" onClose={close} onResolve={resolve} />,
+  );
+  const save = await screen.findByText('Save test content');
+  expect(resolve).not.toHaveBeenCalled();
+  fireEvent.click(save);
+  expect(await screen.findByRole('alert')).toHaveTextContent('Changes were saved');
+  expect(close).not.toHaveBeenCalled();
+  expect(screen.queryByText('Save test content')).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Retry resolving report' }));
+  await waitFor(() => expect(close).toHaveBeenCalledOnce());
+  expect(resolve).toHaveBeenCalledTimes(2);
+});
 describe('ReportEditor', () => {
   it('loads the exact reported question and closes after a successful save', async () => {
     vi.mocked(getQuestionById).mockResolvedValue({ id: 'reported-id' } as never);
     const close = vi.fn();
-    render(<ReportEditor kind="question" contentId="reported-id" onClose={close} />);
+    render(
+      <ReportEditor
+        kind="question"
+        contentId="reported-id"
+        onClose={close}
+        onResolve={vi.fn().mockResolvedValue(undefined)}
+      />,
+    );
     fireEvent.click(await screen.findByText('Save test content'));
     expect(getQuestionById).toHaveBeenCalledWith('reported-id');
-    expect(close).toHaveBeenCalledOnce();
+    await waitFor(() => expect(close).toHaveBeenCalledOnce());
   });
   it('shows an actionable error when reported content no longer exists', async () => {
     vi.mocked(getQuestionById).mockResolvedValue(null);
-    render(<ReportEditor kind="question" contentId="missing" onClose={() => {}} />);
+    render(
+      <ReportEditor kind="question" contentId="missing" onClose={() => {}} onResolve={vi.fn()} />,
+    );
     expect(await screen.findByRole('alert')).toHaveTextContent('no longer available');
     expect(screen.getByRole('button', { name: 'Retry' })).toBeInTheDocument();
   });
@@ -42,9 +72,16 @@ describe('ReportEditor', () => {
 it('closes the theorem editor after a successful save', async () => {
   vi.mocked(getTheoremById).mockResolvedValue({ id: 'theorem-id' } as never);
   const close = vi.fn();
-  render(<ReportEditor kind="theorem" contentId="theorem-id" onClose={close} />);
+  render(
+    <ReportEditor
+      kind="theorem"
+      contentId="theorem-id"
+      onClose={close}
+      onResolve={vi.fn().mockResolvedValue(undefined)}
+    />,
+  );
   const save = await screen.findByText('Save theorem');
   expect(close).not.toHaveBeenCalled();
   fireEvent.click(save);
-  expect(close).toHaveBeenCalledOnce();
+  await waitFor(() => expect(close).toHaveBeenCalledOnce());
 });

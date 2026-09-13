@@ -9,10 +9,12 @@ export function ReportEditor({
   kind,
   contentId,
   onClose,
+  onResolve,
 }: {
   kind: 'question' | 'theorem';
   contentId: string;
   onClose: () => void;
+  onResolve: () => Promise<void>;
 }) {
   const [data, setData] = useState<{
     courses: Course[];
@@ -20,6 +22,22 @@ export function ReportEditor({
     question: Question | null;
     theorem: Theorem | null;
   } | null>(null);
+  const [saved, setSaved] = useState(false);
+  const [resolving, setResolving] = useState(false);
+  const [resolveError, setResolveError] = useState('');
+  const resolveSaved = async () => {
+    setSaved(true);
+    setResolving(true);
+    setResolveError('');
+    try {
+      await onResolve();
+      onClose();
+    } catch (err) {
+      setResolveError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setResolving(false);
+    }
+  };
   const [error, setError] = useState('');
   const [attempt, setAttempt] = useState(0);
   useEffect(() => {
@@ -49,10 +67,23 @@ export function ReportEditor({
   return (
     <div className="mt-4 space-y-3 border-t border-stone-200 pt-4 dark:border-stone-700">
       <p className="text-sm text-stone-500">
-        Review the preview and save your changes. The editor will close after saving; mark the
-        report resolved separately.
+        Review the preview and save your changes. Saving also resolves this report and closes the
+        editor.
       </p>
-      {error ? (
+      {saved ? (
+        <div className="space-y-3">
+          {resolveError ? (
+            <p role="alert">
+              Changes were saved, but the report could not be marked resolved: {resolveError}
+            </p>
+          ) : (
+            <p role="status">Changes saved. Resolving report…</p>
+          )}
+          <Button disabled={resolving} onClick={() => void resolveSaved()}>
+            {resolving ? 'Resolving…' : 'Retry resolving report'}
+          </Button>
+        </div>
+      ) : error ? (
         <div role="alert">
           {error}
           <Button
@@ -72,7 +103,7 @@ export function ReportEditor({
           initial={data.question}
           courses={data.courses}
           topics={data.topics}
-          onSaved={onClose}
+          onSaved={() => void resolveSaved()}
           onCancel={onClose}
         />
       ) : data.theorem ? (
@@ -80,7 +111,7 @@ export function ReportEditor({
           initial={data.theorem}
           courses={data.courses}
           topics={data.topics}
-          onSaved={onClose}
+          onSaved={() => void resolveSaved()}
           onCancel={onClose}
         />
       ) : null}

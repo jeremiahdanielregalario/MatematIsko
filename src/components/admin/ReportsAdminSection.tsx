@@ -31,9 +31,10 @@ interface QuestionReportItemProps {
   report: QuestionReportRow;
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
+  onResolve: (id: string) => Promise<void>;
 }
 
-function QuestionReportItem({ report, onToggle, onDelete }: QuestionReportItemProps) {
+function QuestionReportItem({ report, onToggle, onDelete, onResolve }: QuestionReportItemProps) {
   const [editing, setEditing] = useState(false);
   return (
     <div className="rounded-lg border border-stone-200 bg-white p-4 dark:border-stone-800 dark:bg-stone-900">
@@ -105,6 +106,7 @@ function QuestionReportItem({ report, onToggle, onDelete }: QuestionReportItemPr
           kind="question"
           contentId={report.question_id}
           onClose={() => setEditing(false)}
+          onResolve={() => onResolve(report.id)}
         />
       )}
     </div>
@@ -115,9 +117,10 @@ interface TheoremReportItemProps {
   report: TheoremReportRow;
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
+  onResolve: (id: string) => Promise<void>;
 }
 
-function TheoremReportItem({ report, onToggle, onDelete }: TheoremReportItemProps) {
+function TheoremReportItem({ report, onToggle, onDelete, onResolve }: TheoremReportItemProps) {
   const [editing, setEditing] = useState(false);
   return (
     <div className="rounded-lg border border-stone-200 bg-white p-4 dark:border-stone-800 dark:bg-stone-900">
@@ -189,6 +192,7 @@ function TheoremReportItem({ report, onToggle, onDelete }: TheoremReportItemProp
           kind="theorem"
           contentId={report.theorem_id}
           onClose={() => setEditing(false)}
+          onResolve={() => onResolve(report.id)}
         />
       )}
     </div>
@@ -339,6 +343,10 @@ export function ReportsAdminSection() {
               <QuestionReportItem
                 key={report.id}
                 report={report}
+                onResolve={async (id) => {
+                  await adminResolveReport('question_reports', id);
+                  fetchReports(statusFilter);
+                }}
                 onToggle={(id) => handleToggle('question_reports', id)}
                 onDelete={(id) => handleDelete('question_reports', id)}
               />
@@ -357,6 +365,10 @@ export function ReportsAdminSection() {
             <TheoremReportItem
               key={report.id}
               report={report}
+              onResolve={async (id) => {
+                await adminResolveReport('theorem_reports', id);
+                fetchReports(statusFilter);
+              }}
               onToggle={(id) => handleToggle('theorem_reports', id)}
               onDelete={(id) => handleDelete('theorem_reports', id)}
             />
