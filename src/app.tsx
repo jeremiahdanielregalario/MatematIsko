@@ -18,6 +18,7 @@ import { NotFoundPage } from '@/pages/NotFoundPage';
 import { OnboardingPage } from '@/pages/OnboardingPage';
 import { PracticePage } from '@/pages/PracticePage';
 import { ExamPage } from '@/pages/ExamPage';
+import { ContributionsPage } from '@/pages/ContributionsPage';
 import { ProfilePage } from '@/pages/ProfilePage';
 import { QuestionDetailPage } from '@/pages/QuestionDetailPage';
 import { TheoremsPage } from '@/pages/TheoremsPage';
@@ -57,6 +58,7 @@ export function App() {
                   <Route path="/bookmarks" element={<BookmarksPage />} />
                   <Route path="/blogs/new" element={<WriteBlogPage />} />
                   <Route path="/profile" element={<ProfilePage />} />
+                  <Route path="/contributions" element={<ContributionsPage />} />
                   <Route
                     path="/admin"
                     element={

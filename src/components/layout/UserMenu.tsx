@@ -1,4 +1,4 @@
-import { LogOut, Shield, UserRound } from 'lucide-react';
+import { LogOut, PenLine, Shield, UserRound } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/cn';
@@ -66,6 +66,9 @@ export function UserMenu() {
             <UserRound className="size-4" />
             Profile
           </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link to="/contributions"><PenLine className="size-4" />Contributions</Link>
         </DropdownMenuItem>
         {!adminLoading && isAdmin ? (
           <DropdownMenuItem asChild>

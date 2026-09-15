@@ -61,6 +61,7 @@ export function CoursesPage() {
               : 'Browse the available math courses.'}
           </p>
         </div>
+        <Button variant="outline" asChild><Link to="/contributions">Contribute questions or notes</Link></Button>
         <p className="text-sm text-stone-500 dark:text-stone-400">
           {stats.total} questions · {stats.mastered} mastered
         </p>

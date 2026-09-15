@@ -81,7 +81,8 @@ Most reads use `db.ts`; course notes, blog pages, and blog administration also c
 | Signed in + onboarding | `/practice`, `/bookmarks` | Practice sessions and saved questions |
 | Signed in + onboarding | `/practice/exam` | Topic-based timed quiz/exam papers, locked responses, and post-exam self-review |
 | Signed in + onboarding | `/blogs/new`, `/profile` | Community submission and profile |
-| Above + admin | `/admin` | Courses, questions/topics, theorems, notes, blogs, reports, app users, course/progress monitoring and resets, and admin grants |
+| Signed in + onboarding | `/contributions` | Submit questions/course notes, track review, and revise rejected submissions |
+| Above + admin | `/admin` | Courses, questions/topics, theorems, notes, blogs, reports, contribution review, app users, course/progress monitoring and resets, and admin grants |
 | Fallback | `*` | Not-found page |
 
 Do not resurrect README-only page names as if routes exist. The current router has no standalone `/question-bank` or `/progress` page.
@@ -102,6 +103,7 @@ Do not resurrect README-only page names as if routes exist. The current router h
 | `course_notes` | Course, title, Markdown content, ordering |
 | `question_reports`, `theorem_reports` | User-submitted category/description; open or resolved |
 | `blog_posts` | Unique slug, title/excerpt/content, author, optional image, publication flag, approval status |
+| `content_contributions` | Private immutable question/note submissions, author/name snapshot, course, typed JSON payload, review status/feedback/reviewer, and published content ID |
 
 Shared enums: difficulty = `easy | medium | hard`; progress = `unseen | learning | mastered`; blog approval = `pending | approved | rejected`.
 
@@ -423,3 +425,18 @@ The shared course provider previously bypassed saved selections for every admini
 Profile and onboarding now save through the course provider, which publishes successful selections immediately and invalidates older scope reads instead of requiring a second fetch. Initial scope loading blocks study consumers from querying an unrestricted bank. A rejected save does not publish the new selection; the existing nontransactional delete/insert persistence limitation remains. No SQL migration is required. Changes are local and require frontend deployment.
 
 Validation: all 265 tests in 39 files passed with configured coverage thresholds, including profile-to-Courses navigation, updated shared question queries, administrator study preferences, unrestricted admin management queries, failed saves and stale refresh rejection. TypeScript, affected-file ESLint, production build and diff whitespace checks passed. No authenticated hosted-browser check or deployment was performed.
+
+
+### 2026-09-15 — Moderated question and course-note contributions
+
+Signed-in, onboarded users can open `/contributions` from the account menu, Courses, or a course-specific link (which prefills the course in a new submission). They can submit a question using existing course/topics, difficulty, source/exam name, year, number, prompt, optional hint, answer and solution, or submit titled Markdown course notes. No student topic-creation or live-content editing permission is added. MathEditor provides source tools and live MathRenderer previews; note previews include the same environment panels as the note reader. Validation requires complete content and correct separate-line display delimiters; titles use inline math. The browser retains in-progress form state only while mounted, with no autosave or file-upload workflow.
+
+The personal list shows pending/approved/rejected submissions, complete submitted text, review feedback and approved-content links, with status filters and 20-item pagination. Authors can copy a rejected submission into a revision and submit it as a new pending record, retaining the original decision. Pending and approved submission snapshots are immutable. Published links retain the existing course-scope and verified-solution rules; authors may need to select that course to study it. Administrators review submissions at `/admin?tab=contributions`, initially filtered to pending, with full content previews and Approve and publish / Reject submission. Rejection requires feedback. Approved content can subsequently be edited in the existing admin content editors; those edits do not rewrite the original submission.
+
+Migration `20260915000001_content_contributions.sql` creates a separate private queue rather than adding moderation flags to already-readable study tables. RLS permits only the author and administrators to read submissions. Direct queue writes are revoked for browser roles. `submit_content_contribution` derives author identity from Auth, snapshots the profile display name for reviewers, validates question course/topic relationships and required payload fields, and strips unknown fields. Submissions never write to published tables. Request UUIDs make retries of the same payload idempotent; changed content uses a new UUID in the form. The public study bank does not expose the queue or its private reviewer/author metadata.
+
+`admin_review_contribution` checks database admin authorization, locks the pending row, and publishes a new stable question/note ID and review decision in the same transaction. Repeat approvals return the existing decision instead of duplicating content; conflicting decisions fail. Notes append to the course's ordering, serializing contribution approvals on the course row. Failure to publish leaves the submission pending. Rejected submissions never enter the library. Course/author deletion removes their queue records by FK cascade; author deletion leaves already-published content intact. Existing content IDs, bookmarks, progress, blog policies, and solution access are unchanged. This does not repair the separate historical blog-policy enforcement gap.
+
+Rollout: apply this new migration before deploying the frontend. No existing migration was changed. No migration, frontend deployment, real user submission or production moderation action was performed during implementation.
+
+Validation: all 286 tests in 43 files passed with configured coverage thresholds. After aligning note-form environment previews, all 19 targeted contribution/MathEditor tests passed again. TypeScript, affected-file ESLint, production build and diff whitespace checks passed. `scripts/check-contributions.mjs` passed isolated PGlite upgrade plus clean replay of 83 ordered migrations, author/other-account/anonymous/admin boundaries, direct-write denial, payload validation, retry identity, approval/rejection conflicts and publication rollback. Synthetic note-form and admin-review previews were inspected at desktop and 375px mobile widths in light theme; mobile had no horizontal overflow and zero KaTeX errors. No authenticated hosted-browser journey was exercised.

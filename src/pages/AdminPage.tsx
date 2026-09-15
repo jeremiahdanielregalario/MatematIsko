@@ -8,9 +8,10 @@ import { CourseAdminSection } from '@/components/admin/CourseAdminSection';
 import { ReportsAdminSection } from '@/components/admin/ReportsAdminSection';
 import { NotesAdminSection } from '@/components/admin/NotesAdminSection';
 import { BlogAdminSection } from '@/components/admin/BlogAdminSection';
+import { ContributionsPage } from './ContributionsPage';
 import { UsersAdminSection } from '@/components/admin/UsersAdminSection';
 
-type AdminTab = 'courses' | 'questions' | 'theorems' | 'notes' | 'blogs' | 'reports' | 'users';
+type AdminTab = 'courses' | 'questions' | 'theorems' | 'notes' | 'blogs' | 'reports' | 'users' | 'contributions';
 
 const TABS: { value: AdminTab; label: string; icon: typeof BookOpenText }[] = [
   { value: 'courses', label: 'Courses', icon: GraduationCap },
@@ -19,10 +20,11 @@ const TABS: { value: AdminTab; label: string; icon: typeof BookOpenText }[] = [
   { value: 'notes', label: 'Notes', icon: FileText },
   { value: 'blogs', label: 'Blogs', icon: PenLine },
   { value: 'reports', label: 'Reports', icon: Flag },
+  { value: 'contributions', label: 'Contributions', icon: PenLine },
   { value: 'users', label: 'Users', icon: Users },
 ];
 
-const VALID_TABS = new Set<AdminTab>(['courses', 'questions', 'theorems', 'notes', 'blogs', 'reports', 'users']);
+const VALID_TABS = new Set<AdminTab>(['courses', 'questions', 'theorems', 'notes', 'blogs', 'reports', 'users', 'contributions']);
 
 function parseTab(value: string | null): AdminTab {
   return value !== null && VALID_TABS.has(value as AdminTab) ? (value as AdminTab) : 'questions';
@@ -98,6 +100,7 @@ export function AdminPage() {
       )}
       {tab === 'reports' && <ReportsAdminSection />}
       {tab === 'users' && <UsersAdminSection />}
+      {tab === 'contributions' && <ContributionsPage admin />}
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import katex from 'katex';
 import { useEffect, useId, useRef, useState } from 'react';
+import type { NoteEnvironmentOptions } from '@/components/math/remarkNoteEnvironments';
 import { MathRenderer } from '@/components/math/MathRenderer';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -10,6 +11,7 @@ interface Props {
   value: string;
   onChange: (value: string) => void;
   showPreview?: boolean;
+  noteEnvironments?: NoteEnvironmentOptions;
 }
 const snippets = [
   ['Inline math', '$', '$', 'x^2'],
@@ -24,7 +26,13 @@ const snippets = [
   ],
 ];
 
-export function MathEditor({ label, value, onChange, showPreview = true }: Props) {
+export function MathEditor({
+  label,
+  value,
+  onChange,
+  showPreview = true,
+  noteEnvironments,
+}: Props) {
   const id = useId();
   const input = useRef<HTMLTextAreaElement>(null);
   const preview = useRef<HTMLDivElement>(null);
@@ -94,7 +102,7 @@ export function MathEditor({ label, value, onChange, showPreview = true }: Props
               className="min-h-44 min-w-0 overflow-x-auto rounded-lg bg-stone-50 p-3 dark:bg-stone-950"
             >
               {value.trim() ? (
-                <MathRenderer>{value}</MathRenderer>
+                <MathRenderer noteEnvironments={noteEnvironments}>{value}</MathRenderer>
               ) : (
                 <p className="text-sm text-stone-500">Start typing to preview.</p>
               )}

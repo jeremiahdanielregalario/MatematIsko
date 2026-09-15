@@ -78,12 +78,15 @@ export function CoursePage() {
             <p className="text-stone-500 dark:text-stone-400">{course.name}</p>
           )}
         </div>
+        <div className="flex flex-wrap gap-2">
+        <Button variant="outline" asChild><Link to={`/contributions?courseId=${courseId}`}>Contribute to this course</Link></Button>
         <Button variant="outline" asChild>
           <Link to={`/practice?courseId=${courseId}`}>
             Practice this course
             <ArrowRight className="size-4" />
           </Link>
         </Button>
+        </div>
       </header>
 
       {/* Tab bar */}
