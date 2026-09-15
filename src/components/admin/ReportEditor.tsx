@@ -32,6 +32,7 @@ export function ReportEditor({
     try {
       await onResolve();
       onClose();
+      window.scrollTo({ top: 0, behavior: 'instant' });
     } catch (err) {
       setResolveError(err instanceof Error ? err.message : String(err));
     } finally {

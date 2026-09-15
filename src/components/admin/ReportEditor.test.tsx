@@ -1,7 +1,10 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ReportEditor } from './ReportEditor';
 import { getQuestionById, getTheoremById } from '@/lib/db';
+beforeEach(() => {
+  vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+});
 vi.mock('@/lib/db', () => ({
   getCourses: vi.fn().mockResolvedValue([]),
   getTopics: vi.fn().mockResolvedValue([]),
