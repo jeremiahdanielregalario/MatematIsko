@@ -1,5 +1,6 @@
 import { Clock, Eye, EyeOff, ExternalLink, SearchX, Trash2 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { DeleteReportDialog, type ReportToDelete } from './DeleteReportDialog';
 import { ReportEditor } from './ReportEditor';
 import { MathRenderer } from '@/components/math/MathRenderer';
 import { EmptyState } from '@/components/common/EmptyState';
@@ -17,7 +18,6 @@ import {
 import { cn } from '@/lib/cn';
 import { formatRelativeTime } from '@/lib/format';
 import {
-  adminDeleteReport,
   adminListQuestionReports,
   adminListTheoremReports,
   adminResolveReport,
@@ -99,6 +99,7 @@ function QuestionReportItem({ report, onToggle, onDelete, onResolve }: QuestionR
           className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950"
         >
           <Trash2 className="size-4" />
+          Delete
         </Button>
       </div>
       {editing && (
@@ -185,6 +186,7 @@ function TheoremReportItem({ report, onToggle, onDelete, onResolve }: TheoremRep
           className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950"
         >
           <Trash2 className="size-4" />
+          Delete
         </Button>
       </div>
       {editing && (
@@ -204,6 +206,10 @@ type ReportTab = 'questions' | 'theorems';
 export function ReportsAdminSection() {
   const [activeTab, setActiveTab] = useState<ReportTab>('questions');
   const [statusFilter, setStatusFilter] = useState(ALL_STATUS);
+  const [reportToDelete, setReportToDelete] = useState<ReportToDelete | null>(null);
+  const [notice, setNotice] = useState('');
+  const deleteTrigger = useRef<HTMLElement | null>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
 
   const [questionReports, setQuestionReports] = useState<QuestionReportRow[]>([]);
   const [theoremReports, setTheoremReports] = useState<TheoremReportRow[]>([]);
@@ -247,14 +253,26 @@ export function ReportsAdminSection() {
     }
   };
 
-  const handleDelete = async (table: 'question_reports' | 'theorem_reports', id: string) => {
-    if (!window.confirm('Delete this report permanently?')) return;
-    try {
-      await adminDeleteReport(table, id);
-      fetchReports(statusFilter);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
-    }
+  const handleDelete = (table: 'question_reports' | 'theorem_reports', id: string) => {
+    const report = (table === 'question_reports' ? questionReports : theoremReports).find(
+      (item) => item.id === id,
+    );
+    if (!report) return;
+    deleteTrigger.current =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    setNotice('');
+    setReportToDelete({
+      table,
+      id,
+      title:
+        'question_id' in report
+          ? (report.question_title ?? 'Unknown question')
+          : (report.theorem_name ?? 'Unknown theorem'),
+      course: report.course_code ?? null,
+      category: report.category,
+      status: report.status,
+      description: report.description,
+    });
   };
 
   const openQuestionCount = questionReports.filter((r) => r.status === 'open').length;
@@ -278,7 +296,11 @@ export function ReportsAdminSection() {
     <div className="space-y-6">
       <section className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="font-serif text-3xl font-bold tracking-tight text-stone-900 dark:text-stone-50">
+          <h1
+            ref={headingRef}
+            tabIndex={-1}
+            className="font-serif text-3xl font-bold tracking-tight text-stone-900 dark:text-stone-50"
+          >
             Reports
           </h1>
           <p className="mt-1 text-stone-500 dark:text-stone-400">
@@ -304,6 +326,32 @@ export function ReportsAdminSection() {
           {error}
         </p>
       ) : null}
+
+      {notice && (
+        <p
+          role="status"
+          className="rounded-lg bg-emerald-50 px-4 py-3 text-sm text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-200"
+        >
+          {notice}
+        </p>
+      )}
+      <DeleteReportDialog
+        key={reportToDelete ? `${reportToDelete.table}:${reportToDelete.id}` : 'closed'}
+        report={reportToDelete}
+        onClose={() => setReportToDelete(null)}
+        onDeleted={(report) => {
+          if (report.table === 'question_reports')
+            setQuestionReports((rows) => rows.filter((row) => row.id !== report.id));
+          else setTheoremReports((rows) => rows.filter((row) => row.id !== report.id));
+          setNotice('Report deleted.');
+        }}
+        onReturnFocus={() => {
+          const target = deleteTrigger.current?.isConnected
+            ? deleteTrigger.current
+            : headingRef.current;
+          target?.focus({ preventScroll: true });
+        }}
+      />
 
       {/* Report type tabs */}
       <div className="flex items-center gap-1 rounded-lg border border-stone-200 bg-stone-50 p-1 dark:border-stone-800 dark:bg-stone-900">
