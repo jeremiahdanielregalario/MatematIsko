@@ -17,7 +17,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useAsync } from '@/hooks/useAsync';
 import { useCourseScope } from '@/hooks/useCourseScope';
 import { useCourses } from '@/hooks/useCourses';
-import { getUserCourses, setUserCourses } from '@/lib/db';
+import { getUserCourses } from '@/lib/db';
 
 function InfoRow({
   label,
@@ -45,7 +45,7 @@ export function ProfilePage() {
   const fetchCourses = useCallback(() => (user ? getUserCourses(user.id) : Promise.resolve([])), [user]);
   const { data: courses, loading: coursesLoading, reload: reloadCourses } = useAsync(fetchCourses);
   const { data: allCourses } = useCourses();
-  const { refresh: refreshCourseScope } = useCourseScope();
+  const { saveCourses } = useCourseScope();
 
   const [editingCourses, setEditingCourses] = useState(false);
   const [selectedCourseIds, setSelectedCourseIds] = useState<string[]>([]);
@@ -83,9 +83,8 @@ export function ProfilePage() {
     setSaveError(null);
     setSavingCourses(true);
     try {
-      await setUserCourses(user.id, selectedCourseIds);
+      await saveCourses(selectedCourseIds);
       reloadCourses();
-      refreshCourseScope();
       setEditingCourses(false);
     } catch (err) {
       setSaveError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');

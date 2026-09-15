@@ -31,7 +31,7 @@ interface QuestionAdminSectionProps {
 }
 
 export function QuestionAdminSection({ editId, onEditHandled }: QuestionAdminSectionProps) {
-  const { data: loaded, loading, error, reload } = useQuestions();
+  const { data: loaded, loading, error, reload } = useQuestions({ allCourses: true });
   const { data: coursesData } = useCourses();
   const { data: topicsData } = useTopics();
 

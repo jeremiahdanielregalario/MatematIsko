@@ -31,7 +31,7 @@ interface TheoremAdminSectionProps {
 }
 
 export function TheoremAdminSection({ editId, onEditHandled }: TheoremAdminSectionProps) {
-  const { data: loaded, loading, error, reload } = useTheorems();
+  const { data: loaded, loading, error, reload } = useTheorems({ allCourses: true });
   const { data: coursesData } = useCourses();
   const { data: topicsData } = useTopics();
 

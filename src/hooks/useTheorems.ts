@@ -9,9 +9,11 @@ import { useCourseScope } from './useCourseScope';
  * Loads named theorems (restricted to the courses the student preselected)
  * merged with the current student's progress.
  */
-export function useTheorems() {
-  const { user } = useAuth();
-  const { courseIds } = useCourseScope();
+export function useTheorems({ allCourses = false }: { allCourses?: boolean } = {}) {
+  const { user, isAdmin } = useAuth();
+  const { courseIds: selectedCourseIds } = useCourseScope();
+  // Only admin content-management callers may bypass personal study preferences.
+  const courseIds = allCourses && isAdmin ? null : selectedCourseIds;
   const userId = user?.id ?? null;
 
   const fn = useCallback(async (): Promise<TheoremWithMeta[]> => {

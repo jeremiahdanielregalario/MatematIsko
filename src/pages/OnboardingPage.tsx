@@ -17,8 +17,9 @@ import {
 } from '@/components/ui/select';
 import { setWelcomePending } from '@/lib/welcomeGuide';
 import { useAuth } from '@/hooks/useAuth';
+import { useCourseScope } from '@/hooks/useCourseScope';
 import { useCourses } from '@/hooks/useCourses';
-import { ensureProfile, setUserCourses, updateProfileOnboarding } from '@/lib/db';
+import { ensureProfile, updateProfileOnboarding } from '@/lib/db';
 
 const YEAR_LEVELS = ['1st Year', '2nd Year', '3rd Year', '4th Year', '5th Year or more'];
 
@@ -100,6 +101,7 @@ const DEGREE_PROGRAMS = [
 export function OnboardingPage() {
   const { user, profile, loading, profileLoading, refreshProfile, acknowledgeSignIn } = useAuth();
   const navigate = useNavigate();
+  const { saveCourses } = useCourseScope();
   const { data: courses, loading: coursesLoading, error: coursesError, reload } = useCourses();
 
   const [degreeProgram, setDegreeProgram] = useState<string | undefined>();
@@ -145,7 +147,7 @@ export function OnboardingPage() {
         year_level: yearLevel,
         upmmc_member: upmmcMember,
       });
-      await setUserCourses(user.id, selectedCourseIds);
+      await saveCourses(selectedCourseIds);
       setWelcomePending(user.id, true);
       acknowledgeSignIn();
       await refreshProfile();
