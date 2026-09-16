@@ -1,0 +1,78 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "omniroute/claude-opus-4-5-thinking",
+  "provider": {
+    "omniroute": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "OmniRoute",
+      "options": {
+        "baseURL": "http://localhost:20128/v1",
+        "apiKey": "sk-a85d89ac0f800248-079f24-802d14fd"
+      },
+      "models": {
+        "cc/claude-opus-4-8": {
+          "name": "Claude Opus 4.8",
+          "attachment": true,
+          "reasoning": true,
+          "temperature": true,
+          "tool_call": true,
+          "limit": { "context": 1000000, "output": 32000 }
+        },
+        "cc/claude-opus-4-7": {
+          "name": "Claude Opus 4.7",
+          "attachment": true,
+          "reasoning": true,
+          "temperature": true,
+          "tool_call": true,
+          "limit": { "context": 1000000, "output": 32000 }
+        },
+        "cc/claude-sonnet-4-6": {
+          "name": "Claude Sonnet 4.6",
+          "attachment": true,
+          "reasoning": true,
+          "temperature": true,
+          "tool_call": true,
+          "limit": { "context": 200000, "output": 16000 }
+        },
+        "cc/claude-haiku-4-5-20251001": {
+          "name": "Claude Haiku 4.5",
+          "attachment": true,
+          "temperature": true,
+          "tool_call": true,
+          "limit": { "context": 200000, "output": 8192 }
+        },
+        "claude-opus-4-5-thinking": {
+          "name": "Claude Opus 4.5 Thinking",
+          "attachment": true,
+          "reasoning": true,
+          "temperature": true,
+          "tool_call": true,
+          "limit": { "context": 200000, "output": 32000 }
+        },
+        "claude-sonnet-4-5-thinking": {
+          "name": "Claude Sonnet 4.5 Thinking",
+          "attachment": true,
+          "reasoning": true,
+          "temperature": true,
+          "tool_call": true,
+          "limit": { "context": 200000, "output": 16000 }
+        },
+        "gemini-3.1-pro-high": {
+          "name": "Gemini 3.1 Pro High",
+          "attachment": true,
+          "reasoning": true,
+          "temperature": true,
+          "tool_call": true,
+          "limit": { "context": 1000000, "output": 65536 }
+        },
+        "gemini-3-flash": {
+          "name": "Gemini 3 Flash",
+          "attachment": true,
+          "temperature": true,
+          "tool_call": true,
+          "limit": { "context": 1000000, "output": 65536 }
+        }
+      }
+    }
+  }
+}
