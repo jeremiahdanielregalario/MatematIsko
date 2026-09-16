@@ -4,7 +4,7 @@ import type { NoteEnvironmentOptions } from '@/components/math/remarkNoteEnviron
 import { MathRenderer } from '@/components/math/MathRenderer';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { FindTextarea } from './FindTextarea';
 
 interface Props {
   label: string;
@@ -84,7 +84,7 @@ export function MathEditor({
       <div className={showPreview ? 'grid min-w-0 gap-3 xl:grid-cols-2' : ''}>
         <div className="min-w-0 space-y-2">
           <p className="text-xs text-stone-500">Markdown source</p>
-          <Textarea
+          <FindTextarea
             ref={input}
             id={id}
             value={value}

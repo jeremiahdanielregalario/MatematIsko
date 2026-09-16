@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { FindTextarea } from './FindTextarea';
 import { adminUpsertBlogPost, adminDeleteBlogPost, adminSetBlogApproval } from '@/lib/db';
 import type { BlogPostWithAuthor } from '@/types';
 
@@ -221,7 +221,7 @@ export function BlogAdminSection({ editId, onEditHandled }: BlogAdminSectionProp
         </div>
         <div>
           <Label htmlFor="post-content">Content (Markdown + LaTeX)</Label>
-          <Textarea id="post-content" value={content} onChange={(e) => setContent(e.target.value)} className="mt-1 min-h-[200px] font-mono text-sm" />
+          <FindTextarea id="post-content" value={content} onChange={(e) => setContent(e.target.value)} className="mt-1 min-h-[200px] font-mono text-sm" />
         </div>
         <div className="flex items-center gap-4">
           <label className="inline-flex items-center gap-2 text-sm">

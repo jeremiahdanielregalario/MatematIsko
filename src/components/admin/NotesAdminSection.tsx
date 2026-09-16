@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { FindTextarea } from './FindTextarea';
 import {
   Select,
   SelectContent,
@@ -173,7 +173,7 @@ export function NotesAdminSection({ editId, onEditHandled }: NotesAdminSectionPr
         </div>
         <div>
           <Label htmlFor="note-content">Content (Markdown + LaTeX)</Label>
-          <Textarea
+          <FindTextarea
             id="note-content"
             value={content}
             onChange={(e) => setContent(e.target.value)}
