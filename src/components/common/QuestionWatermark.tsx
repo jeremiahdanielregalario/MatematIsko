@@ -11,7 +11,11 @@ export function QuestionWatermark({ children }: { children: ReactNode }) {
     (character) =>
       ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&apos;' })[character]!,
   );
-  const tile = `<svg xmlns="http://www.w3.org/2000/svg" width="320" height="160"><text x="160" y="80" text-anchor="middle" transform="rotate(-15 160 80)" fill="#888888" fill-opacity="0.18" font-family="sans-serif" font-size="11" textLength="280" lengthAdjust="spacingAndGlyphs">${escaped}</text></svg>`;
+  // Enhanced SVG: Two overlapping layers with slightly different positions and opacity to increase complexity.
+  const tile = `<svg xmlns="http://www.w3.org/2000/svg" width="320" height="160">
+    <text x="160" y="80" text-anchor="middle" transform="rotate(-15 160 80)" fill="#888888" fill-opacity="0.1" font-family="sans-serif" font-size="11" textLength="280" lengthAdjust="spacingAndGlyphs">${escaped}</text>
+    <text x="162" y="82" text-anchor="middle" transform="rotate(-15 160 80)" fill="#888888" fill-opacity="0.08" font-family="sans-serif" font-size="11" textLength="280" lengthAdjust="spacingAndGlyphs">${escaped}</text>
+  </svg>`;
 
   return (
     <div className="question-watermark-content">
