@@ -7,76 +7,39 @@ VALUES (
   'e6c40a16-e845-41ed-83c2-dabd361cb794', -- New UUID for Unit II
   '609dc463-1524-494d-bf0f-91859a2e4cf4', -- MATH 146
   'Unit II: Differential Geometry Notes',
-  $BODY$# Math 146: Differential Geometry
-**Course Notes**
+  $BODY$# Math 146: Differential Geometry — Unit II
 
 ## Unit II: Meeting 14 (March 11)
 
-### 1. Orthogonal Frame
-Let $p \in \mathbb{R}^n$. A collection $\{e_1, \dots, e_n\}$ of nonzero tangent vectors in $T_p(\mathbb{R}^n)$ is an **orthogonal frame** for $T_p(\mathbb{R}^n)$ if $g_p(e_i, e_j) = 0$ whenever $i \neq j$.
+### Frames and Frame Fields
 
-### 2. Orthonormal Frame
-An orthogonal frame is an **orthonormal frame** if each $e_i$ is a unit tangent vector ($g_p(e_i, e_i) = 1$).
+**Orthogonal Frame:** For $p \in \mathbb{R}^n$, $\{e_1, \dots, e_n\}$ in $T_p(\mathbb{R}^n)$ is an *orthogonal frame* if $g_p(e_i, e_j) = 0$ for $i \neq j$.
 
-### 3. Orthonormal Frame Field
-Let $W \subseteq \mathbb{R}^n$ be open. $\{E_1, \dots, E_n\} \subseteq \mathfrak{X}(W)$ is an **orthonormal frame field** on $W$ if $g(E_i, E_j) = \delta_{ij}$ (where $\delta_{ij}$ is the Kronecker delta).
+**Orthonormal Frame:** An orthogonal frame where every $e_i$ is a unit vector ($||e_i|| = 1$).
 
-### 4. Expansion Theorems
-An orthonormal frame $\{e_1, \dots, e_n\}$ at point $p$ forms a basis for $T_p(\mathbb{R}^n)$. For any tangent vector $v \in T_p(\mathbb{R}^n)$:
+**Frame Fields:** If this holds for a collection of vector fields $\{E_1, \dots, E_n\}$ on an open set $W$, it is an orthonormal frame field. An example is the natural frame field $\{U_1, \dots, U_n\}$ on $\mathbb{R}^n$.
 
-$$v = \sum_{i=1}^n g_p(v, e_i) e_i$$
+**Theorems:**
+- Orthonormal frames form a basis for $T_p(\mathbb{R}^n)$.
+- Any tangent vector $v$ can be expanded: $v = \sum g_p(v, e_i)e_i$.
+- Any vector field $X$ can be expanded: $X = \sum g(X, E_i)E_i$.
 
-Similarly, for any vector field $X \in \mathfrak{X}(W)$:
-
-$$X = \sum_{i=1}^n g(X, E_i) E_i$$
-
-### 5. Polar Frame Field (Example)
-On $\mathbb{R}^2 \setminus \{(0,0)\}$, with polar coordinates $(r, \theta)$:
-$$E_r = \cos \theta U_1 + \sin \theta U_2$$
-$$E_\theta = -\sin \theta U_1 + \cos \theta U_2$$
-$\{E_r, E_\theta\}$ forms an orthonormal frame field.
-
----
-
-## Unit II: Meeting 15 (March 13)
-
-### Cylindrical Frame Field
-On $\mathbb{R}^3 \setminus \{ (x,y,z) : x=0, y=0 \}$:
-$$E_r = \cos \theta U_1 + \sin \theta U_2$$
-$$E_\theta = -\sin \theta U_1 + \cos \theta U_2$$
-$$E_z = U_3$$
-
-### Frenet Apparatus
-For unit-speed curve $\beta: J \to \mathbb{R}^n$:
-1.  **Unit tangent:** $T = \beta'$
-2.  **Curvature vector:** $T' = \beta''$
-3.  **Curvature:** $\kappa = ||T'||$
-4.  **Principal normal ($ \kappa > 0$):** $N = \kappa^{-1} T'$
-5.  **Binormal ($n=3$):** $B = T \times N$
-6.  **Torsion:** $\tau = g(N', B) = -g(B', N)$
-
-The **Frenet Formulas** for $\kappa > 0$ are:
-$$T' = \kappa N$$
-$$N' = -\kappa T + \tau B$$
-$$B' = -\tau N$$
+**Polar/Cylindrical Frames:** Coordinate systems like polar/cylindrical allow us to construct non-natural orthonormal frame fields (e.g., $\{E_r, E_\theta\}$ on $\mathbb{R}^2 \setminus \{0\}$).
 
 ---
 
 ## Unit II: Meeting 19 (April 24)
 
-### Coordinate Patch
-Let $\Sigma \subseteq \mathbb{R}^n$. A **coordinate patch** in $\Sigma$ is a regular homeomorphism from an open subset of $\mathbb{R}^2$ to an open subset of $\Sigma$.
+### Intro to Surfaces
+- **Coordinate Patch:** A regular homeomorphism from an open subset of $\mathbb{R}^2$ to a subset of a surface $\Sigma \subseteq \mathbb{R}^n$.
+- **Smooth Surface:** A set $\Sigma$ where every point $p \in \Sigma$ is covered by a coordinate patch.
+- **Monge Patch:** A simple surface defined as the graph of a smooth function $f(u, v)$ over a domain $D \subseteq \mathbb{R}^2$:
+  $$\phi(u, v) = (u, v, f(u, v))$$
+- **Implicit Function Theorem:** This theorem provides the criteria for when a level set $F^{-1}(k)$ of a smooth function $F: V \subseteq \mathbb{R}^{\ell+m} \to \mathbb{R}^m$ is locally a smooth surface (given the Jacobian satisfies rank conditions).
 
-### Smooth Surface
-$\Sigma \subseteq \mathbb{R}^n$ is a **smooth surface** if for all $p \in \Sigma$, there exists a coordinate patch whose image is an open neighborhood of $p$ in $\Sigma$.
-
-### Implicit Function Theorem
-If $F: V \subseteq \mathbb{R}^{\ell+m} \to \mathbb{R}^m$ is smooth, $p=(a;b) \in F^{-1}(k)$, and the Jacobian submatrix $\frac{\partial F}{\partial y}$ at $p$ is invertible, then locally the level set $F^{-1}(k)$ is the graph of a unique smooth function $y = g(x)$.
-
-### Regular Level Set Theorem
-If $f: V \subseteq \mathbb{R}^3 \to \mathbb{R}$ is smooth and the differential $df|_p \neq 0$ for all $p \in f^{-1}(k)$, then the level set $f^{-1}(k)$ is a smooth surface in $\mathbb{R}^3$.
-$BODY$,
-  1
+### Tangent Vectors to Surfaces
+A tangent vector $v_p \in T_p(\mathbb{R}^n)$ is **tangent to $\Sigma$** at $p$ if it is the velocity vector of some curve $\alpha: I \to \Sigma$. The collection of all such vectors forms the **tangent space** $T_p(\Sigma)$.$BODY$,
+  2
 )
 ON CONFLICT (id) DO UPDATE SET
   title = EXCLUDED.title,
