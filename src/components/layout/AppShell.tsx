@@ -10,6 +10,7 @@ import {
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/cn';
+import { StudyPrivacy } from '@/components/common/StudyPrivacy';
 import { WelcomeGuide } from '@/components/common/WelcomeGuide';
 import { Logo } from '@/components/Logo';
 import { CourseStudyModal } from '@/components/courses/CourseStudyModal';
@@ -130,6 +131,15 @@ export function AppShell() {
         </nav>
       ) : null}
 
+      {user && !loading && (
+        <StudyPrivacy
+          key={user.id}
+          userId={user.id}
+          watermark={/^\/(dashboard|courses|questions|theorems|practice|bookmarks)(\/|$)/.test(
+            location.pathname,
+          )}
+        />
+      )}
       <CourseStudyModal />
       {user &&
         !loading &&

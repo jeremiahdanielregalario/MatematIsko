@@ -370,3 +370,36 @@ html {
   color: var(--environment-accent);
   text-underline-offset: 4px;
 }
+
+/* Capture deterrents are independent of route animations and dialog portals. */
+.study-watermark {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483646;
+  pointer-events: none;
+  user-select: none;
+  background-repeat: repeat;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+.study-privacy-cover {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  display: grid;
+  place-items: center;
+  background: var(--color-stone-50);
+  color: var(--color-stone-900);
+}
+
+.dark .study-privacy-cover {
+  background: var(--color-stone-950);
+  color: var(--color-stone-100);
+}
+
+@media print {
+  .study-privacy-cover {
+    display: none;
+  }
+}
