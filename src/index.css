@@ -371,11 +371,17 @@ html {
   text-underline-offset: 4px;
 }
 
-/* Capture deterrents are independent of route animations and dialog portals. */
-.study-watermark {
-  position: fixed;
+/* Watermarks stay within question and revealed support content. */
+.question-watermark-content {
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+}
+
+.question-watermark {
+  position: absolute;
   inset: 0;
-  z-index: 2147483646;
+  z-index: 1;
   pointer-events: none;
   user-select: none;
   background-repeat: repeat;

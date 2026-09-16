@@ -1,3 +1,4 @@
+import { WatermarkEmailContext } from '@/components/common/watermarkContext';
 import {
   Bookmark,
   BookMarked,
@@ -41,114 +42,108 @@ export function AppShell() {
   const location = useLocation();
 
   return (
-    <div className="flex min-h-dvh flex-col">
-      <a
-        href="#study-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-white focus:p-3 focus:text-brand-900"
-      >
-        Skip to study content
-      </a>
-      <header className="sticky top-0 z-40 border-b border-stone-200 bg-white/80 backdrop-blur dark:border-stone-800 dark:bg-stone-950/80">
-        <div className="mx-auto flex h-16 w-full max-w-8xl items-center justify-between gap-3 px-4 sm:px-6">
-          <Link to={user ? '/dashboard' : '/'} aria-label="MatematIsko home" className="rounded">
-            <Logo size="sm" />
-          </Link>
-
-          {user ? (
-            <nav aria-label="Primary" className="hidden items-center gap-1 lg:flex">
-              {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
-                <NavLink key={to} to={to} className={navLinkClass}>
-                  <span className="inline-flex items-center gap-1.5">
-                    <Icon className="size-4" />
-                    {label}
-                  </span>
-                </NavLink>
-              ))}
-            </nav>
-          ) : null}
-
-          <div className="flex items-center gap-1.5">
-            <ThemeToggle />
-            {user ? <UserMenu /> : <Link to="/" className="sr-only lg:hidden" />}
-          </div>
-        </div>
-      </header>
-
-      <main
-        id="study-content"
-        tabIndex={-1}
-        className="mx-auto w-full max-w-8xl flex-1 px-4 pb-mobile-nav pt-8 sm:px-6 lg:pb-12"
-      >
-        {loading ? (
-          <div className="flex h-64 items-center justify-center text-sm text-stone-400">
-            Loading&hellip;
-          </div>
-        ) : (
-          <div key={location.pathname} className="animate-page-in">
-            <Outlet />
-          </div>
-        )}
-      </main>
-
-      <footer className="hidden border-t border-stone-200 py-6 dark:border-stone-800 lg:block">
-        <div className="mx-auto flex w-full max-w-8xl flex-col items-center gap-1 px-4 text-center text-xs text-stone-500 dark:text-stone-400 sm:px-6">
-          <span className="inline-flex items-center gap-1.5 font-medium">
-            <Home className="size-3.5" />
-            MatematIsko
-          </span>
-          <p>Review smarter. Solve better.</p>
-        </div>
-      </footer>
-
-      {user ? (
-        <nav
-          aria-label="Mobile"
-          className="fixed inset-x-0 bottom-0 z-40 border-t border-stone-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur dark:border-stone-800 dark:bg-stone-950/95 lg:hidden"
+    <WatermarkEmailContext.Provider value={!loading ? (user?.email ?? null) : null}>
+      <div className="flex min-h-dvh flex-col">
+        <a
+          href="#study-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-white focus:p-3 focus:text-brand-900"
         >
-          <div className="mx-auto flex h-16 max-w-lg items-stretch justify-around">
-            {NAV_ITEMS.map(({ to, label, icon: Icon }) => {
-              const active = location.pathname === to || location.pathname.startsWith(to + '/');
-              return (
-                <NavLink
-                  key={to}
-                  to={to}
-                  aria-label={label}
-                  aria-current={active ? 'page' : undefined}
-                  className={cn(
-                    'flex flex-1 flex-col items-center justify-center gap-0.5 text-[10px] font-medium',
-                    'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600',
-                    active
-                      ? 'text-brand-900 dark:text-brand-300'
-                      : 'text-stone-500 dark:text-stone-400',
-                  )}
-                >
-                  <Icon className="size-5" />
-                  {label}
-                </NavLink>
-              );
-            })}
-          </div>
-        </nav>
-      ) : null}
+          Skip to study content
+        </a>
+        <header className="sticky top-0 z-40 border-b border-stone-200 bg-white/80 backdrop-blur dark:border-stone-800 dark:bg-stone-950/80">
+          <div className="mx-auto flex h-16 w-full max-w-8xl items-center justify-between gap-3 px-4 sm:px-6">
+            <Link to={user ? '/dashboard' : '/'} aria-label="MatematIsko home" className="rounded">
+              <Logo size="sm" />
+            </Link>
 
-      {user && !loading && (
-        <StudyPrivacy
-          key={user.id}
-          userId={user.id}
-          watermark={/^\/(dashboard|courses|questions|theorems|practice|bookmarks)(\/|$)/.test(
-            location.pathname,
+            {user ? (
+              <nav aria-label="Primary" className="hidden items-center gap-1 lg:flex">
+                {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
+                  <NavLink key={to} to={to} className={navLinkClass}>
+                    <span className="inline-flex items-center gap-1.5">
+                      <Icon className="size-4" />
+                      {label}
+                    </span>
+                  </NavLink>
+                ))}
+              </nav>
+            ) : null}
+
+            <div className="flex items-center gap-1.5">
+              <ThemeToggle />
+              {user ? <UserMenu /> : <Link to="/" className="sr-only lg:hidden" />}
+            </div>
+          </div>
+        </header>
+
+        <main
+          id="study-content"
+          tabIndex={-1}
+          className="mx-auto w-full max-w-8xl flex-1 px-4 pb-mobile-nav pt-8 sm:px-6 lg:pb-12"
+        >
+          {loading ? (
+            <div className="flex h-64 items-center justify-center text-sm text-stone-400">
+              Loading&hellip;
+            </div>
+          ) : (
+            <div key={location.pathname} className="animate-page-in">
+              <Outlet />
+            </div>
           )}
-        />
-      )}
-      <CourseStudyModal />
-      {user &&
-        !loading &&
-        !profileLoading &&
-        profile?.degree_program &&
-        profile?.year_level &&
-        location.pathname === '/dashboard' && (
-          <WelcomeGuide key={user.id} userId={user.id} onDismiss={acknowledgeSignIn} />
-        )}
-    </div>
+        </main>
+
+        <footer className="hidden border-t border-stone-200 py-6 dark:border-stone-800 lg:block">
+          <div className="mx-auto flex w-full max-w-8xl flex-col items-center gap-1 px-4 text-center text-xs text-stone-500 dark:text-stone-400 sm:px-6">
+            <span className="inline-flex items-center gap-1.5 font-medium">
+              <Home className="size-3.5" />
+              MatematIsko
+            </span>
+            <p>Review smarter. Solve better.</p>
+          </div>
+        </footer>
+
+        {user ? (
+          <nav
+            aria-label="Mobile"
+            className="fixed inset-x-0 bottom-0 z-40 border-t border-stone-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur dark:border-stone-800 dark:bg-stone-950/95 lg:hidden"
+          >
+            <div className="mx-auto flex h-16 max-w-lg items-stretch justify-around">
+              {NAV_ITEMS.map(({ to, label, icon: Icon }) => {
+                const active = location.pathname === to || location.pathname.startsWith(to + '/');
+                return (
+                  <NavLink
+                    key={to}
+                    to={to}
+                    aria-label={label}
+                    aria-current={active ? 'page' : undefined}
+                    className={cn(
+                      'flex flex-1 flex-col items-center justify-center gap-0.5 text-[10px] font-medium',
+                      'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600',
+                      active
+                        ? 'text-brand-900 dark:text-brand-300'
+                        : 'text-stone-500 dark:text-stone-400',
+                    )}
+                  >
+                    <Icon className="size-5" />
+                    {label}
+                  </NavLink>
+                );
+              })}
+            </div>
+          </nav>
+        ) : null}
+
+        {user && !loading && <StudyPrivacy key={user.id} />}
+        <CourseStudyModal />
+        {user &&
+          !loading &&
+          !profileLoading &&
+          profile?.degree_program &&
+          profile?.year_level &&
+          location.pathname === '/dashboard' && (
+            <WelcomeGuide key={user.id} userId={user.id} onDismiss={acknowledgeSignIn} />
+          )}
+      </div>
+    </WatermarkEmailContext.Provider>
   );
 }

@@ -1,3 +1,4 @@
+import { QuestionWatermark } from '@/components/common/QuestionWatermark';
 import { ArrowUpRight, BookMarked } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { ProgressStatus, QuestionWithMeta } from '@/types';
@@ -63,7 +64,9 @@ export function QuestionCard({
         </h3>
         <div className="min-w-0 overflow-hidden text-sm text-stone-600 dark:text-stone-300">
           <div className="line-clamp-3">
-            <MathRenderer preview>{question.question_text}</MathRenderer>
+            <QuestionWatermark>
+              <MathRenderer preview>{question.question_text}</MathRenderer>
+            </QuestionWatermark>
           </div>
         </div>
       </div>

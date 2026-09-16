@@ -1,3 +1,4 @@
+import { QuestionWatermark } from '@/components/common/QuestionWatermark';
 import { Check, HelpCircle, X } from 'lucide-react';
 import { useState } from 'react';
 import type { PracticeAnswer, AnswerResult } from '@/lib/practice';
@@ -41,7 +42,12 @@ export function PracticeSession({ questions, onAnswer, onComplete, onQuit }: Pra
     reveal.reset();
   };
 
-  const answerButtons: { variant: AnswerResult; icon: typeof Check; label: string; activeClass: string }[] = [
+  const answerButtons: {
+    variant: AnswerResult;
+    icon: typeof Check;
+    label: string;
+    activeClass: string;
+  }[] = [
     {
       variant: 'correct',
       icon: Check,
@@ -108,9 +114,11 @@ export function PracticeSession({ questions, onAnswer, onComplete, onQuit }: Pra
             <h2 className="mb-2 font-serif text-xl font-semibold leading-snug text-stone-900 dark:text-stone-50">
               <MathRenderer inline>{question.title}</MathRenderer>
             </h2>
-            <MathRenderer className="font-serif text-lg leading-relaxed">
-              {question.question_text}
-            </MathRenderer>
+            <QuestionWatermark>
+              <MathRenderer className="font-serif text-lg leading-relaxed">
+                {question.question_text}
+              </MathRenderer>
+            </QuestionWatermark>
           </div>
 
           <RevealSection

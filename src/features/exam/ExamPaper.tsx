@@ -1,3 +1,4 @@
+import { QuestionWatermark } from '@/components/common/QuestionWatermark';
 import { memo, useEffect, useState } from 'react';
 import { Clock, Flag, LockKeyhole } from 'lucide-react';
 import type { QuestionWithMeta } from '@/types';
@@ -283,7 +284,9 @@ const ExamQuestions = memo(function ExamQuestions({
             >
               <MathRenderer inline>{question.title}</MathRenderer>
             </h2>
-            <MathRenderer className="font-serif text-lg">{question.question_text}</MathRenderer>
+            <QuestionWatermark>
+              <MathRenderer className="font-serif text-lg">{question.question_text}</MathRenderer>
+            </QuestionWatermark>
             <div>
               <label htmlFor={`response-${question.id}`} className="mb-2 block text-sm font-medium">
                 Your answer or working notes{' '}
@@ -349,16 +352,20 @@ const ExamQuestions = memo(function ExamQuestions({
               >
                 <div>
                   <h3 className="mb-2 font-semibold">Answer</h3>
-                  <MathRenderer>{question.answer || 'No answer is available yet.'}</MathRenderer>
+                  <QuestionWatermark>
+                    <MathRenderer>{question.answer || 'No answer is available yet.'}</MathRenderer>
+                  </QuestionWatermark>
                 </div>
                 <details>
                   <summary className="cursor-pointer text-sm font-semibold text-brand-900 dark:text-brand-300">
                     Worked solution
                   </summary>
                   <div className="mt-3">
-                    <MathRenderer>
-                      {question.solution || 'No worked solution is available yet.'}
-                    </MathRenderer>
+                    <QuestionWatermark>
+                      <MathRenderer>
+                        {question.solution || 'No worked solution is available yet.'}
+                      </MathRenderer>
+                    </QuestionWatermark>
                   </div>
                 </details>
                 <fieldset>

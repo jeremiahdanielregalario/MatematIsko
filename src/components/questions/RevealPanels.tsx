@@ -1,3 +1,4 @@
+import { QuestionWatermark } from '@/components/common/QuestionWatermark';
 import { BookOpen, Lightbulb, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { MathRenderer } from '@/components/math/MathRenderer';
@@ -6,7 +7,8 @@ type Tone = 'hint' | 'answer' | 'solution';
 
 const TONES: Record<Tone, string> = {
   hint: 'border-amber-200 bg-amber-50 text-amber-950 dark:border-amber-900/60 dark:bg-amber-950/30 dark:text-amber-100',
-  answer: 'border-emerald-200 bg-emerald-50 text-emerald-950 dark:border-emerald-900/60 dark:bg-emerald-950/30 dark:text-emerald-100',
+  answer:
+    'border-emerald-200 bg-emerald-50 text-emerald-950 dark:border-emerald-900/60 dark:bg-emerald-950/30 dark:text-emerald-100',
   solution:
     'border-sky-200 bg-sky-50 text-sky-950 dark:border-sky-900/60 dark:bg-sky-950/30 dark:text-sky-100',
 };
@@ -34,7 +36,9 @@ function RevealPanelBase({
         {title}
       </h4>
       <div className="mt-3">
-        <MathRenderer className="prose-sm">{children}</MathRenderer>
+        <QuestionWatermark>
+          <MathRenderer className="prose-sm">{children}</MathRenderer>
+        </QuestionWatermark>
       </div>
     </section>
   );
@@ -58,7 +62,11 @@ export function AnswerPanel({ answer }: { answer: string }) {
 
 export function SolutionPanel({ solution }: { solution: string }) {
   return (
-    <RevealPanelBase icon={<BookOpen className="size-3.5" />} title="Complete solution" tone="solution">
+    <RevealPanelBase
+      icon={<BookOpen className="size-3.5" />}
+      title="Complete solution"
+      tone="solution"
+    >
       {solution}
     </RevealPanelBase>
   );

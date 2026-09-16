@@ -1,3 +1,4 @@
+import { QuestionWatermark } from '@/components/common/QuestionWatermark';
 import { ArrowLeft, Shuffle } from 'lucide-react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ErrorState } from '@/components/common/ErrorState';
@@ -134,9 +135,11 @@ export function QuestionDetailPage() {
             <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-stone-400 dark:text-stone-500">
               Problem
             </h2>
-            <MathRenderer className="font-serif text-lg leading-relaxed">
-              {merged.question_text}
-            </MathRenderer>
+            <QuestionWatermark>
+              <MathRenderer className="font-serif text-lg leading-relaxed">
+                {merged.question_text}
+              </MathRenderer>
+            </QuestionWatermark>
           </div>
 
           <div>
