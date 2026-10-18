@@ -7,6 +7,7 @@ import { BookmarkButton } from '@/components/questions/BookmarkButton';
 import { DifficultyBadge } from '@/components/questions/DifficultyBadge';
 import { MasteryButton } from '@/components/questions/MasteryButton';
 import { RevealSection } from '@/components/questions/RevealSection';
+import { Scratchpad } from '@/components/questions/Scratchpad';
 import { ReportButton } from '@/components/common/ReportButton';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -150,6 +151,9 @@ export function QuestionDetailPage() {
               Try the problem on your own before revealing anything. When you are ready, work
               through the hints, answer, and full solution one step at a time.
             </p>
+            <div className="mb-4">
+              <Scratchpad questionId={merged.id} />
+            </div>
             <RevealSection
               level={reveal.level}
               onReveal={reveal.reveal}

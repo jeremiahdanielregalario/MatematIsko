@@ -1,10 +1,11 @@
-import { useRef, useEffect, useCallback } from 'react';
+import { useRef, useEffect, useCallback, useState } from 'react';
+import { compileSafeVizExpression } from '@/lib/graph';
 
 export interface Surface3DConfig {
   /** Explicit mesh arrays (rows × cols grid of [x,y,z] triples). */
   mesh?: number[][][];
   /**
-   * Parametric surface: provide JS expressions for x(u,v), y(u,v), z(u,v).
+   * Parametric surface: provide math expressions for x(u,v), y(u,v), z(u,v).
    * `u` and `v` are in [0, 1]; they are mapped to [uMin,uMax] × [vMin,vMax].
    */
   parametric?: {
@@ -33,15 +34,8 @@ export interface Surface3DConfig {
 function compileFn(
   expr: string,
 ): ((u: number, v: number) => number) | null {
-  try {
-    return new Function(
-      'u',
-      'v',
-      `"use strict"; return (${expr});`,
-    ) as (u: number, v: number) => number;
-  } catch {
-    return null;
-  }
+  const fn = compileSafeVizExpression(expr, ['u', 'v']);
+  return fn ? (u: number, v: number) => fn(u, v) : null;
 }
 
 function buildParametricMesh(param: Surface3DConfig['parametric']) {
@@ -152,6 +146,10 @@ function computeNormal(
 
 export function Surface3D({ config }: { config: Surface3DConfig }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const initialRx = config.rotateX ?? -30;
+  const initialRz = config.rotateZ ?? 45;
+  const [angles, setAngles] = useState({ rx: initialRx, rz: initialRz });
+  const dragRef = useRef<{ x: number; y: number; rx: number; rz: number } | null>(null);
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
@@ -181,8 +179,8 @@ export function Surface3D({ config }: { config: Surface3DConfig }) {
     }
     if (!mesh || mesh.length === 0) return;
 
-    const rx = ((config.rotateX ?? -30) * Math.PI) / 180;
-    const rz = ((config.rotateZ ?? 45) * Math.PI) / 180;
+    const rx = (angles.rx * Math.PI) / 180;
+    const rz = (angles.rz * Math.PI) / 180;
 
     // Compute scale from bounds
     let allX: number[] = [];
@@ -338,18 +336,60 @@ export function Surface3D({ config }: { config: Surface3DConfig }) {
       ctx.textBaseline = 'top';
       ctx.fillText(config.title, W / 2, 8);
     }
-  }, [config]);
+  }, [config, angles]);
 
   useEffect(() => {
     draw();
   }, [draw]);
 
   return (
-    <div className="my-4 flex flex-col items-center gap-1">
+    <div className="not-prose my-4 flex flex-col items-center gap-2">
       <canvas
         ref={canvasRef}
-        className="rounded-lg border border-stone-200 dark:border-stone-700"
+        aria-label={config.title ?? '3D surface visualization'}
+        onPointerDown={(e) => {
+          dragRef.current = { x: e.clientX, y: e.clientY, rx: angles.rx, rz: angles.rz };
+        }}
+        onPointerMove={(e) => {
+          if (!dragRef.current) return;
+          const dx = e.clientX - dragRef.current.x;
+          const dy = e.clientY - dragRef.current.y;
+          setAngles({
+            rx: Math.max(-85, Math.min(85, dragRef.current.rx - dy * 0.5)),
+            rz: dragRef.current.rz + dx * 0.5,
+          });
+        }}
+        onPointerUp={() => {
+          dragRef.current = null;
+        }}
+        onPointerLeave={() => {
+          dragRef.current = null;
+        }}
+        className="cursor-grab rounded-lg border border-stone-200 active:cursor-grabbing dark:border-stone-700"
       />
+      <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-stone-600 dark:text-stone-300">
+        <button
+          type="button"
+          onClick={() => setAngles((a) => ({ ...a, rz: a.rz - 15 }))}
+          className="rounded border border-stone-200 px-2 py-1 hover:bg-stone-100 dark:border-stone-700 dark:hover:bg-stone-800"
+        >
+          Rotate left
+        </button>
+        <button
+          type="button"
+          onClick={() => setAngles((a) => ({ ...a, rz: a.rz + 15 }))}
+          className="rounded border border-stone-200 px-2 py-1 hover:bg-stone-100 dark:border-stone-700 dark:hover:bg-stone-800"
+        >
+          Rotate right
+        </button>
+        <button
+          type="button"
+          onClick={() => setAngles({ rx: initialRx, rz: initialRz })}
+          className="rounded border border-stone-200 px-2 py-1 hover:bg-stone-100 dark:border-stone-700 dark:hover:bg-stone-800"
+        >
+          Reset view
+        </button>
+      </div>
     </div>
   );
 }

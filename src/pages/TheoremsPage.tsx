@@ -1,10 +1,11 @@
 import { GraduationCap, Layers, Layers2, SearchX } from 'lucide-react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { EmptyState } from '@/components/common/EmptyState';
 import { ErrorState } from '@/components/common/ErrorState';
 import { LoadingState } from '@/components/common/LoadingState';
 import { Reveal } from '@/components/common/Reveal';
+import { SearchBar } from '@/components/questions/SearchBar';
 import { TheoremCard } from '@/components/theorems/TheoremCard';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -17,16 +18,24 @@ import {
 } from '@/components/ui/select';
 import { useCourses } from '@/hooks/useCourses';
 import { useCourseScope } from '@/hooks/useCourseScope';
+import { useDebounce } from '@/hooks/useDebounce';
 import { useTheoremMutations } from '@/hooks/useTheoremMutations';
 import { useTheorems } from '@/hooks/useTheorems';
 import { useTopics } from '@/hooks/useTopics';
+import { cn } from '@/lib/cn';
 import { mergeTheoremMutations } from '@/lib/mutations';
-import type { TheoremWithMeta } from '@/types';
+import type { ProgressStatus, TheoremWithMeta } from '@/types';
 
 const EMPTY_THEOREMS: TheoremWithMeta[] = [];
 
 const ALL_COURSES = '__all';
 const ALL_TOPICS = '__all';
+const STATUS_FILTERS: readonly [ProgressStatus | 'all', string][] = [
+  ['all', 'All'],
+  ['unseen', 'Unseen'],
+  ['learning', 'Needs review'],
+  ['mastered', 'Mastered'],
+];
 
 export function TheoremsPage() {
   const navigate = useNavigate();
@@ -57,16 +66,52 @@ export function TheoremsPage() {
     [allTopics, courseId],
   );
 
-  const { statuses, setStatus } = useTheoremMutations(() => undefined);
+  const { statuses, setStatus } = useTheoremMutations((id) =>
+    theorems.find((theorem) => theorem.id === id),
+  );
+  const [searchInput, setSearchInput] = useState('');
+  const search = useDebounce(searchInput, 200);
+  const [statusFilter, setStatusFilter] = useState<ProgressStatus | 'all'>('all');
 
-  const filtered = useMemo(() => {
+  const courseAndTopicFiltered = useMemo(() => {
     const merged = theorems.map((theorem) => mergeTheoremMutations(theorem, statuses));
+    const query = search.trim().toLowerCase();
     return merged.filter((theorem) => {
       if (courseId !== '' && theorem.course_id !== courseId) return false;
       if (topicId !== '' && theorem.topic_id !== topicId) return false;
+      if (query) {
+        const haystack = [
+          theorem.name,
+          theorem.reference,
+          theorem.statement,
+          theorem.formal_notation,
+          theorem.course?.code,
+          theorem.topic?.name,
+        ]
+          .filter(Boolean)
+          .join(' ')
+          .toLowerCase();
+        if (!haystack.includes(query)) return false;
+      }
       return true;
     });
-  }, [theorems, statuses, courseId, topicId]);
+  }, [theorems, statuses, courseId, topicId, search]);
+
+  const counts = useMemo(() => {
+    const result = { all: courseAndTopicFiltered.length, unseen: 0, learning: 0, mastered: 0 };
+    for (const theorem of courseAndTopicFiltered) {
+      const st = theorem.progress?.status ?? 'unseen';
+      result[st] += 1;
+    }
+    return result;
+  }, [courseAndTopicFiltered]);
+
+  const filtered = useMemo(() => {
+    if (statusFilter === 'all') return courseAndTopicFiltered;
+    return courseAndTopicFiltered.filter(
+      (theorem) => (theorem.progress?.status ?? 'unseen') === statusFilter,
+    );
+  }, [courseAndTopicFiltered, statusFilter]);
 
   const filteredTheorems = filtered;
 
@@ -111,6 +156,12 @@ export function TheoremsPage() {
         </Button>
       </section>
 
+      <SearchBar
+        value={searchInput}
+        onChange={setSearchInput}
+        placeholder="Search theorems by name, statement, reference, or topic…"
+      />
+
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
           <Label htmlFor="theorem-course-filter">Course</Label>
@@ -153,6 +204,25 @@ export function TheoremsPage() {
             </SelectContent>
           </Select>
         </div>
+      </div>
+
+      <div aria-label="Filter theorems by status" className="flex flex-wrap gap-2">
+        {STATUS_FILTERS.map(([key, label]) => (
+          <button
+            key={key}
+            type="button"
+            aria-pressed={statusFilter === key}
+            onClick={() => setStatusFilter(key)}
+            className={cn(
+              'rounded-full border px-3 py-1.5 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600',
+              statusFilter === key
+                ? 'border-brand-800 bg-brand-50 font-semibold text-brand-900 dark:border-brand-400 dark:bg-brand-950 dark:text-brand-200'
+                : 'border-stone-200 text-stone-600 dark:border-stone-700 dark:text-stone-300',
+            )}
+          >
+            {label} <span className="ml-1 tabular-nums">{counts[key]}</span>
+          </button>
+        ))}
       </div>
 
       {filteredTheorems.length === 0 ? (

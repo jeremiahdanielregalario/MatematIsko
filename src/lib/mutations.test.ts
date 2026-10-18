@@ -57,6 +57,19 @@ describe('mergeMutations', () => {
     expect(merged.bookmarked).toBe(false);
     expect(merged.progress!.status).toBe('unseen');
   });
+
+  it('applies optimistic lastAttemptedAt and masteredAt timestamps when present', () => {
+    const question = makeQuestion();
+    const merged = mergeMutations(question, {
+      bookmarks: {},
+      statuses: { q1: 'mastered' },
+      attempts: { q1: 2 },
+      lastAttemptedAt: { q1: '2026-10-18T10:00:00.000Z' },
+      masteredAt: { q1: '2026-10-18T10:00:00.000Z' },
+    });
+    expect(merged.progress!.last_attempted_at).toBe('2026-10-18T10:00:00.000Z');
+    expect(merged.progress!.mastered_at).toBe('2026-10-18T10:00:00.000Z');
+  });
 });
 
 // ---------------------------------------------------------------------------

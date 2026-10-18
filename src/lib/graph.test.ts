@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { compileExpression, graphMarkdown, LIMIT_GRAPH, parseGraph, sampleCurve } from './graph';
+import {
+  compileExpression,
+  compileMultiVarExpression,
+  compileSafeVizExpression,
+  graphMarkdown,
+  LIMIT_GRAPH,
+  parseGraph,
+  sampleCurve,
+} from './graph';
 
 describe('safe graph formulas', () => {
   it.each([
@@ -13,6 +21,8 @@ describe('safe graph formulas', () => {
     ['exp(0)+log(e)+tan(0)', 0, 2],
     ['+x-0.5', 2, 1.5],
     ['1e2*x', 2, 200],
+    ['sec(0)+csc(pi/2)+cot(pi/4)', 0, 3],
+    ['floor(2.9)+ceil(1.1)+sign(-5)', 0, 3],
   ])('evaluates %s', (source, x, expected) => {
     expect(compileExpression(source)(x)).toBeCloseTo(expected);
   });
@@ -32,6 +42,16 @@ describe('safe graph formulas', () => {
     'x[0]',
   ])('rejects executable or invalid input: %s', (source) => {
     expect(() => compileExpression(source)).toThrow();
+  });
+
+  it('compiles multi-variable expressions safely for parametric and surface plots', () => {
+    const fn = compileMultiVarExpression('u^2 + 2*u*v + cos(0)', ['u', 'v']);
+    expect(fn(3, 4)).toBeCloseTo(9 + 24 + 1);
+
+    const vizFn = compileSafeVizExpression('2 * Math.cos(Math.PI * t) + t**2', ['t']);
+    expect(vizFn).not.toBeNull();
+    expect(vizFn!(1)).toBeCloseTo(-2 + 1);
+    expect(compileSafeVizExpression('window.alert(1)', ['t'])).toBeNull();
   });
 });
 

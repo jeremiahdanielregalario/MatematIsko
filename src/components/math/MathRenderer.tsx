@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { GraphBlock } from './FunctionGraph';
+import { MathViz } from './MathViz';
 import ReactMarkdown from 'react-markdown';
 import rehypeKatex from 'rehype-katex';
 import remarkGfm from 'remark-gfm';
@@ -8,6 +9,12 @@ import { remarkDisplayMath } from './remarkDisplayMath';
 import { remarkNoteEnvironments, type NoteEnvironmentOptions } from './remarkNoteEnvironments';
 import { cn } from '@/lib/cn';
 import { decodeUnicodeEscapes } from '@/lib/unicode';
+
+const VIZ_CODE_CLASSES: Record<string, 'polar' | 'parametric' | 'surface3d'> = {
+  'language-polar': 'polar',
+  'language-parametric': 'parametric',
+  'language-surface3d': 'surface3d',
+};
 
 interface MathRendererProps {
   /**
@@ -144,14 +151,27 @@ export function MathRenderer({
                   if (
                     code?.type === 'element' &&
                     code.tagName === 'code' &&
-                    Array.isArray(code.properties.className) &&
-                    code.properties.className.includes('language-graph')
+                    Array.isArray(code.properties.className)
                   ) {
-                    const source = code.children
-                      .filter((child) => child.type === 'text')
-                      .map((child) => child.value)
-                      .join('');
-                    return <GraphBlock source={source} preview={preview} />;
+                    const classes = code.properties.className.map(String);
+                    const extractSource = () =>
+                      code.children
+                        .filter((child) => child.type === 'text')
+                        .map((child) => child.value)
+                        .join('');
+                    if (classes.includes('language-graph')) {
+                      return <GraphBlock source={extractSource()} preview={preview} />;
+                    }
+                    const vizClass = classes.find((cls) => Object.hasOwn(VIZ_CODE_CLASSES, cls));
+                    if (vizClass) {
+                      return (
+                        <MathViz
+                          data-math-viz={VIZ_CODE_CLASSES[vizClass]}
+                          data-config={extractSource()}
+                          preview={preview}
+                        />
+                      );
+                    }
                   }
                   return <pre {...props}>{children}</pre>;
                 },

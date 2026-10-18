@@ -44,12 +44,57 @@ function FlashcardDeck({ theorems, onRate, onFinish }: FlashcardSessionProps) {
     }
   }, [index, deck.length, onFinish]);
 
-  const rate = (status: ProgressStatus) => {
-    if (!current) return;
-    setResults((r) => [...r, { theorem: current, status }]);
-    onRate(current, status);
-    next();
-  };
+  const rate = useCallback(
+    (status: ProgressStatus) => {
+      if (!current) return;
+      setResults((r) => [...r, { theorem: current, status }]);
+      onRate(current, status);
+      next();
+    },
+    [current, onRate, next],
+  );
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.defaultPrevented || event.isComposing || event.repeat) return;
+      if (event.metaKey || event.ctrlKey || event.altKey) return;
+      const target = event.target;
+      if (target instanceof HTMLElement) {
+        const tag = target.tagName;
+        if (
+          target.isContentEditable ||
+          tag === 'INPUT' ||
+          tag === 'TEXTAREA' ||
+          tag === 'SELECT' ||
+          target.closest('[role="dialog"], [role="alertdialog"], [role="menu"]')
+        ) {
+          return;
+        }
+        if ((event.key === ' ' || event.key === 'Enter') && (tag === 'BUTTON' || tag === 'A')) {
+          return;
+        }
+      }
+
+      if (event.key === ' ') {
+        event.preventDefault();
+        setSide((s) => (s === 'front' ? 'back' : 'front'));
+        return;
+      }
+
+      if (side === 'back') {
+        if (event.key === '1' || event.key === 'ArrowLeft') {
+          event.preventDefault();
+          rate('learning');
+        } else if (event.key === '2' || event.key === 'ArrowRight') {
+          event.preventDefault();
+          rate('mastered');
+        }
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [side, rate]);
 
   const restart = () => {
     setDeck((d) => [...d].sort(() => Math.random() - 0.5));
@@ -152,7 +197,10 @@ function FlashcardDeck({ theorems, onRate, onFinish }: FlashcardSessionProps) {
         </div>
       )}
 
-      <div className="flex items-center justify-center">
+      <div className="flex flex-col items-center justify-center gap-2">
+        <p className="text-xs text-stone-400 dark:text-stone-500">
+          Shortcuts: Space to flip · 1 Still learning · 2 Got it
+        </p>
         <Button variant="ghost" size="sm" onClick={restart}>
           <RotateCcw className="size-4" />
           Shuffle & restart
@@ -166,9 +214,10 @@ interface ResultsViewProps {
   results: { theorem: TheoremWithMeta; status: ProgressStatus }[];
   onDone: () => void;
   onReview: () => void;
+  onReviewLearning: () => void;
 }
 
-function ResultsView({ results, onDone, onReview }: ResultsViewProps) {
+function ResultsView({ results, onDone, onReview, onReviewLearning }: ResultsViewProps) {
   const mastered = results.filter((r) => r.status === 'mastered');
   const learning = results.filter((r) => r.status === 'learning');
 
@@ -196,7 +245,13 @@ function ResultsView({ results, onDone, onReview }: ResultsViewProps) {
             <p className="text-sm text-amber-700/70 dark:text-amber-400/70">Still learning</p>
           </div>
         </div>
-        <div className="mt-8 flex items-center justify-center gap-3">
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          {learning.length > 0 && (
+            <Button variant="outline" onClick={onReviewLearning}>
+              <RotateCcw className="size-4" />
+              Review still learning ({learning.length})
+            </Button>
+          )}
           <Button variant="outline" onClick={onReview}>
             <RotateCcw className="size-4" />
             Review again
@@ -228,14 +283,22 @@ export function FlashcardSessionPage() {
   }, [loaded, courseId, theoremId]);
 
   const [finished, setFinished] = useState(false);
+  const [subsetIds, setSubsetIds] = useState<string[] | null>(null);
   const [lastResults, setLastResults] = useState<
     { theorem: TheoremWithMeta; status: ProgressStatus }[]
   >([]);
 
   useEffect(() => {
     setFinished(false);
+    setSubsetIds(null);
     setLastResults([]);
   }, [courseId, theoremId]);
+
+  const activeTheorems = useMemo(() => {
+    if (!subsetIds) return theorems;
+    const set = new Set(subsetIds);
+    return theorems.filter((t) => set.has(t.id));
+  }, [theorems, subsetIds]);
 
   const handleRate = useCallback(
     (theorem: TheoremWithMeta, status: ProgressStatus) => {
@@ -275,6 +338,15 @@ export function FlashcardSessionPage() {
         results={lastResults}
         onDone={() => navigate('/theorems')}
         onReview={() => {
+          setSubsetIds(null);
+          setFinished(false);
+          setLastResults([]);
+        }}
+        onReviewLearning={() => {
+          const learningIds = lastResults
+            .filter((r) => r.status === 'learning')
+            .map((r) => r.theorem.id);
+          setSubsetIds(learningIds.length > 0 ? learningIds : null);
           setFinished(false);
           setLastResults([]);
         }}
@@ -300,8 +372,8 @@ export function FlashcardSessionPage() {
       </div>
 
       <FlashcardDeck
-        key={`${courseId ?? 'all'}:${theoremId ?? 'all'}`}
-        theorems={theorems}
+        key={`${courseId ?? 'all'}:${theoremId ?? 'all'}:${subsetIds?.join(',') ?? 'full'}`}
+        theorems={activeTheorems}
         onRate={(theorem, status) => {
           setLastResults((r) => [...r, { theorem, status }]);
           handleRate(theorem, status);

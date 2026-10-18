@@ -8,6 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { MathRenderer } from '@/components/math/MathRenderer';
 import { DifficultyBadge } from '@/components/questions/DifficultyBadge';
 import { RevealSection } from '@/components/questions/RevealSection';
+import { Scratchpad } from '@/components/questions/Scratchpad';
 import { useReveal } from '@/hooks/useReveal';
 import { useRevealKeyboard } from '@/hooks/useRevealKeyboard';
 import { cn } from '@/lib/cn';
@@ -120,6 +121,8 @@ export function PracticeSession({ questions, onAnswer, onComplete, onQuit }: Pra
               </MathRenderer>
             </QuestionWatermark>
           </div>
+
+          <Scratchpad questionId={question.id} />
 
           <RevealSection
             level={reveal.level}

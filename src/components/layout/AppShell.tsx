@@ -15,6 +15,7 @@ import { StudyPrivacy } from '@/components/common/StudyPrivacy';
 import { WelcomeGuide } from '@/components/common/WelcomeGuide';
 import { Logo } from '@/components/Logo';
 import { CourseStudyModal } from '@/components/courses/CourseStudyModal';
+import { CommandPalette } from './CommandPalette';
 import { ThemeToggle } from './ThemeToggle';
 import { UserMenu } from './UserMenu';
 
@@ -70,6 +71,7 @@ export function AppShell() {
             ) : null}
 
             <div className="flex items-center gap-1.5">
+              {user && <CommandPalette />}
               <ThemeToggle />
               {user ? <UserMenu /> : <Link to="/" className="sr-only lg:hidden" />}
             </div>

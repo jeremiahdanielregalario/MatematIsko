@@ -1,4 +1,5 @@
 import { useRef, useEffect, useCallback } from 'react';
+import { compileSafeVizExpression } from '@/lib/graph';
 
 export interface PolarCurveConfig {
   fn: string;
@@ -31,13 +32,8 @@ const DEFAULT_COLORS = [
 ];
 
 function compileFn(expr: string): ((t: number) => number) | null {
-  try {
-    return new Function('t', `"use strict"; return (${expr});`) as (
-      t: number,
-    ) => number;
-  } catch {
-    return null;
-  }
+  const fn = compileSafeVizExpression(expr, ['t']);
+  return fn ? (t: number) => fn(t) : null;
 }
 
 function toCanvasX(x: number, cx: number, scale: number) {

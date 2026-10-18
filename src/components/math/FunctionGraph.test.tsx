@@ -36,3 +36,29 @@ it('inserts a valid graph and blocks invalid formulas', () => {
   fireEvent.click(screen.getByRole('button', { name: 'Vertical asymptote' }));
   expect(screen.getByRole('button', { name: 'Insert graph into question' })).toBeEnabled();
 });
+
+it('supports interactive coordinate inspection and zoom controls on graphs', () => {
+  render(<MathRenderer>{graphMarkdown(LIMIT_GRAPH)}</MathRenderer>);
+  fireEvent.click(screen.getByRole('button', { name: 'Inspect coordinates' }));
+  expect(screen.getByRole('region', { name: 'Coordinate inspector' })).toBeInTheDocument();
+  const slider = screen.getByRole('slider', { name: 'Trace x coordinate' });
+  fireEvent.change(slider, { target: { value: '1' } });
+  expect(screen.getByText(/y = x\+2: \(1, 3\)/)).toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole('button', { name: 'Zoom in graph' }));
+  expect(screen.getByRole('button', { name: 'Reset zoom' })).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Reset zoom' }));
+  expect(screen.queryByRole('button', { name: 'Reset zoom' })).not.toBeInTheDocument();
+});
+
+it('renders polar, parametric, and surface3d fenced blocks safely in full and preview modes', () => {
+  const polarMd = '```polar\n{"title":"Cardioid","curves":[{"fn":"1 + cos(t)"}]}\n```';
+  const { rerender } = render(<MathRenderer preview>{polarMd}</MathRenderer>);
+  expect(screen.getByText('Visualization included: Cardioid')).toBeInTheDocument();
+
+  rerender(<MathRenderer>{polarMd}</MathRenderer>);
+  expect(screen.getByText('Cardioid')).toBeInTheDocument();
+
+  rerender(<MathRenderer>{'```polar\nnot-json\n```'}</MathRenderer>);
+  expect(screen.getByRole('status')).toHaveTextContent('Invalid visualization configuration.');
+});

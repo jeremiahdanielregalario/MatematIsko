@@ -1,58 +1,82 @@
 /** Small mathematical expression parser. Never executes JavaScript from content. */
 type Fn = (x: number) => number;
+type MultiFn = (...vars: number[]) => number;
+
 const FUNCTIONS: Record<string, Fn> = {
   sin: Math.sin,
   cos: Math.cos,
   tan: Math.tan,
+  asin: Math.asin,
+  acos: Math.acos,
+  atan: Math.atan,
+  sinh: Math.sinh,
+  cosh: Math.cosh,
+  tanh: Math.tanh,
+  sec: (x) => 1 / Math.cos(x),
+  csc: (x) => 1 / Math.sin(x),
+  cot: (x) => 1 / Math.tan(x),
   sqrt: Math.sqrt,
+  cbrt: Math.cbrt,
   abs: Math.abs,
   ln: Math.log,
   log: Math.log,
   exp: Math.exp,
+  floor: Math.floor,
+  ceil: Math.ceil,
+  sign: Math.sign,
 };
-export function compileExpression(source: string): Fn {
+
+export function compileMultiVarExpression(
+  source: string,
+  variables: readonly string[] = ['x'],
+): MultiFn {
   if (!source.trim() || source.length > 200)
     throw new Error('Use a formula between 1 and 200 characters.');
   const tokens = source.match(/(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?|[a-zA-Z]+|\S/g) ?? [];
   let index = 0;
   const peek = () => tokens[index];
   const take = () => tokens[index++];
-  function atom(): Fn {
+  const varIndex = new Map(variables.map((name, i) => [name, i]));
+
+  function atom(): MultiFn {
     const token = take();
     if (token === '(') {
       const result = sum();
       if (take() !== ')') throw new Error('Missing closing parenthesis.');
       return result;
     }
-    if (token === 'x') return (x) => x;
+    if (token && varIndex.has(token)) {
+      const idx = varIndex.get(token)!;
+      return (...args) => args[idx] ?? 0;
+    }
     if (token === 'pi') return () => Math.PI;
     if (token === 'e') return () => Math.E;
     if (token && Object.hasOwn(FUNCTIONS, token)) {
       if (take() !== '(') throw new Error(`Use ${token}(...) with parentheses.`);
       const argument = sum();
       if (take() !== ')') throw new Error('Missing closing parenthesis.');
-      return (x) => FUNCTIONS[token](argument(x));
+      return (...args) => FUNCTIONS[token](argument(...args));
     }
     if (token && /^(?:\d|\.)/.test(token) && Number.isFinite(Number(token)))
       return () => Number(token);
     throw new Error(
-      `Unsupported formula near "${token ?? 'end'}". Use x, numbers, + - * / ^ and supported functions.`,
+      `Unsupported formula near "${token ?? 'end'}". Use ${variables.join(', ')}, numbers, + - * / ^ and supported functions.`,
     );
   }
-  function power(): Fn {
+  function power(): MultiFn {
     const left = atom();
     if (peek() === '^') {
       take();
       const right = unary();
-      return (x) => left(x) ** right(x);
+      return (...args) => left(...args) ** right(...args);
     }
     return left;
   }
-  function unary(): Fn {
+  function unary(): MultiFn {
     if (peek() === '-') {
       take();
       const value = unary();
-      return (x) => -value(x);
+      return (...args) => -value(...args);
     }
     if (peek() === '+') {
       take();
@@ -60,23 +84,29 @@ export function compileExpression(source: string): Fn {
     }
     return power();
   }
-  function product(): Fn {
+  function product(): MultiFn {
     let result = unary();
     while (peek() === '*' || peek() === '/') {
       const operator = take();
       const left = result;
       const right = unary();
-      result = operator === '*' ? (x) => left(x) * right(x) : (x) => left(x) / right(x);
+      result =
+        operator === '*'
+          ? (...args) => left(...args) * right(...args)
+          : (...args) => left(...args) / right(...args);
     }
     return result;
   }
-  function sum(): Fn {
+  function sum(): MultiFn {
     let result = product();
     while (peek() === '+' || peek() === '-') {
       const operator = take();
       const left = result;
       const right = product();
-      result = operator === '+' ? (x) => left(x) + right(x) : (x) => left(x) - right(x);
+      result =
+        operator === '+'
+          ? (...args) => left(...args) + right(...args)
+          : (...args) => left(...args) - right(...args);
     }
     return result;
   }
@@ -84,6 +114,35 @@ export function compileExpression(source: string): Fn {
   if (index !== tokens.length)
     throw new Error('Unexpected formula text. Use explicit multiplication, for example 2*x.');
   return result;
+}
+
+export function compileExpression(source: string): Fn {
+  const fn = compileMultiVarExpression(source, ['x']);
+  return (x: number) => fn(x);
+}
+
+/**
+ * Safe expression compiler for polar, parametric, and 3D surface plots.
+ * Normalizes legacy Math.* constants/functions and ** exponentiation without
+ * ever invoking eval or new Function.
+ */
+export function compileSafeVizExpression(
+  source: string,
+  variables: readonly string[],
+): MultiFn | null {
+  try {
+    const normalized = source
+      .replace(/\bMath\.PI\b/g, 'pi')
+      .replace(/\bMath\.E\b/g, 'e')
+      .replace(
+        /\bMath\.(sin|cos|tan|asin|acos|atan|sinh|cosh|tanh|sqrt|cbrt|abs|log|exp|floor|ceil|sign)\b/g,
+        '$1',
+      )
+      .replace(/\*\*/g, '^');
+    return compileMultiVarExpression(normalized, variables);
+  } catch {
+    return null;
+  }
 }
 
 export type Endpoint = 'none' | 'open' | 'closed';
