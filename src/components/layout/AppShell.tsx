@@ -12,6 +12,7 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/cn';
 import { StudyPrivacy } from '@/components/common/StudyPrivacy';
+import { StudyTimer } from '@/components/common/StudyTimer';
 import { WelcomeGuide } from '@/components/common/WelcomeGuide';
 import { Logo } from '@/components/Logo';
 import { CourseStudyModal } from '@/components/courses/CourseStudyModal';
@@ -71,6 +72,7 @@ export function AppShell() {
             ) : null}
 
             <div className="flex items-center gap-1.5">
+              {user && <StudyTimer />}
               {user && <CommandPalette />}
               <ThemeToggle />
               {user ? <UserMenu /> : <Link to="/" className="sr-only lg:hidden" />}

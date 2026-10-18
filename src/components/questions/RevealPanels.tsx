@@ -6,11 +6,11 @@ import { MathRenderer } from '@/components/math/MathRenderer';
 type Tone = 'hint' | 'answer' | 'solution';
 
 const TONES: Record<Tone, string> = {
-  hint: 'border-amber-200 bg-amber-50 text-amber-950 dark:border-amber-900/60 dark:bg-amber-950/30 dark:text-amber-100',
+  hint: 'border-amber-200 border-l-4 border-l-amber-500 bg-amber-50/90 text-amber-950 dark:border-amber-900/60 dark:border-l-amber-400 dark:bg-amber-950/30 dark:text-amber-100',
   answer:
-    'border-emerald-200 bg-emerald-50 text-emerald-950 dark:border-emerald-900/60 dark:bg-emerald-950/30 dark:text-emerald-100',
+    'border-emerald-200 border-l-4 border-l-emerald-600 bg-emerald-50/90 text-emerald-950 dark:border-emerald-900/60 dark:border-l-emerald-400 dark:bg-emerald-950/30 dark:text-emerald-100',
   solution:
-    'border-sky-200 bg-sky-50 text-sky-950 dark:border-sky-900/60 dark:bg-sky-950/30 dark:text-sky-100',
+    'border-sky-200 border-l-4 border-l-sky-600 bg-sky-50/90 text-sky-950 dark:border-sky-900/60 dark:border-l-sky-400 dark:bg-sky-950/30 dark:text-sky-100',
 };
 
 function RevealPanelBase({

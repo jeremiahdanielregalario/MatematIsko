@@ -94,6 +94,9 @@ export function LandingPage() {
             <div className="mb-6 flex justify-center lg:justify-start">
               <Logo size="lg" />
             </div>
+            <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-semibold tracking-wide text-brand-900 dark:border-brand-900 dark:bg-brand-950/60 dark:text-brand-200">
+              University of the Philippines · Mathematics Exam Review
+            </p>
             <h1 className="font-serif text-4xl font-bold leading-tight tracking-tight text-stone-900 sm:text-5xl dark:text-stone-50">
               Review smarter. Solve better.
             </h1>

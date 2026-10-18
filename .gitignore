@@ -23,5 +23,8 @@ npm-debug.log*
 # Supabase local
 supabase/.temp/
 
+# Vercel local
+.vercel/
+
 # Build output
 compiled.css

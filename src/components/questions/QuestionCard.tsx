@@ -29,21 +29,29 @@ export function QuestionCard({
   to,
 }: QuestionCardProps) {
   const status = question.progress?.status ?? 'unseen';
+  const attempts = question.progress?.attempts ?? 0;
 
   return (
     <Card
       className={cn(
-        'group relative flex flex-col gap-3 p-5 transition-all duration-200 hover:-translate-y-1 hover:shadow-md',
+        'group relative flex flex-col gap-3 border-l-4 p-5 transition-all duration-200 hover:-translate-y-1 hover:shadow-md',
+        status === 'mastered'
+          ? 'border-l-emerald-500 dark:border-l-emerald-500'
+          : status === 'learning'
+            ? 'border-l-amber-500 dark:border-l-amber-500'
+            : 'border-l-stone-300 hover:border-l-brand-700 dark:border-l-stone-700 dark:hover:border-l-brand-400',
         'focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-brand-600',
         className,
       )}
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex flex-wrap items-center gap-2 text-xs text-stone-500 dark:text-stone-400">
-          <span className="font-mono font-semibold text-brand-900 dark:text-brand-300">
+          <span className="rounded bg-brand-50 px-1.5 py-0.5 font-mono font-semibold text-brand-900 dark:bg-brand-950/60 dark:text-brand-300">
             {question.course?.code ?? '—'}
           </span>
-          <span>{question.topic?.name}</span>
+          <span className="font-medium text-stone-600 dark:text-stone-300">
+            {question.topic?.name}
+          </span>
           <DifficultyBadge difficulty={question.difficulty} />
         </div>
         <BookmarkButton
@@ -54,7 +62,7 @@ export function QuestionCard({
       </div>
 
       <div className="min-w-0 overflow-hidden">
-        <h3 className="mb-1 font-serif text-lg font-semibold leading-snug text-stone-900 dark:text-stone-100">
+        <h3 className="mb-1.5 font-serif text-lg font-semibold leading-snug text-stone-900 transition-colors group-hover:text-brand-800 dark:text-stone-100 dark:group-hover:text-brand-300">
           <Link
             to={to ?? `/questions/${question.id}`}
             className="rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 after:absolute after:inset-0"
@@ -76,6 +84,11 @@ export function QuestionCard({
           <span>
             {question.exam_name} · No. {question.question_number} · {question.year}
           </span>
+          {attempts > 0 && (
+            <span className="rounded bg-stone-100 px-1.5 py-0.5 font-mono text-[11px] tabular-nums text-stone-600 dark:bg-stone-800 dark:text-stone-300">
+              {attempts} {attempts === 1 ? 'attempt' : 'attempts'}
+            </span>
+          )}
           {!onSetStatus && status !== 'unseen' ? (
             <Badge variant={status === 'mastered' ? 'success' : 'warning'}>
               {status === 'mastered' ? (

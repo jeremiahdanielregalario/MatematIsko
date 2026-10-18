@@ -232,15 +232,15 @@ export function DashboardPage() {
             </select>
           </label>
         </div>
-        <dl className="grid grid-cols-3 gap-3 rounded-xl border border-stone-200 p-4 dark:border-stone-800">
+        <dl className="grid grid-cols-3 gap-3 rounded-xl border border-stone-200 bg-white/80 p-4 shadow-xs dark:border-stone-800 dark:bg-stone-900/60">
           {[
-            [stats.learning, 'Learning'],
-            [stats.unseen, 'Unseen'],
-            [stats.mastered, 'Mastered'],
-          ].map(([value, label]) => (
+            [stats.learning, 'Learning', 'text-amber-700 dark:text-amber-400'],
+            [stats.unseen, 'Unseen', 'text-stone-900 dark:text-stone-100'],
+            [stats.mastered, 'Mastered', 'text-emerald-700 dark:text-emerald-400'],
+          ].map(([value, label, tone]) => (
             <div key={label} className="min-w-0">
-              <dt className="text-xs text-stone-500 dark:text-stone-400">{label}</dt>
-              <dd className="mt-1 text-2xl font-semibold tabular-nums">{value}</dd>
+              <dt className="text-xs font-medium text-stone-500 dark:text-stone-400">{label}</dt>
+              <dd className={cn('mt-1 text-2xl font-bold tabular-nums', tone)}>{value}</dd>
             </div>
           ))}
         </dl>
