@@ -1,9 +1,23 @@
 import { adminIsAdmin } from '@/lib/admin';
 import type { User } from '@supabase/supabase-js';
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { UP_ACCESS_MESSAGE, isApprovedUpEmail } from '@/lib/auth';
 import { SESSION_EXPIRED_MESSAGE, SESSION_LIFETIME_MS, SESSION_START_KEY } from '@/lib/constants';
 import { ensureProfile, getProfile } from '@/lib/db';
+import {
+  clearStudyActivity,
+  recordStudyActivity,
+  shouldPromptStudyAfterIdle,
+  touchStudyActivity,
+} from '@/lib/studyPrompt';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import type { Profile } from '@/types';
 
@@ -58,6 +72,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profileLoading, setProfileLoading] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [justSignedIn, setJustSignedIn] = useState(false);
+  const activeUserIdRef = useRef<string | null>(null);
 
   const [adminAccess, setAdminAccess] = useState<{ userId: string; allowed: boolean } | null>(null);
   const isAdmin = !!rawUser && adminAccess?.userId === rawUser.id && adminAccess.allowed;
@@ -92,33 +107,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     let cancelled = false;
     const client = supabase;
 
-    const acceptUser = (user: User) => {
+    const acceptUser = (user: User): boolean => {
       if (!isApprovedUpEmail(user.email)) {
+        if (activeUserIdRef.current) clearStudyActivity(activeUserIdRef.current);
+        activeUserIdRef.current = null;
         setRawUser(null);
         setProfile(null);
         setProfileLoading(false);
         setAuthError(UP_ACCESS_MESSAGE);
         clearSessionStart();
         void client.auth.signOut();
-        return;
+        return false;
       }
       if (isSessionExpired()) {
+        if (activeUserIdRef.current) clearStudyActivity(activeUserIdRef.current);
+        activeUserIdRef.current = null;
         setRawUser(null);
         setProfile(null);
         setProfileLoading(false);
         setAuthError(SESSION_EXPIRED_MESSAGE);
         clearSessionStart();
         void client.auth.signOut();
-        return;
+        return false;
       }
       setAuthError(null);
-      setRawUser(user);
-      setProfileLoading(true);
+      const isSameUser = activeUserIdRef.current === user.id;
+      activeUserIdRef.current = user.id;
+      setRawUser((prev) => (prev?.id === user.id && prev?.email === user.email ? prev : user));
+      if (!isSameUser) {
+        setProfileLoading(true);
+      }
+      return true;
     };
 
     const { data } = client.auth.onAuthStateChange((event, session) => {
       const nextUser = session?.user ?? null;
       if (!nextUser) {
+        if (activeUserIdRef.current) clearStudyActivity(activeUserIdRef.current);
+        activeUserIdRef.current = null;
         clearSessionStart();
         setRawUser(null);
         setProfile(null);
@@ -127,13 +153,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setLoading(false);
         return;
       }
-      if (event === 'SIGNED_IN') {
-        setJustSignedIn(true);
-      }
+      const wasSameUser = activeUserIdRef.current === nextUser.id;
       if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
         ensureSessionStart();
       }
-      acceptUser(nextUser);
+      if (!acceptUser(nextUser)) {
+        setJustSignedIn(false);
+        setLoading(false);
+        return;
+      }
+      if (event === 'SIGNED_IN') {
+        if (touchStudyActivity(nextUser.id, { promptIfUnset: !wasSameUser })) {
+          setJustSignedIn(true);
+        }
+      } else if (event === 'INITIAL_SESSION') {
+        if (
+          touchStudyActivity(nextUser.id, {
+            promptIfUnset: window.location.pathname === '/auth/callback',
+          })
+        ) {
+          setJustSignedIn(true);
+        }
+      }
       setLoading(false);
     });
 
@@ -143,8 +184,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (cancelled) return;
         const user = sessionData.session?.user ?? null;
         if (user) {
+          const wasSameUser = activeUserIdRef.current === user.id;
           ensureSessionStart();
-          acceptUser(user);
+          if (acceptUser(user) && !wasSameUser) {
+            if (
+              touchStudyActivity(user.id, {
+                promptIfUnset: window.location.pathname === '/auth/callback',
+              })
+            ) {
+              setJustSignedIn(true);
+            }
+          }
         }
         setLoading(false);
       })
@@ -157,6 +207,55 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       data.subscription.unsubscribe();
     };
   }, []);
+
+  // Track study activity and only re-open the study prompt when returning
+  // after a long period of inactivity (STUDY_PROMPT_IDLE_MS), never on
+  // routine tab switches.
+  useEffect(() => {
+    if (!rawUser) return;
+    const userId = rawUser.id;
+    let lastInteractionWrite = 0;
+
+    const onReturnOrInteract = (throttled: boolean) => {
+      const now = Date.now();
+      if (shouldPromptStudyAfterIdle(userId, now)) {
+        recordStudyActivity(userId, now);
+        setJustSignedIn(true);
+        lastInteractionWrite = now;
+        return;
+      }
+      if (!throttled || now - lastInteractionWrite >= 60_000) {
+        recordStudyActivity(userId, now);
+        lastInteractionWrite = now;
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        onReturnOrInteract(false);
+      } else if (!shouldPromptStudyAfterIdle(userId)) {
+        recordStudyActivity(userId);
+      }
+    };
+
+    const handleFocus = () => onReturnOrInteract(false);
+    const handleInteraction = () => {
+      if (document.visibilityState === 'hidden') return;
+      onReturnOrInteract(true);
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleFocus);
+    window.addEventListener('pointerdown', handleInteraction, { passive: true });
+    window.addEventListener('keydown', handleInteraction, { passive: true });
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('pointerdown', handleInteraction);
+      window.removeEventListener('keydown', handleInteraction);
+    };
+  }, [rawUser]);
 
   // Force sign-out while the tab stays open once the session window elapses.
   useEffect(() => {
@@ -210,6 +309,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signInWithGoogle = useCallback(async () => {
     if (!supabase) return;
+    clearStudyActivity();
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo: `${window.location.origin}/auth/callback` },
@@ -219,20 +319,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signInWithEmail = useCallback(async (email: string, password: string) => {
     if (!supabase) return;
+    clearStudyActivity();
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
   }, []);
 
   const signOut = useCallback(async () => {
     if (!supabase) return;
+    const prevUserId = activeUserIdRef.current ?? rawUser?.id;
     await supabase.auth.signOut();
+    clearStudyActivity(prevUserId);
+    activeUserIdRef.current = null;
     clearSessionStart();
     setRawUser(null);
     setProfile(null);
     setProfileLoading(false);
     setAuthError(null);
     setJustSignedIn(false);
-  }, []);
+  }, [rawUser]);
 
   const refreshProfile = useCallback(async () => {
     if (!rawUser || !supabase) return;
@@ -246,8 +350,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [rawUser]);
 
   const acknowledgeSignIn = useCallback(() => {
+    if (rawUser) {
+      recordStudyActivity(rawUser.id);
+    }
     setJustSignedIn(false);
-  }, []);
+  }, [rawUser]);
 
   const value = useMemo<AuthContextValue>(
     () => ({

@@ -109,7 +109,7 @@ Shared enums: difficulty = `easy | medium | hard`; progress = `unseen | learning
 
 Questions and theorems use distinct progress records. An absent progress row is interpreted as unseen in study logic. Questions reference course and topic independently: maintain consistency when authoring or moving content. Review foreign-key cascades before deleting courses, topics, or questions; deletion can remove dependent study records.
 
-Persisted in Supabase: profiles, course selections, content, bookmarks, progress, reports, blogs. Local browser state includes theme (`matematisko-theme`), the client session-start timestamp (`matematisko_session_started_at`), per-user welcome-guide dismissal (`matematisko-welcome-v1:<user-id>`), per-user/per-question scratchpad working notes (`matematisko-scratchpad-v1:<user-id>:<question-id>`), and Supabase's persisted auth session. Practice phase, answer summary, reveal state, and mutation overlays are React state; a full resumable practice history is not implemented.
+Persisted in Supabase: profiles, course selections, content, bookmarks, progress, reports, blogs. Local browser state includes theme (`matematisko-theme`), the client session-start timestamp (`matematisko_session_started_at`), per-user study-prompt activity timestamp (`matematisko_study_last_active_v1:<user-id>`), per-user welcome-guide dismissal (`matematisko-welcome-v1:<user-id>`), per-user/per-question scratchpad working notes (`matematisko-scratchpad-v1:<user-id>:<question-id>`), and Supabase's persisted auth session. Practice phase, answer summary, reveal state, and mutation overlays are React state; a full resumable practice history is not implemented.
 
 Quiz/exam papers additionally use per-user sessionStorage (`matematisko-exam-v1:<user-id>`) for one current paper in the browser tab: question IDs, absolute start/deadline, completion/reveal state, optional working notes, attempted/flagged IDs, and self-ratings. Question content, answers, and solutions are not stored there. Papers can resume after refresh or route navigation, but are not synced to Supabase or other devices. Storage failures show an explicit warning. User/scope changes remount the exam workspace; missing or out-of-scope saved questions block resuming rather than silently changing the paper.
 
@@ -498,3 +498,28 @@ Decision:
 Impact: No database schema, migration, RLS policy, or content ID changes. All new client state is scoped per user and degrades gracefully when browser storage is unavailable.
 
 Evidence: Full Vitest suite (51 test files, 310 tests) with coverage thresholds, `tsc --noEmit`, ESLint (`eslint src`), and production `rsbuild build` passed.
+
+### 2026-10-22 — MATH 126 Unit II (Lebesgue Integration) and Unit III (Lebesgue Spaces) course notes
+
+Status: implemented and applied to the linked database.
+
+Context: In MATH 126 (`c0000000-0000-4000-8000-000000000004`), the existing `Lebesgue Spaces ($L^p$ Spaces)` note (`e2f6c7d8-8a9b-4c2d-9e4f-5a6b7c8d9e0f`) was labeled Unit II at `sort_order = 2`, whereas the actual Unit II covers Lebesgue Integration and $L^p$ Spaces is Unit III.
+
+Decision:
+- Preserve the stable ID `e2f6c7d8-8a9b-4c2d-9e4f-5a6b7c8d9e0f` for the $L^p$ Spaces note, retitle it `Unit III: Lebesgue Spaces ($L^p$ Spaces)` at `sort_order = 3`, and store its updated review-guide source in `notes/math126-unit3-review-guide.md`.
+- Author the comprehensive `Unit II: Lebesgue Integration` course note (`f3a7d8e9-9b0c-4d3e-8f5a-6b7c8d9e0f1a`, `sort_order = 2`) in `notes/math126-unit2-review-guide.md` from the supplied Typst lecture notes, covering almost-everywhere properties, simple functions and the Simple Approximation Lemma, the four-stage construction of the Lebesgue integral (simple, bounded on finite-measure sets, nonnegative, and general integrable functions), Riemann-vs-Lebesgue integrability, Chebyshev's inequality, the zero-integral criterion, Fatou's Lemma, the Monotone Convergence Theorem, Beppo Levi's Lemma, the Integral Comparison Test, and the Lebesgue Dominated Convergence Theorem, complete with transitions, simplified-thinking callouts, a review map, self-check questions, and documented source clarifications.
+- Record both updates in append-only migration `supabase/migrations/20261022000001_math126_unit2_lebesgue_integration_and_unit3_lp_spaces.sql` without editing any earlier applied migration.
+
+Evidence: All 175 display equations and 1,369 inline math expressions in `notes/math126-unit2-review-guide.md` and 51 display equations and 284 inline expressions in `notes/math126-unit3-review-guide.md` passed KaTeX validation and `MathRenderer` (`noteEnvironments`) rendering checks with zero errors. Applied `20261022000001_math126_unit2_lebesgue_integration_and_unit3_lp_spaces.sql` to the linked database (`wsbnsxtknjrviwfnvqbz`), confirmed `supabase db push --dry-run` reports the remote database up to date, and verified live MD5 hashes for all three MATH 126 course notes match the local files.
+
+### 2026-10-22 — Suppress study-course modal on routine tab switches
+
+Status: implemented locally; ready for deployment.
+
+Context: `@supabase/supabase-js` emits a `SIGNED_IN` auth event whenever a backgrounded browser tab regains visibility. `AuthProvider` previously treated every `SIGNED_IN` event as a fresh sign-in (`setJustSignedIn(true)`) and replaced `rawUser` / `profileLoading`, causing `CourseStudyModal` ("What would you like to study today?") to pop up on every tab switch.
+
+Decision:
+- Add `src/lib/studyPrompt.ts` (`STUDY_PROMPT_IDLE_MS = 4 * 60 * 60 * 1000`, stored per user in `localStorage` under `matematisko_study_last_active_v1:<userId>` with in-memory fallback) to track the user's last study activity.
+- In `src/hooks/useAuth.tsx`, track the active user ID across auth callbacks so same-user `SIGNED_IN` / visibility recovery events neither reset `profileLoading` nor re-open `CourseStudyModal` unless the user has been inactive for at least `STUDY_PROMPT_IDLE_MS` (4 hours). Explicit sign-in/sign-out clears the activity timestamp so fresh logins still prompt as intended.
+
+Evidence: Targeted tests in `src/lib/studyPrompt.test.ts` and `src/components/courses/CourseStudyModal.test.tsx` plus the full Vitest suite (53 files, 314 tests), `tsc --noEmit`, ESLint (`eslint src`), and production `rsbuild build` passed.
